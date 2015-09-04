@@ -57,7 +57,7 @@ def make_time(object_name, print_output=False):
                             # Name of output FITS file
                             p.stdin.write('./../basic_' + line.split('_')[2] + '.gti \n')
                             # Selection expression. Note I have omitted the num_pcu_on_eq_5!
-                            p.stdin.write('elv.gt.10.and.offset.lt.0.02.and.num_pcu_on.gt.1 \n')
+                            p.stdin.write('elv.gt.10.and.offset.lt.0.02.and.num_pcu_on.gt.1.and.(time_since_saa.gt.30.or.time_since_saa.lt.0.0) \n')
                             # Flag yes, if HK format is compact
                             p.stdin.write('no \n')
                             # Column containing HK parameter times
