@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import binned_statistic
 from matplotlib import gridspec
 import os
 import fitsio
@@ -149,9 +150,17 @@ def plot_obsid(show=False):
                 # FREQUENCY POWER SPECTRUM
                 # ------------------------
                 ax3 = fig.add_subplot(gs[1,-2:-1])
-                ax3.errorbar(freq, ps*freq, xerr=freq_error, 
-                             yerr=(ps*freq_error + freq*ps_error), 
-                             fmt='o', color='r')
+                
+                bin_means, bin_edges, binnumber = binned_statistic(freq, freq*ps, bins=np.logspace(-3,2, num=25))
+                #print len(bin_means), len(bin_edges)
+                ax3.step(bin_edges[:-1], bin_means, where='pre', lw=2, label='binned statistic of data')
+                
+                #ax3.hlines(bin_means, bin_edges[:-1], bin_edges[1:], 
+                #           colors='g', lw=5, label='binned statistic of data')
+                # If plotting with errorbar
+                #ax3.errorbar(freq, ps*freq, xerr=freq_error, 
+                #             yerr=(ps*freq_error + freq*ps_error), 
+                #             fmt='o', color='r')
                 ax3.set_xscale("log", nonposx='clip')
                 ax3.set_yscale("log", nonposy='clip')
                 ax3.set_ylabel('Frequency*Power')

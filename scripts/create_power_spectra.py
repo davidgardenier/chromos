@@ -161,7 +161,7 @@ def generate_power_spectra(print_output=False):
         # Subtracting white noise
         if white_noise_subtraction:
             #white_noise = (2.0/np.mean(rate))*np.ones(n_seg) <- Adam's white noise function
-            power_spectrum -= white_noise*norm
+            power_spectrum -= white_noise
 
         # Adding to the list of power spectra of all paths
         power_spectra.append(power_spectrum[1:n_seg/2])

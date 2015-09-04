@@ -16,6 +16,6 @@ object_name = 'aquila'
 #extract_light_curve(object_name, extrct_event_mode=True, extrct_background=True, print_output=True)
 #rebin_background(print_output=True)
 #account_for_background(print_output=True)
-cut_xray_flares(print_output=True)
+#cut_xray_flares(print_output=True)
 generate_power_spectra(print_output=True)
 calculate_power_colours(print_output=True)
