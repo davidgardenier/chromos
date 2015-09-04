@@ -55,3 +55,15 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Manual files to ignore
+P60054/
+abstracts/
+appidlist
+bitfile_M
+deprecated_scripts/
+lucy/
+phil/
+plots/
+pwr_colours.dat
+*.*~
