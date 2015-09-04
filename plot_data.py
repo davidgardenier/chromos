@@ -144,7 +144,6 @@ def plot_obsid(show=False):
                 ax2 = fig.add_subplot(gs[1,:-2])
                 
                 bin_means, bin_edges, binnumber = binned_statistic(freq, ps, bins=np.logspace(-3,2, num=25))
-                
                 ax2.step(bin_edges[:-1], bin_means, where='pre', lw=2)
                 
                 # If plotting direct power spectrum
