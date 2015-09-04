@@ -142,25 +142,31 @@ def plot_obsid(show=False):
                                                             unpack=True)
                 # Plot details
                 ax2 = fig.add_subplot(gs[1,:-2])
-                ax2.plot(freq, ps, 'r-')
+                
+                bin_means, bin_edges, binnumber = binned_statistic(freq, ps, bins=np.logspace(-3,2, num=25))
+                
+                ax2.step(bin_edges[:-1], bin_means, where='pre', lw=2)
+                
+                # If plotting direct power spectrum
+                #ax2.plot(freq, ps, 'r-')
+                
                 ax2.set_ylabel('Power')
                 ax2.set_xlabel('Frequency (Hz)')
-                ax2.set_xscale("log", nonposx='clip')
+                ax2.set_xscale('log', nonposx='clip')
 
                 # FREQUENCY POWER SPECTRUM
                 # ------------------------
                 ax3 = fig.add_subplot(gs[1,-2:-1])
                 
                 bin_means, bin_edges, binnumber = binned_statistic(freq, freq*ps, bins=np.logspace(-3,2, num=25))
-                #print len(bin_means), len(bin_edges)
-                ax3.step(bin_edges[:-1], bin_means, where='pre', lw=2, label='binned statistic of data')
                 
-                #ax3.hlines(bin_means, bin_edges[:-1], bin_edges[1:], 
-                #           colors='g', lw=5, label='binned statistic of data')
+                ax3.step(bin_edges[:-1], bin_means, where='pre', lw=2)
+                
                 # If plotting with errorbar
                 #ax3.errorbar(freq, ps*freq, xerr=freq_error, 
                 #             yerr=(ps*freq_error + freq*ps_error), 
                 #             fmt='o', color='r')
+                
                 ax3.set_xscale("log", nonposx='clip')
                 ax3.set_yscale("log", nonposy='clip')
                 ax3.set_ylabel('Frequency*Power')
