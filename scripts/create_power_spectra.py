@@ -147,7 +147,7 @@ def generate_power_spectra(print_output=False):
                 white_noise_per_segment += (2*(np.mean(segment)+np.mean(bkg_segment))/np.mean(segment)**2)
                   
         power_spectrum = power_spectrum/float(number_of_segments)
-        
+        print 'Number of segments: ', number_of_segments
         if white_noise_subtraction:
             white_noise = white_noise_per_segment/float(number_of_segments)
         
