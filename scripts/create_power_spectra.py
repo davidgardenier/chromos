@@ -33,13 +33,16 @@ def find_files():
         
         for f in os.listdir('.'):
             
-            # If an xray flare was present, use the corrected file minus xray flare
-            if f.startswith('corrected_rate_minus_xray_flares_') and f.endswith('.dat'):
+            # If an xray flare was present, use the corrected file
+            # minus xray flare
+            if (f.startswith('corrected_rate_minus_xray_flares_') and
+                f.endswith('.dat')):
                 light_curves.append(os.path.join(os.getcwd(), f))
                 xray_flare = True
             # If there was an xray flare, there should be a background
             # which had been corrected for the flare
-            if f.startswith('corrected_bkg_rate_minus_xray_flares_') and f.endswith('.dat'):
+            if (f.startswith('corrected_bkg_rate_minus_xray_flares_') and 
+                f.endswith('.dat')):
                 backgrounds.append(os.path.join(os.getcwd(), f))
                 xray_flare = True
                 
@@ -131,6 +134,20 @@ def generate_power_spectra(print_output=False):
         
         # Calculating the fourier transform for each segment and averaging
         number_of_segments = len(segment_endpoints)
+        
+        if number_of_segments == 0:
+            if print_output:
+                print '-----------------------' 
+                print 'Working on:', paths_lc[i].split('/')[-2]
+                if paths_lc[i].split('/')[-1].split('_')[2] == 'minus':
+                    print 'X-ray flare: Present'
+                print 'Number of segments:', number_of_segments
+                print 'Ceasing with calculations - no segments'
+                power_spectra.append('nan')                
+                power_spectra_error.append('nan')
+                
+            continue      
+        
         power_spectrum = np.zeros((n_seg))
         
         if white_noise_subtraction:
@@ -147,7 +164,7 @@ def generate_power_spectra(print_output=False):
                 white_noise_per_segment += (2*(np.mean(segment)+np.mean(bkg_segment))/np.mean(segment)**2)
                   
         power_spectrum = power_spectrum/float(number_of_segments)
-        print 'Number of segments: ', number_of_segments
+        
         if white_noise_subtraction:
             white_noise = white_noise_per_segment/float(number_of_segments)
         
@@ -183,24 +200,30 @@ def generate_power_spectra(print_output=False):
     
     # Save the power spectra
     for i, spectrum in enumerate(power_spectra):
-        # Create file within obsid folder
-        f = open(paths_lc[i].split('correct')[0] + 'power_spectrum_' + paths_lc[i].split('correct')[1].split('_')[-1], 'w')
+        if isinstance(spectrum, basestring):
+            continue
+        else:
         
-        # For each value in a power spectrum
-        for item, value in enumerate(spectrum):
-            # power_spectra value, error, frequency, freq_error
-            line = (repr(value) + ' ' + repr(power_spectra_error[i][item]) + ' '
-                    + repr(frequency[item]) + ' ' + repr(frequency_error[item])
-                    + '\n')
+            # Create file within obsid folder
+            f = open((paths_lc[i].split('correct')[0] + 
+                      'power_spectrum_' + 
+                      paths_lc[i].split('correct')[1].split('_')[-1]), 'w')
             
-            f.write(line)
+            # For each value in a power spectrum
+            for item, value in enumerate(spectrum):
+                # power_spectra value, error, frequency, freq_error
+                line = (repr(value) + ' ' + repr(power_spectra_error[i][item])
+                        + ' ' + repr(frequency[item]) + ' ' + 
+                        repr(frequency_error[item]) + '\n')
+                
+                f.write(line)
+                
+            f.close()
             
-        f.close()
-        
-        #plt.plot(frequency, spectrum, label=paths_lc[i].split('/')[-2])
-        #plt.legend()
-        #plt.show()
-        
+            #plt.plot(frequency, spectrum, label=paths_lc[i].split('/')[-2])
+            #plt.legend()
+            #plt.show()
+            
     print '----------- \n Created power spectra'
     
     # Returning all power spectram, frequency grids and errors on both
