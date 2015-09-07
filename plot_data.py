@@ -190,7 +190,7 @@ def plot_obsid(show=False):
                 h = np.where(obsid == e.split('/')[-1])[0][0]
                 # Add a red dot showing the power colour colour value
                 ax4.scatter([pc1[h]],[pc2[h]], c='r', lw=0, s=50, zorder=2)
-
+                
         print '-----------\n Plotting:', e
         
         fig.tight_layout()
