@@ -27,18 +27,24 @@ def find_power_spectra():
     
 
 def calculate_power_colours(print_output=False):
-    
+    '''
+    Function to calculate power colours for each power spectrum
+    '''
     # Define the frequency bands in Hz
     frequency_bands = [0.0039,0.031,0.25,2.0,16.0]
         
     pc_1 = []
     pc_2 = []
     
+    # Determine whether the power spectra are located
     paths = find_power_spectra()
     
+    # Define colour for plotting
     color=iter(plt.cm.rainbow(np.linspace(0,1,len(paths))))
     
+    # For each power spectrum
     for path in paths:
+    
         # Import data
         all_data = np.loadtxt(path,dtype=float)
         inverted_data = np.transpose(all_data)
@@ -85,13 +91,15 @@ def calculate_power_colours(print_output=False):
     plt.legend()
     plt.show()
     
+    # Write power colours to file
     f = open('./pwr_colours.dat', 'w')
 
     # For each value in a power spectrum
     for i, value in enumerate(pc1):
         # power_spectra value, error, frequency, freq_error
-        line = (repr(pc1[i]) + ' ' + repr(pc2[i]) + ' '
-                + obsid[i] + '\n')
+        line = (repr(pc1[i]) + ' ' + 
+                repr(pc2[i]) + ' ' + 
+                obsid[i] + '\n')
         
         f.write(line)
         
