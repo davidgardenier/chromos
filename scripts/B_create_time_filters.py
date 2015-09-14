@@ -2,10 +2,8 @@ import os
 from subprocess import Popen, PIPE, STDOUT
 
 # -----------------------------------------------------------------------------
-# ---------------------------- Create filter ----------------------------------
+# ------------------------- Create filter files -------------------------------
 # -----------------------------------------------------------------------------
-
-object_name = 'aquila'
 
 
 def make_time(object_name, print_output=False):
@@ -20,6 +18,9 @@ def make_time(object_name, print_output=False):
      - print_output: if True, will print the output of maketime function
     '''
     
+    if print_output is True:
+        print '---> Creating filter files' 
+        
     for folder in os.listdir('.'):
         if folder.startswith('P'):
             subfolder = os.path.join('./', folder)
@@ -39,7 +40,9 @@ def make_time(object_name, print_output=False):
                             # Avoid problems with running maketime by removing
                             # previous versions of basic.gti
                             try:
-                                os.remove('./../basic_' + line.split('_')[2] + '.gti')
+                                os.remove('./../basic_' + 
+                                          line.split('_')[2] + 
+                                          '.gti')
                             except OSError:
                                 pass
                             
@@ -48,34 +51,38 @@ def make_time(object_name, print_output=False):
                                       stderr=STDOUT, bufsize=1)
                             
                             if print_output is True:
-                                print('---> Running maketime on ' + line.split('/')[0])
+                                print('----------\n Running maketime on ' +
+                                      line.split('/')[0])
                                 
                             # Give the required input
                             # -----------------------
                             # Name of FITS file
                             p.stdin.write('./' + f + ' \n')
                             # Name of output FITS file
-                            p.stdin.write('./../basic_' + line.split('_')[2] + '.gti \n')
-                            # Selection expression. Note I have omitted the num_pcu_on_eq_5!
-                            p.stdin.write('elv.gt.10.and.offset.lt.0.02.and.num_pcu_on.gt.1.and.(time_since_saa.gt.30.or.time_since_saa.lt.0.0) \n')
+                            p.stdin.write('./../basic_' + 
+                                          line.split('_')[2] + 
+                                          '.gti \n')
+                            # Selection expression.
+                            p.stdin.write('elv.gt.10.and.' +
+                                          'offset.lt.0.02.and.' +
+                                          'num_pcu_on.gt.1.and.' +
+                                          '(time_since_saa.gt.30.or.' +
+                                          'time_since_saa.lt.0.0).and.' +
+                                          'electron2.lt.0.1 \n')
                             # Flag yes, if HK format is compact
                             p.stdin.write('no \n')
                             # Column containing HK parameter times
                             p.stdin.write('TIME \n')
 
-
                             # Print output of program
                             if print_output is True:
                                 with p.stdout:
                                     for line in iter(p.stdout.readline, b''):
-                                        print line,
+                                        print '    ' + line,
                                     p.stdout.close()
                                     p.wait()
 
                     os.chdir('./../../../')
 
-    print '----------- \n Successfully created basic.gti files'
-
-
-if __name__ == '__main__':
-    make_time(object_name, print_output=False)
+    if print_output is True:
+        print '---> Completed'

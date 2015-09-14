@@ -2,11 +2,8 @@ import os
 from subprocess import Popen, PIPE
 
 # -----------------------------------------------------------------------------
-# -------------------------- Get Event modes ----------------------------------
+# ------------------------- Find Event mode files -----------------------------
 # -----------------------------------------------------------------------------
-
-object_name = 'aquila'
-
 
 def determine_files(object_name, print_output=False):
     '''
@@ -22,6 +19,9 @@ def determine_files(object_name, print_output=False):
      - print_output: if True, will print the output of xtescan2 function
     '''
 
+    if print_output is True:
+        print '---> Finding event mode files' 
+        
     for folder in os.listdir('.'):
         if folder.startswith('P'):
             subfolder = os.path.join('./', folder)
@@ -46,19 +46,18 @@ def determine_files(object_name, print_output=False):
             
             # Execute xtescan2
             os.chdir(subfolder)
-            p = Popen(['csh','./../scripts/xtescan2','obsid.lst', object_name], stdout=PIPE)
+            p = Popen(['csh','./../scripts/xtescan2','obsid.lst', object_name],
+                      stdout=PIPE)
             
             # Print output
             if print_output is True:
                 for line in p.stdout:
-                    print line
+                    print '    ' + line
             p.wait()
 
             f.close()
             os.chdir('./../')
             
-    print '----------- \n Successfully extracted data files'
 
-
-if __name__ == '__main__':
-    determine_files(object_name, print_output=False)
+    if print_output is True:
+        print '---> Completed' 

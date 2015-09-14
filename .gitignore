@@ -58,6 +58,7 @@ target/
 
 # Manual files to ignore
 P60054/
+P40047/
 abstracts/
 appidlist
 bitfile_M
