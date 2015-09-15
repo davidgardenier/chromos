@@ -69,6 +69,7 @@ def plot_obsid(show=False):
 
     for e in paths:
     
+        print '-----------\nPlotting:', e    
         # Set up grid
         fig = plt.figure(figsize=(15, 10))
         gs = gridspec.GridSpec(2, 3)
@@ -87,7 +88,7 @@ def plot_obsid(show=False):
             # -------------------------------------------
             # Plot the upper graph showing the lightcurve
             if f.startswith('firstlight_') and f.endswith('.lc'):
-            
+                print 'Plotted light curve'
                 # Get the data
                 rate, t, dt, n_bins, error, t_0 = read_light_curve(path)
                 
@@ -114,7 +115,7 @@ def plot_obsid(show=False):
             # If a rebinned background file has been found, plot it in the
             # same graph
             elif f.startswith('rebinned_background_') and f.endswith('.dat'):
-            
+                print 'Plotted background'
                 # Set a normalisation factor so it is visible
                 norm_bkg = 10
                 
@@ -134,7 +135,7 @@ def plot_obsid(show=False):
 
 
             elif f.startswith('power_spectrum_') and f.endswith('.dat'):
-                
+                print 'Plotted power spectrum'
                 # POWER SPECTRUM
                 # --------------
                 # Import power spectrum
@@ -190,16 +191,19 @@ def plot_obsid(show=False):
                 h = np.where(obsid == e.split('/')[-1])[0][0]
                 # Add a red dot showing the power colour colour value
                 ax4.scatter([pc1[h]],[pc2[h]], c='r', lw=0, s=50, zorder=2)
-                
-        print '-----------\n Plotting:', e
         
-        fig.tight_layout()
-        
-        if show:
-            plt.show()
-        else:
-            plt.savefig('./plots/full_' + e.split('/')[-1])
+        try: 
+            fig.tight_layout()
             
-        plt.clf()
-        
+            if show:
+                plt.show()
+            else:
+                plt.savefig('./plots/full_' + e.split('/')[-1])
+                
+            plt.clf()
+            
+        except ValueError:
+            print('Unable to plot - no lightcurve file')
+            continue
+                
 plot_obsid(show=False)
