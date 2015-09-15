@@ -7,13 +7,17 @@ from scripts.E_account_for_background import *
 from scripts.F_cut_xray_flares import *
 from scripts.G_create_power_spectra import *
 from scripts.H_create_power_colours import *
+import os
 
-object_name = 'aquila'
+PATH = '/scratch/david/master_project/data'
+OBJECT_NAME = 'aquila'
 
-#determine_files(object_name, print_output=True)
-#make_time(object_name, print_output=True)
-#create_background(object_name, print_output=True)
-#extract_light_curve(object_name, extract_event_mode=True, extract_background=True, print_output=True)
+os.chdir(PATH)
+
+#determine_files(OBJECT_NAME, print_output=True)
+#make_time(OBJECT_NAME, print_output=True)
+#create_background(OBJECT_NAME, print_output=True)
+#extract_light_curve(OBJECT_NAME, extract_event_mode=True, extract_background=True, print_output=True)
 #rebin_background(print_output=True)
 #account_for_background(print_output=True)
 #cut_xray_flares(print_output=True)

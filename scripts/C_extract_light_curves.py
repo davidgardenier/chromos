@@ -78,8 +78,11 @@ def calculated_energy_range(date,min_energy,max_energy):
         text = list(txt)
         stop_dates = [x + y for x, y in zip(text[2].split()[2:6], text[3].split()[2:6])]
         end_dates = [datetime.strptime(t, '%m/%d/%y(%H:%M)') for t in stop_dates]
-
-        date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
+        
+        if len(date) == 8:
+            date = datetime.strptime(date, '%d/%m/%y')
+        else:
+            date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
 
         if date < end_dates[0]:
             epoch = 1
@@ -119,7 +122,8 @@ def group_files(object_name):
         # Check whether it's an M - the only bitfile I have implemented
         if f.split('E_')[1][8] != 'M':
             print 'Woah, you\'ll need a different bitfile'
-            return
+            print f
+            continue
         else:
             event_modes.append(f)
             
