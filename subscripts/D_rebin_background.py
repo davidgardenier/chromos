@@ -2,7 +2,7 @@ import os
 import fitsio
 import numpy as np
 import matplotlib.pyplot as plt
-
+import glob
 # -----------------------------------------------------------------------------
 # ----------------------- Rebin the background --------------------------------
 # -----------------------------------------------------------------------------
@@ -16,13 +16,21 @@ def find_light_curves():
     '''
     
     light_curves = []
+    backgrounds = []
     
     for root, dirs, files in os.walk('.'):
         for f in files:
             if f.startswith('firstlight') and f.endswith('.lc'):
-                light_curves.append(os.path.join(root, f))
-
-    return light_curves
+                if len(glob.glob(root + '/background_*')) == 0:
+                    print 'No background found in', root
+                    continue
+                else:
+                    lc = os.path.join(root, f)
+                    light_curves.append(lc)
+                    backgrounds.append(lc.split('firstlight')[0] + 'background' + lc.split('firstlight')[1])
+                    
+                    
+    return light_curves, backgrounds
              
 
 def read_light_curve(path):
@@ -74,22 +82,22 @@ def rebin_background(print_output=False):
     '''
 
     # Determine paths to light curves
-    paths = find_light_curves()
-    
+    paths_lc, paths_bkg = find_light_curves()
+    print len(paths_lc), len(paths_bkg)
     # Determine number of light curves we'll have to loop though
-    n_spectra = len(paths)
+    n_spectra = len(paths_lc)
     
     # For each light curve
     for i in xrange(n_spectra):
         
         if print_output:
-            print '------------------ \n Working on path', paths[i]
+            print '------------------ \n Working on path', paths_lc[i]
         
         # Define how to find the background files    
-        bkg = paths[i].split('firstlight')[0] + 'background' + paths[i].split('firstlight')[1]
+        bkg = paths_bkg[i]
 
         # Reading in the lightcurve data for each path/file
-        rate, t, dt, n_bins, error = read_light_curve(paths[i])
+        rate, t, dt, n_bins, error = read_light_curve(paths_lc[i])
         bkg_rate, bkg_t, bkg_dt, bkg_n_bins, bkg_error = read_light_curve(bkg)
         
         # Set up an array for the rebinned background data
@@ -139,7 +147,7 @@ def rebin_background(print_output=False):
         rebinned_bkg_error = [0]*n_bins
         
         # Path to which the data will be saved
-        new_file = paths[i].split('firstlight_')[0] + 'rebinned_background_' + paths[i].split('firstlight_')[1][:5] + '.dat'
+        new_file = paths_lc[i].split('firstlight_')[0] + 'rebinned_background_' + paths_lc[i].split('firstlight_')[1][:5] + '.dat'
         
         # Write the rebinned background data to a file
         with open(new_file, 'w') as out_file:

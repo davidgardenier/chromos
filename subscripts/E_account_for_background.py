@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import fitsio
+import glob
 
 def find_light_curves():
     '''
@@ -16,10 +17,15 @@ def find_light_curves():
     for root, dirs, files in os.walk('.'):
         for f in files:
             if f.startswith('firstlight') and f.endswith('.lc'):
-                light_curves.append(os.path.join(root, f))
-            if f.startswith('rebinned_background_') and f.endswith('.dat'):
-                backgrounds.append(os.path.join(root, f))
-                
+                if len(glob.glob(root + '/rebinned_background_*')) == 0:
+                    print 'No background found in', root
+                    continue
+                else:
+                    lc = os.path.join(root, f)
+                    light_curves.append(lc)
+                    bkg = lc.split('firstlight')[0] + 'rebinned_background' + lc.split('firstlight')[1][:-2] + 'dat'
+                    backgrounds.append(bkg)
+
     return light_curves, backgrounds
              
 
@@ -67,7 +73,6 @@ def account_for_background(print_output=False):
     
     # For each path
     for i, p in enumerate(paths_bkg):
-    
         # Read in the rebinned_background and the rates of the lightcurves
         bkg_rate, bkg_t, bkg_dt, bkg_n_bins, bkg_error  = np.loadtxt(p,dtype=float,unpack=True)
         rate, t, dt, n_bins, error = read_light_curve(paths_lc[i])

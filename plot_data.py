@@ -5,6 +5,11 @@ from matplotlib import gridspec
 import os
 import fitsio
 
+PATH = '/scratch/david/master_project/data'
+OBJECT_NAME = 'aquila'
+
+os.chdir(PATH)
+
 def read_light_curve(path):
     '''
     Function to read the data from the lightcurve fits files. Adapted with 
