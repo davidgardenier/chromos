@@ -41,7 +41,7 @@ def calculate_power_colours(print_output=False):
     
     # Define colour for plotting
     color=iter(plt.cm.rainbow(np.linspace(0,1,len(paths))))
-    
+         
     # For each power spectrum
     for path in paths:
     
@@ -55,18 +55,26 @@ def calculate_power_colours(print_output=False):
         frequency = inverted_data[2]
         frequency_error = inverted_data[3]
         
+        variances = []
+    
         index_frequency_bands = []
-        
+    
         # Convert frequency bands to index values from in the frequency list
         for fb in frequency_bands:
             index = min(range(len(frequency)), key=lambda i: abs(frequency[i]-fb))
-            index_frequency_bands.append(index)
+            index_frequency_bands.append([index])
         
-        variances = []
+        # Group indexes into sets of style [low, high)
+        for i, e in enumerate(index_frequency_bands[:-1]):
+            e.append(index_frequency_bands[i+1][0]-1)
+        
+        del index_frequency_bands[-1]
         
         # Integrate the power spectra within the frequency bands
-        for i, e in enumerate(index_frequency_bands[:-1]):
-            variance = integrate.simps(power_spectrum[e:index_frequency_bands[i+1]])
+        bin_width = frequency[1]-frequency[0]
+        
+        for e in index_frequency_bands:
+            variance = bin_width*sum(power_spectrum[e[0]:e[1]])
             variances.append(variance)
         
         pc1 = variances[1]/variances[0]
