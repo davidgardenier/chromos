@@ -168,10 +168,6 @@ def generate_power_spectra(print_output=False):
         # Initialise the power spectrum array
         power_spectrum = np.zeros((n_seg))
 
-        ## Initialise the white noise array
-        #if white_noise_subtraction:
-        #    white_noise_per_segment = np.zeros((n_seg))
-
         # For each segment
         for j in xrange(number_of_segments):
             # Make an array containing the segment of the light curve
