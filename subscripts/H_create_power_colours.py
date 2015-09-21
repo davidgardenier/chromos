@@ -34,8 +34,9 @@ def calculate_power_colours(print_output=False):
     frequency_bands = [0.0039,0.031,0.25,2.0,16.0]
 
     pc_1 = []
+    pc_1_error = []
     pc_2 = []
-
+    pc_2_error = []
     # Determine whether the power spectra are located
     paths = find_power_spectra()
 
@@ -54,9 +55,11 @@ def calculate_power_colours(print_output=False):
         power_spectrum_error = inverted_data[1]
         frequency = inverted_data[2]
         frequency_error = inverted_data[3]
-
+        power_spectrum_squared = inverted_data[4]
+        number_of_segments = inverted_data[5][0]
+        
         variances = []
-
+        variance_errors = []
         index_frequency_bands = []
 
         # Convert frequency bands to index values from in the frequency list
@@ -77,23 +80,39 @@ def calculate_power_colours(print_output=False):
             variance = bin_width*sum(power_spectrum[e[0]:e[1]])
             variances.append(variance)
 
+            # Calculate errors on the variance (see appendix Heil, Vaughan & Uttley 2012)
+            # M refers to the number of segments
+            one_over_sqrt_M = 1/float(np.sqrt(number_of_segments))
+            prop_std = sum(power_spectrum_squared[e[0]:e[1]])
+            variance_error = bin_width*one_over_sqrt_M*np.sqrt(prop_std)
+            variance_errors.append(variance_error)
+            
         pc1 = variances[2]/float(variances[0])
         pc2 = variances[1]/float(variances[3])
+        
+        pc1_error = np.sqrt(variance_errors[2]**2/float(variances[2]) + variance_errors[0]**2/float(variances[0]))
+        pc2_error = np.sqrt(variance_errors[1]**2/float(variances[1]) + variance_errors[3]**2/float(variances[3]))
 
         pc_1.append(pc1)
         pc_2.append(pc2)
+        
+        pc_1_error.append(pc1_error)
+        pc_2_error.append(pc2_error)
 
     # Sort the power colours
     srt_list = []
     for i in range(len(pc_1)):
-        srt_list.append((pc_1[i], pc_2[i], paths[i].split('/')[2]))
+        srt_list.append((pc_1[i], pc_2[i], pc_1_error[i], pc_2_error[i], paths[i].split('/')[2]))
 
-    sorted_list = sorted(srt_list, key=lambda obsid: obsid[2])
-    pc1, pc2, obsid = zip(*sorted_list)
+    sorted_list = sorted(srt_list, key=lambda obsid: obsid[4])
+    pc1, pc2, pc1_error, pc2_error, obsid = zip(*sorted_list)
 
     for i in range(len(paths)):
-        plt.loglog(pc1[i], pc2[i], 'o', c=next(color), label=obsid[i])
+        print(pc1[i], pc2[i], pc1_error[i], pc2_error[i])
+        plt.errorbar(pc1[i], pc2[i], xerr=pc1_error[i], yerr=pc2_error[i], c=next(color), label=obsid[i])
 
+    plt.xscale('log')
+    plt.yscale('log')
     plt.xlim([0.001, 1000])
     plt.ylim([0.001, 1000])
     plt.legend()

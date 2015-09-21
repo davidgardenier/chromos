@@ -9,7 +9,7 @@ from subscripts.G_create_power_spectra import *
 from subscripts.H_create_power_colours import *
 import os
 
-PATH = '/scratch/david/master_project/full_data'
+PATH = '/scratch/david/master_project/data'
 OBJECT_NAME = 'aquila'
 
 os.chdir(PATH)

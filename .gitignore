@@ -68,4 +68,5 @@ phil/
 plots/
 pwr_colours.dat
 *.tmp
+log*
 *.*~

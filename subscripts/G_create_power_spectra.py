@@ -86,7 +86,9 @@ def generate_power_spectra(print_output=False):
     power_spectra_error = []
     bkg_power_spectra = []
     bkg_power_spectra_error = []
-
+    power_spectra_squared = []
+    number_of_spectra_segments = []
+    
     # Calculate the normalised power spectra with errors
     for i in xrange(n_spectra):
 
@@ -145,7 +147,6 @@ def generate_power_spectra(print_output=False):
 
         # Calculating the number of segments
         number_of_segments = len(segment_endpoints)
-
         # Stop calculations if no segments can be found
         if number_of_segments == 0:
 
@@ -162,12 +163,20 @@ def generate_power_spectra(print_output=False):
                 # ensure the length of the arrays remain the same
                 power_spectra.append('nan')
                 power_spectra_error.append('nan')
-
+                power_spectra_squared.append('nan')
+                number_of_spectra_segments.append('nan')
+        
             continue
 
         # Initialise the power spectrum array
         power_spectrum = np.zeros((n_seg))
-
+        # Necessary for errors on power colour values
+        power_spectrum_squared = np.zeros((n_seg))
+        
+        # Initialise rate arrays
+        rate_tot = []
+        bkg_tot = []
+        
         # For each segment
         for j in xrange(number_of_segments):
             # Make an array containing the segment of the light curve
@@ -184,19 +193,27 @@ def generate_power_spectra(print_output=False):
             # Add the normalisation of the square of the FFT
             # to the power spectrum
             power_spectrum += norm*(np.absolute(four_trans))**2
-            
-
-            # Calculate the white noise per segment & subtract from the power
-            # spectrum
+            # Add the normalisation of the squared power spectrum
+            power_spectrum_squared += (norm*(np.absolute(four_trans))**2)**2
+                        
+            # For calculating the total white noise
             if white_noise_subtraction:
-                white_noise = (2*(np.mean(segment)+np.mean(bkg_segment))/np.mean(segment)**2)
-                power_spectrum -= white_noise
-                
+                rate_tot.extend(segment)
+                bkg_tot.extend(bkg_segment)
+            
         # Calculate the mean power spectrum
         power_spectrum = power_spectrum/float(number_of_segments)
 
+        # Calculate the mean power spectrum
+        power_spectrum_squared = power_spectrum_squared/float(number_of_segments)
+                
         # Calculating the error on the power spectrum
         power_spectrum_error = power_spectrum/np.sqrt(float(number_of_segments))
+                
+        # Calculate the white noise & subtract from the power spectrum
+        if white_noise_subtraction:
+            white_noise = (2*(np.mean(rate_tot)+np.mean(bkg_tot))/np.mean(rate_tot)**2)
+            power_spectrum -= white_noise
 
         # Adding to the list of power spectra of all paths
         # Note the range of the power spectrum - this is due to the output
@@ -204,7 +221,9 @@ def generate_power_spectra(print_output=False):
         # the list
         power_spectra.append(power_spectrum[1:n_seg/2])
         power_spectra_error.append(power_spectrum_error[1:n_seg/2])
-
+        power_spectra_squared.append(power_spectrum_squared[1:n_seg/2])
+        number_of_spectra_segments.append(number_of_segments)
+        
         # Give the user information on what's happening
         if print_output:
             print '-----------------------'
@@ -244,7 +263,9 @@ def generate_power_spectra(print_output=False):
                 line = (repr(value) + ' ' + 
                         repr(power_spectra_error[i][item]) + ' ' + 
                         repr(frequency[item]) + ' ' +
-                        repr(frequency_error[item]) + '\n')
+                        repr(frequency_error[item]) + ' ' +
+                        repr(power_spectra_squared[i][item]) + ' ' +
+                        repr(number_of_spectra_segments[0]) + '\n')
 
                 f.write(line)
 
