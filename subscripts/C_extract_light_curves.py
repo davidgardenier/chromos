@@ -3,6 +3,7 @@ import glob
 from subprocess import Popen, PIPE, STDOUT
 from datetime import datetime
 from collections import defaultdict
+from astropy.io import fits
 
 # -----------------------------------------------------------------------------
 # ------------------------- Extract lightcurves -------------------------------
@@ -181,12 +182,67 @@ def group_files(object_name):
     return paths, dates
 
 
+def get_channel_range(cer, path_events):
+    
+    # Get the channels you're looking for
+    abs_channels = cer.split('-')
+    
+    # Get the paths of the files
+    paths = []
+    with open(path_events) as p:
+        for line in p:
+            paths.append(line.strip())
+    
+    # Save all channel ranges to ensure none have changed
+    channel_ranges = []
+    
+    for path in paths:
+        # Get the list in which you want search for channels
+        tevtb2 = fits.open(path)[1].header['TEVTB2']
+        
+        # Cut out the channels
+        rel_channels = tevtb2.split(',C')[1][1:].split(']')[0].replace('~','-')
+        
+        # Indexes between which the abs channels are.
+        indexes = []
+        
+        # For each absolute channel
+        for i, c in enumerate(abs_channels):
+            # Find the index of the closest value
+            while True:
+                try:
+                    # If in the list, that's fine
+                    index = rel_channels.index(c)
+                    break
+                except:
+                    # Else keep adding to the value
+                    c = str(int(c) + 1)
+            
+            # Make sure you cut in the right places,
+            # for the first index, just after a comma
+            if i == 0:
+                while rel_channels[index - 1] != ',':
+                    index -= 1
+            # and for the last index just before a comma
+            if i == 1:
+                while rel_channels[index] != ',':
+                    index += 1
+            indexes.append(index)
+        
+        channel_ranges.append(rel_channels[indexes[0]:indexes[1]])
+    
+    return max(channel_ranges)
+
 def seextrct(path_events, date, time_resolution, low_e, high_e, print_output):
+    
+    cer = calculated_energy_range(date, low_e, high_e)
+    channel_range_from_file = get_channel_range(cer, path_events) 
+    
     # Execute seextrct with the required bitfile
     p = Popen(['seextrct','bitfile=./../../scripts/bitfile_M'],
               stdout=PIPE, stdin=PIPE, stderr=STDOUT,
               bufsize=1)
-
+              
     # Give the required input
     # -----------------------
     # Input file name
@@ -220,7 +276,7 @@ def seextrct(path_events, date, time_resolution, low_e, high_e, print_output):
     # Maximum energy bin to include in Spectra
     p.stdin.write('INDEF \n')
     # Input energy intervals to be retained 0-1,2-255
-    p.stdin.write(calculated_energy_range(date, low_e, high_e) + ' \n')
+    p.stdin.write(channel_range_from_file + ' \n')
     # Input channels for each bin 0-5,6-255
     p.stdin.write('INDEF \n')
 
@@ -344,7 +400,7 @@ def extract_light_curve(object_name, extract_event_mode=True,
         # Energy range
         low_e = 2
         high_e = 13
-        
+                
         if extract_event_mode:
             file_name = e.split('/')[-1]
             seextrct(file_name, d, time_resolution, low_e, high_e, print_output)

@@ -144,7 +144,7 @@ def plot_obsid(show=False):
                     # POWER SPECTRUM
                     # --------------
                     # Import power spectrum
-                    ps, ps_error, freq, freq_error, _ = np.loadtxt(path,dtype=float,
+                    ps, ps_error, freq, freq_error, _ , _ = np.loadtxt(path,dtype=float,
                                                                 unpack=True)
                     # Plot details
                     ax2 = fig.add_subplot(gs[1,:-2])

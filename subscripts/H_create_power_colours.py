@@ -90,8 +90,8 @@ def calculate_power_colours(print_output=False):
         pc1 = variances[2]/float(variances[0])
         pc2 = variances[1]/float(variances[3])
         
-        pc1_error = np.sqrt(variance_errors[2]**2/float(variances[2]) + variance_errors[0]**2/float(variances[0]))
-        pc2_error = np.sqrt(variance_errors[1]**2/float(variances[1]) + variance_errors[3]**2/float(variances[3]))
+        pc1_error = np.sqrt((variance_errors[2]**2/float(variances[2]) + variance_errors[0]**2/float(variances[0]))*pc1)
+        pc2_error = np.sqrt((variance_errors[1]**2/float(variances[1]) + variance_errors[3]**2/float(variances[3]))*pc2)
 
         pc_1.append(pc1)
         pc_2.append(pc2)
@@ -109,7 +109,7 @@ def calculate_power_colours(print_output=False):
 
     for i in range(len(paths)):
         print(pc1[i], pc2[i], pc1_error[i], pc2_error[i])
-        plt.errorbar(pc1[i], pc2[i], xerr=pc1_error[i], yerr=pc2_error[i], c=next(color), label=obsid[i])
+        plt.errorbar(pc1[i], pc2[i], xerr=pc1_error[i], yerr=pc2_error[i], ls='none', marker='x', c=next(color), label=obsid[i])
 
     plt.xscale('log')
     plt.yscale('log')
