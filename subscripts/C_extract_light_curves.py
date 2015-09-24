@@ -235,7 +235,10 @@ def get_channel_range(cer, path_events):
 
 def seextrct(path_events, date, time_resolution, low_e, high_e, print_output):
     
+    # First calculate the absolute energy range on basis of date
     cer = calculated_energy_range(date, low_e, high_e)
+    # Then check for the corresponding range in the header of each event mode
+    # file
     channel_range_from_file = get_channel_range(cer, path_events) 
     
     # Execute seextrct with the required bitfile
