@@ -90,8 +90,8 @@ def calculate_power_colours(print_output=False):
         pc1 = variances[2]/float(variances[0])
         pc2 = variances[1]/float(variances[3])
         
-        pc1_error = np.sqrt((variance_errors[2]**2/float(variances[2]) + variance_errors[0]**2/float(variances[0]))*pc1)
-        pc2_error = np.sqrt((variance_errors[1]**2/float(variances[1]) + variance_errors[3]**2/float(variances[3]))*pc2)
+        pc1_error = np.sqrt(variance_errors[2]**2/float(variances[2]**2) + variance_errors[0]**2/float(variances[0]**2))*pc1
+        pc2_error = np.sqrt(variance_errors[1]**2/float(variances[1]**2) + variance_errors[3]**2/float(variances[3]**2))*pc2
 
         pc_1.append(pc1)
         pc_2.append(pc2)
@@ -116,7 +116,7 @@ def calculate_power_colours(print_output=False):
     plt.xlim([0.001, 1000])
     plt.ylim([0.001, 1000])
     plt.legend()
-    plt.show()#('./pwr_colours.png')
+    plt.savefig('./pwr_colours.png')
 
     # Write power colours to file
     f = open('./pwr_colours.dat', 'w')
