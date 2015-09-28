@@ -62,13 +62,14 @@ def create_background(object_name, print_output=False):
         except OSError:
             pass
 
+        print os.getcwd()
         # Give pcabackest options
         pcabackest = ['pcabackest',
                       'infile=' + std2_wd[i],
                       'outfile=' + f.split('std')[0] + object_name + '_bkg_' + str(number),
                       'filterfile=' + f,
-                      'modelfile=./scripts/pca_bkgd_cmbrightvle_eMv20051128.mdl',
-                      'saahfile=./scripts/pca_saa_history.gz',
+                      'modelfile=./../scripts/subscripts/pca_bkgd_cmbrightvle_eMv20051128.mdl',
+                      'saahfile=./../scripts/subscripts/pca_saa_history.gz',
                       'modeltype=both',
                       'interval=16',
                       'propane=no',

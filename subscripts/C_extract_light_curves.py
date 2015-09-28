@@ -75,7 +75,7 @@ def calculated_energy_range(date,min_energy,max_energy):
      - Channel range
     '''
 
-    with open('./../../scripts/energy_channel_conversion.txt', 'r') as txt:
+    with open('./../../../scripts/subscripts/energy_channel_conversion.txt', 'r') as txt:
         text = list(txt)
         stop_dates = [x + y for x, y in zip(text[2].split()[2:6], text[3].split()[2:6])]
         end_dates = [datetime.strptime(t, '%m/%d/%y(%H:%M)') for t in stop_dates]
@@ -120,13 +120,7 @@ def group_files(object_name):
 
     # Find files with list of event mode files
     for f in glob.glob('./*/' + object_name + '.E_*.list'):
-        # Check whether it's an M - the only bitfile I have implemented
-        if f.split('E_')[1][8] != 'M':
-            print 'Woah, you\'ll need a different bitfile'
-            print f
-            continue
-        else:
-            event_modes.append(f)
+        event_modes.append(f)
             
     # Set up lists of data we want as output
     paths = {'event':[],'bkg':[]}
@@ -177,7 +171,7 @@ def group_files(object_name):
         f.write('\n'.join(d[key]))
         f.close()
 
-    paths['bkg'] = [i[:-21]+object_name+'_bkg.list' for i in paths['event']]
+    paths['bkg'] = ['/'.join(i.split('/')[:-1]) + '/' + object_name+'_bkg.list' for i in paths['event']]
 
     return paths, dates
 
@@ -240,9 +234,9 @@ def seextrct(path_events, date, time_resolution, low_e, high_e, print_output):
     # Then check for the corresponding range in the header of each event mode
     # file
     channel_range_from_file = get_channel_range(cer, path_events) 
-    
+
     # Execute seextrct with the required bitfile
-    p = Popen(['seextrct','bitfile=./../../scripts/bitfile_M'],
+    p = Popen(['seextrct','bitfile=./../../../scripts/subscripts/bitfile_M'],
               stdout=PIPE, stdin=PIPE, stderr=STDOUT,
               bufsize=1)
               
@@ -305,7 +299,7 @@ def saextrct(path_bkg, date, time_resolution, low_e, high_e, print_output):
     if print_output is True:
         print '-----------------------\n Working on background file\n-----------------------'
 
-    # Execute seextrct with the required bitfile
+    # Execute saextrct
     p = Popen(['saextrct'], stdout=PIPE, stdin=PIPE, stderr=STDOUT,
               bufsize=1)
 
@@ -389,7 +383,7 @@ def extract_light_curve(object_name, extract_event_mode=True,
         b = paths['bkg'][i]
         d = dates[i]
 
-        os.chdir(e[:-21])
+        os.chdir('/'.join(e.split('/')[:-1]))
 
         # Let you know which file it's working on
         if print_output is True:
@@ -403,7 +397,7 @@ def extract_light_curve(object_name, extract_event_mode=True,
         # Energy range
         low_e = 2
         high_e = 13
-                
+        
         if extract_event_mode:
             file_name = e.split('/')[-1]
             seextrct(file_name, d, time_resolution, low_e, high_e, print_output)
