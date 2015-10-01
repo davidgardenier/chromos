@@ -177,7 +177,9 @@ def group_files(object_name):
 
 
 def get_channel_range(cer, path_events):
-    
+    '''
+    Look inside each event mode file to get the channel range it contains
+    '''
     # Get the channels you're looking for
     abs_channels = cer.split('-')
     
@@ -227,8 +229,12 @@ def get_channel_range(cer, path_events):
     
     return max(channel_ranges)
 
+
+
 def seextrct(path_events, date, time_resolution, low_e, high_e, print_output):
-    
+    '''
+    Run seextrct over all event mode files
+    '''
     # First calculate the absolute energy range on basis of date
     cer = calculated_energy_range(date, low_e, high_e)
     # Then check for the corresponding range in the header of each event mode
@@ -292,7 +298,7 @@ def seextrct(path_events, date, time_resolution, low_e, high_e, print_output):
 
 def saextrct(path_bkg, date, time_resolution, low_e, high_e, print_output):
     '''
-    #Function to extract a light curve file from background files
+    Function to extract a light curve file from background files
     '''
 
     # Let you know which file it's working on
@@ -353,7 +359,8 @@ def saextrct(path_bkg, date, time_resolution, low_e, high_e, print_output):
                 print oline,
         p.stdout.close()
         p.wait()
-        
+
+   
 def extract_light_curve(object_name, extract_event_mode=True,
                         extract_background=True, print_output=False):
     '''
