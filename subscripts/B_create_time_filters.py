@@ -66,7 +66,7 @@ def make_time(object_name, print_output=False):
                             p.stdin.write('elv.gt.10.and.' +
                                           'offset.lt.0.02.and.' +
                                           'num_pcu_on.gt.1.and.' +
-                                          '(time_since_saa.gt.30.or.' +
+                                          '(time_since_saa.gt.10.or.' +
                                           'time_since_saa.lt.0.0).and.' +
                                           'electron2.lt.0.1 \n')
                             # Flag yes, if HK format is compact
