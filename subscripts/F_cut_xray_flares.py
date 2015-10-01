@@ -15,11 +15,14 @@ def find_files():
     
     for root, dirs, files in os.walk('.'):
         for f in files:
-            if f.startswith('corrected_rate_') and f.endswith('.dat') and len(f)==24:
+            if f.startswith('corrected_rate_') and f.endswith('.dat') and 'xray' not in f:
                 corrected_rates.append(os.path.join(root, f))
             if f.startswith('rebinned_background_') and f.endswith('.dat'):
                 backgrounds.append(os.path.join(root, f))
-                
+    
+    corrected_rates.sort()
+    backgrounds.sort()
+        
     return corrected_rates, backgrounds
     
     
@@ -115,10 +118,10 @@ def cut_xray_flares(print_output=False):
             
             n_bins = len(rate)
             bkg_n_bins = len(bkg_rate)
-            
+                            
             # Path to which the data will be saved
-            new_file = p.split('rebinned_background_')[0] + 'corrected_rate_minus_xray_flares_' + p.split('rebinned_background_')[1][:5] + '.dat'
-            
+            new_file = p.split('rebinned_background_')[0] + 'corrected_rate_minus_xray_flares_' + p.split('rebinned_background_')[1].split('.')[0] + '.dat'
+
             if print_output:
                 print ' Wait...'
                 
@@ -128,10 +131,10 @@ def cut_xray_flares(print_output=False):
                     out_file.write(repr(rate[i]) + ' ' + repr(t[i]) + ' ' + str(dt[0]) + ' ' + str(n_bins) + ' ' + repr(error[i]) + '\n')
                     
             # Path to which the background data will be saved
-            bkg_file = p.split('rebinned_background_')[0] + 'corrected_bkg_rate_minus_xray_flares_' + p.split('rebinned_background_')[1][:5] + '.dat'
+            bkg_file = p.split('rebinned_background_')[0] + 'corrected_bkg_rate_minus_xray_flares_' + p.split('rebinned_background_')[1].split('.')[0] + '.dat'
             
             # Write the background X-ray flare corrected rates to a file
-            with open(bkg_file, 'w') as out_file:
+            with open(bkg_file, 'w') as out_file: 
                 for i in range(n_bins):
                     out_file.write(repr(bkg_rate[i]) + ' ' + repr(bkg_t[i]) + ' ' + str(bkg_dt[0]) + ' ' + str(bkg_n_bins) + ' ' + repr(bkg_error[i]) + '\n')
                     

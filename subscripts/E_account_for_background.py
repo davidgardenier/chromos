@@ -18,7 +18,7 @@ def find_light_curves():
         for f in files:
             if f.startswith('firstlight') and f.endswith('.lc'):
                 if len(glob.glob(root + '/rebinned_background_*')) == 0:
-                    print 'No background found in', root
+                    print ' No rebinned background found in', root
                     continue
                 else:
                     lc = os.path.join(root, f)
@@ -80,7 +80,7 @@ def account_for_background(print_output=False):
         corrected_rate = rate - bkg_rate
 
         # Path to which the data will be saved
-        new_file = p.split('rebinned_background_')[0] + 'corrected_rate_' + p.split('rebinned_background_')[1][:5] + '.dat'
+        new_file = p.split('rebinned_background_')[0] + 'corrected_rate_' + p.split('rebinned_background_')[1].split('.')[0] + '.dat'
         
         # Write the corrected rates to a file
         with open(new_file, 'w') as out_file:

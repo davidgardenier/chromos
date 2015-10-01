@@ -22,7 +22,7 @@ def find_light_curves():
         for f in files:
             if f.startswith('firstlight') and f.endswith('.lc'):
                 if len(glob.glob(root + '/background_*')) == 0:
-                    print 'No background found in', root
+                    print ' No background found in', root
                     continue
                 else:
                     lc = os.path.join(root, f)
@@ -83,7 +83,7 @@ def rebin_background(print_output=False):
 
     # Determine paths to light curves
     paths_lc, paths_bkg = find_light_curves()
-    print len(paths_lc), len(paths_bkg)
+
     # Determine number of light curves we'll have to loop though
     n_spectra = len(paths_lc)
     
@@ -146,8 +146,9 @@ def rebin_background(print_output=False):
         # Errors still need to be calculated
         rebinned_bkg_error = [0]*n_bins
         
+        timing = paths_lc[i].split('firstlight_')[1].split('.')[0]
         # Path to which the data will be saved
-        new_file = paths_lc[i].split('firstlight_')[0] + 'rebinned_background_' + paths_lc[i].split('firstlight_')[1][:5] + '.dat'
+        new_file = paths_lc[i].split('firstlight_')[0] + 'rebinned_background_' + timing + '.dat'
         
         # Write the rebinned background data to a file
         with open(new_file, 'w') as out_file:
