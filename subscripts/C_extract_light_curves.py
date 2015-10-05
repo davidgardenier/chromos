@@ -79,7 +79,7 @@ def calculated_energy_range(date,min_energy,max_energy):
         text = list(txt)
         stop_dates = [x + y for x, y in zip(text[2].split()[2:6], text[3].split()[2:6])]
         end_dates = [datetime.strptime(t, '%m/%d/%y(%H:%M)') for t in stop_dates]
-        
+
         if len(date) == 8:
             date = datetime.strptime(date, '%d/%m/%y')
         else:
@@ -121,7 +121,7 @@ def group_files(object_name):
     # Find files with list of event mode files
     for f in glob.glob('./*/' + object_name + '.E_*.list'):
         event_modes.append(f)
-            
+
     # Set up lists of data we want as output
     paths = {'event':[],'bkg':[]}
     dates = []
@@ -145,7 +145,7 @@ def group_files(object_name):
             obsid = d[key][0].split('/')[6]
             timing = e.split('_')[1]
             path = d[key][0].split('pca')[0]
-            
+
             # Write to file
             f = open(path + 'event_mode_' + timing + '.list', 'w')
             f.write('\n'.join(d[key]))
@@ -171,7 +171,7 @@ def group_files(object_name):
         f.write('\n'.join(d[key]))
         f.close()
 
-    paths['bkg'] = ['/'.join(i.split('/')[:-1]) + '/' + object_name+'_bkg.list' for i in paths['event']]
+    paths['bkg'] = ['/'.join(i.split('/')[:-1]) + '/' + object_name + '_bkg.list' for i in paths['event']]
 
     return paths, dates
 
@@ -182,26 +182,26 @@ def get_channel_range(cer, path_events):
     '''
     # Get the channels you're looking for
     abs_channels = cer.split('-')
-    
+
     # Get the paths of the files
     paths = []
     with open(path_events) as p:
         for line in p:
             paths.append(line.strip())
-    
+
     # Save all channel ranges to ensure none have changed
     channel_ranges = []
-    
+
     for path in paths:
         # Get the list in which you want search for channels
         tevtb2 = fits.open(path)[1].header['TEVTB2']
-        
+
         # Cut out the channels
         rel_channels = tevtb2.split(',C')[1][1:].split(']')[0].replace('~','-')
-        
+
         # Indexes between which the abs channels are.
         indexes = []
-        
+
         # For each absolute channel
         for i, c in enumerate(abs_channels):
             # Find the index of the closest value
@@ -213,7 +213,7 @@ def get_channel_range(cer, path_events):
                 except:
                     # Else keep adding to the value
                     c = str(int(c) + 1)
-            
+
             # Make sure you cut in the right places,
             # for the first index, just after a comma
             if i == 0:
@@ -224,11 +224,19 @@ def get_channel_range(cer, path_events):
                 while rel_channels[index] != ',':
                     index += 1
             indexes.append(index)
-        
+
         channel_ranges.append(rel_channels[indexes[0]:indexes[1]])
-    
+
     return max(channel_ranges)
 
+
+def find_goodxenon_files(object_name, paths):
+    files = sorted(glob.glob('./*/*/gxlist_*'))
+    paths['gx'] = [f.replace('.',os.getcwd()) for f in files]
+    
+    paths['bkg_gx'] = ['/'.join(i.split('/')[:-1]) + '/' + object_name + '_bkg.list' for i in paths['gx']]
+    print paths['bkg_gx']
+    return paths
 
 
 def seextrct(path_events, date, time_resolution, low_e, high_e, print_output):
@@ -239,13 +247,13 @@ def seextrct(path_events, date, time_resolution, low_e, high_e, print_output):
     cer = calculated_energy_range(date, low_e, high_e)
     # Then check for the corresponding range in the header of each event mode
     # file
-    channel_range_from_file = get_channel_range(cer, path_events) 
+    channel_range_from_file = get_channel_range(cer, path_events)
 
     # Execute seextrct with the required bitfile
     p = Popen(['seextrct','bitfile=./../../../scripts/subscripts/bitfile_M'],
               stdout=PIPE, stdin=PIPE, stderr=STDOUT,
               bufsize=1)
-              
+
     # Give the required input
     # -----------------------
     # Input file name
@@ -360,7 +368,7 @@ def saextrct(path_bkg, date, time_resolution, low_e, high_e, print_output):
         p.stdout.close()
         p.wait()
 
-   
+
 def extract_light_curve(object_name, extract_event_mode=True,
                         extract_background=True, print_output=False):
     '''
@@ -379,10 +387,11 @@ def extract_light_curve(object_name, extract_event_mode=True,
                           extract the background to data
      - print_output: prints the output of the seextrct program
     '''
-    
     current_path = os.getcwd()
     paths, dates = group_files(object_name)
+    paths = find_goodxenon_files(object_name, paths)
 
+    '''
     for i in range(len(paths['event'])):
 
         # Defining corresponding event and bkg files
@@ -404,7 +413,7 @@ def extract_light_curve(object_name, extract_event_mode=True,
         # Energy range
         low_e = 2
         high_e = 13
-        
+
         if extract_event_mode:
             file_name = e.split('/')[-1]
             seextrct(file_name, d, time_resolution, low_e, high_e, print_output)
@@ -414,3 +423,4 @@ def extract_light_curve(object_name, extract_event_mode=True,
 
     os.chdir(current_path)
     print '----------- \n ---> Created lightcurves'
+    '''
