@@ -46,7 +46,7 @@ def cut_pcu_change(print_output=False):
                 
                 # TAKE CARE: Have not built in what would happen if the number
                 # of PCUs would change rapidly -> The high_t of one may be larger
-                # than the low_t of another...
+                # than the low_t of another... This has not been tested
                 # This could be used: previous_t = t_range[-19:-1]
                 
                 # Careful of going beyond the total time range
