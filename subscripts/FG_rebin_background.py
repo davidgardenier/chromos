@@ -44,7 +44,7 @@ def rebin(path_lc, path_bkg, mode, resolution):
         bkg_rate, bkg_t, bkg_dt, bkg_n_bins, bkg_error = read_light_curve(path_bkg)
     except IOError:
         return None
-        
+
     # Output
     path_rebinned_bkg = path_bkg.split('back')[0] + 'rebinned_bkg_lc_' + mode + '_' + resolution
     path_bkg_corrected_lc = path_lc.split('light')[0] + 'bkg_corrected_lc_' + mode + '_' + resolution
@@ -83,28 +83,22 @@ def rebin(path_lc, path_bkg, mode, resolution):
                 # The y-coordinates of the line
                 y = [bkg_rate[lower_index], bkg_rate[upper_index]]
                 
-                # Fit the two points with a line
-                fit = np.polyfit(x, y, 1)
-                # Turn it into a function so you can give a x-value and 
-                # it will tell you the y-value (in this case the rate)
-                fit_fn = np.poly1d(fit)
-                
             # Add the necessary rate value
-            rebinned_bkg_rate.append(fit_fn(t[k]))
+            rebinned_bkg_rate.append(np.interp(t[k], x, y))
+    
 
     # Write the rebinned background data to a file
     with open(path_rebinned_bkg, 'w') as out_file:
-        out_file.write('\n'.join(repr(rebinned_bkg_rate)) + '\n')
+        for n in range(n_bins):
+            out_file.write(repr(rebinned_bkg_rate[n]) + '\n')
 
     # Correct the rate for the background
-    bkg_corrected_lc = []
-    for i in range(n_bins):
-        bkg_corrected_lc.append(rate[i] - rebinned_bkg_rate[i])
+    bkg_corrected_lc = rate - rebinned_bkg_rate
         
     # Write the background corrected data to a file
     with open(path_bkg_corrected_lc, 'w') as out_file:
         for n in range(n_bins):
-            out_file.write(repr(bkg_corrected_lc[i]) + ' ' + repr(t[i]) + ' ' + repr(dt) + ' ' + repr(n_bins) + ' ' + repr(error[i]) + '\n')
+            out_file.write(repr(bkg_corrected_lc[n]) + ' ' + repr(t[n]) + ' ' + repr(dt) + ' ' + str(n_bins) + ' ' + repr(error[n]) + '\n')
        
     return path_rebinned_bkg, path_bkg_corrected_lc  
 

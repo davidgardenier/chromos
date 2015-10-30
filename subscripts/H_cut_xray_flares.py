@@ -1,7 +1,7 @@
 import json
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
+#import sys
 
 def cut_flare(lc, bkg_lc, resolution, mode):
     '''
@@ -38,14 +38,16 @@ def cut_flare(lc, bkg_lc, resolution, mode):
             j += upper_limit
         else:
             j += 1
-            
+    
+    
     # If X-ray flares were detected
     if len(indexes_to_remove) > 0:
         
-        # Read in the rebinned_background and the rates of the corrected rates
-        bkg_rate = np.loadtxt(bkg_lc, dtype=float, unpack=True)
         plt.scatter(t, rate,c='r',lw=0)
         
+        # Read in the rebinned_background and the rates of the corrected rates
+        bkg_rate = np.loadtxt(bkg_lc, dtype=float)
+                
         # Remove the X-ray events
         rate = np.delete(rate, indexes_to_remove)
         bkg_rate = np.delete(bkg_rate, indexes_to_remove)
@@ -55,12 +57,9 @@ def cut_flare(lc, bkg_lc, resolution, mode):
         n_bins = len(rate)
         bkg_n_bins = len(bkg_rate)
         
-        if n_bins != bkg_n_bins:
-            print '-----------------> WARNING: BINS NOT OF CORRECT SIZE!!!'
-
         # Names for output
-        new_file = lc.split('path')[0] + 'xray_corrected_' + mode + '_' + resolution
-        bkg_file = lc.split('path')[0] + 'xray_corrected_bkg_' + mode + '_' + resolution
+        new_file = lc.split('bkg')[0] + 'xray_corrected_' + mode + '_' + resolution
+        bkg_file = lc.split('bkg')[0] + 'xray_corrected_bkg_' + mode + '_' + resolution
         
         # Write the X-ray flare corrected rates to a file
         with open(new_file, 'w') as out_file:
@@ -73,11 +72,13 @@ def cut_flare(lc, bkg_lc, resolution, mode):
                 out_file.write(repr(bkg_rate[i]) + '\n')
         
         plt.scatter(t,rate,c='b',lw=0)
-        plt.show()
         
         return new_file, bkg_file
         
+        plt.show()
     else:
+    
+        #plt.show()
         return None
 
 
@@ -108,8 +109,8 @@ def cut_xray_flares(print_output=False):
                 
                 for i in range(len(d[obsid][mode]['path_bkg_corrected_lc'])):
                 
+                    bkg = d[obsid][mode]['path_rebinned_bkg'][i]
                     lc = d[obsid][mode]['path_bkg_corrected_lc'][i]
-                    bkg = d[obsid][mode]['path_bkg_corrected_lc'][i]
                     resolution = d[obsid][mode]['resolutions'][i]
                     
                     result = cut_flare(lc, bkg, resolution, mode)

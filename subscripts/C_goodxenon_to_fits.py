@@ -20,6 +20,7 @@ def xenon2fits(print_output=False):
 
     for obsid in d:
         if 'goodxenon' in d[obsid]:
+            d[obsid]['goodxenon']['path_list_fits'] = []
             for path in sorted(d[obsid]['goodxenon']['path_list']):
 
                 output = path.split('paths')[0] + 'gxfits_' + path.split('_')[-1]
@@ -45,7 +46,7 @@ def xenon2fits(print_output=False):
 
                 list_with_paths = glob.glob('./P' + obsid[:5] + '/' + obsid + '/gxfits*')
                 output = path.split('paths')[0] + 'paths_goodxenonfits_' + path.split('_')[-1]
-                d[obsid]['goodxenon']['path_list_fits'] = output
+                d[obsid]['goodxenon']['path_list_fits'].append(output)
                 
                 # Write the list of paths to file
                 with open(output, 'w') as text:

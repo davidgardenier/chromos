@@ -1,17 +1,13 @@
 import json
+import os
 
-d = {
-    'first_name': 'Guido',
-    'second_name': 'Rossum',
-    'titles': ['BDFL', 'Developer'],
-}
+PATH = '/scratch/david/master_project/full_data'
+OBJECT_NAME = 'aquila'
+PRINT_OUTPUT = True
 
-text = json.dumps(d)
+os.chdir(PATH)
 
-with open('./test_info', 'w') as info:
-    info.write(text)
+with open('./info_on_files.json', 'r') as info:
+    d = json.load(info)
 
-with open('./test_info', 'r') as info:
-    data = json.load(info)
-    
-print data['titles'][0]
+print json.dumps(d, sort_keys=True, indent=4)

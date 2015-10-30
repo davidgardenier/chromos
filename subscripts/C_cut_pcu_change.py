@@ -1,6 +1,7 @@
 from astropy.io import fits
 import json
 import os
+from subprocess import Popen, PIPE, STDOUT
 
 def cut_pcu_change(print_output=False):
     '''
@@ -26,8 +27,9 @@ def cut_pcu_change(print_output=False):
         num_pcu_on = hdulist[1].data.field('NUM_PCU_ON')
         time = hdulist[1].data.field('Time')
         # Remember time has an offset due to spacecraft time
-        time += tstart + timezero
-
+        time -= time[0]
+        #time += tstart + timezero
+        
         # Counter to determine when the number of pcus changes
         pcu = num_pcu_on[0]
         # The acceptable time range
@@ -42,27 +44,24 @@ def cut_pcu_change(print_output=False):
                 # Cut 32s around it
                 low_t = time[i] - 16
                 high_t = time[i] + 16
-                symbol = '-'
+                previous_t = float(t_range.split('-')[-2].split(',')[-1])
                 
-                # TAKE CARE: Have not built in what would happen if the number
-                # of PCUs would change rapidly -> The high_t of one may be larger
-                # than the low_t of another... This has not been tested
-                # This could be used: previous_t = t_range[-19:-1]
-                
-                # Careful of going beyond the total time range
-                if low_t > time[0]:
-                    t_range += repr(low_t) + ','
-                # If low_t is smaller than the initial t, use the high boundary
-                else:
-                    t_range = repr(high_t) + '-'
+                # Check whether there's any overlap
+                if low_t <= previous_t:
+                    # Replace the previous upper time if there is
+                    t_range = t_range.replace(t_range.split('-')[-2].split(',')[-1], repr(high_t))
                     continue
-                 
-                if high_t < time[-1]:
-                    t_range += repr(high_t) + '-'
-                # If high_t is larger than the last t, strip the comma off the end
                 else:
+                    t_range += repr(low_t) + ','
+                
+                # Check whether you've reached the end
+                if high_t > time[-1]:
                     t_range = t_range[:-1]
                     break
+                else:
+                    t_range += repr(high_t) + '-'
+                
+
 
         if t_range[-1] == '-':
             t_range += repr(time[-1])
@@ -70,7 +69,29 @@ def cut_pcu_change(print_output=False):
         if print_output:
             print '    ', obsid, '-->', t_range
 
-        d[obsid]['filter']['time_range'] = t_range
+        output = path.split('std')[0] + 'pcu.tint'
+        
+        time_command = ['timetrans',
+                        '-i', # Input file
+                        path,
+                        '-f', # Output file
+                        output,
+                        '-t', # Time range 
+                        t_range]
+
+        # Execute timetrans
+        p = Popen(time_command, stdout=PIPE, stdin=PIPE,
+                  stderr=STDOUT, bufsize=1)
+
+        # Print output of program
+#        if print_output is True:
+#            with p.stdout:
+#                for line in iter(p.stdout.readline, b''):
+#                    print '        ' + line,
+#                p.stdout.close()
+#                p.wait()
+                    
+        d[obsid]['filter']['time_range'] = output
         
     # Write dictionary with all information to file
     with open('./info_on_files.json', 'w') as info:

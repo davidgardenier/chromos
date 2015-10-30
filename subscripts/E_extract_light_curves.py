@@ -1,7 +1,7 @@
 import json
 from subprocess import Popen, PIPE, STDOUT
 
-def seextrct(mode, path_data, filterfile, channels, output, print_output):
+def seextrct(mode, path_data, filterfile, time_range, channels, output, print_output):
     '''
     Run seextrct over all event mode files
     '''
@@ -42,7 +42,7 @@ def seextrct(mode, path_data, filterfile, channels, output, print_output):
     # Ending time for summation in seconds
     p.stdin.write('INDEF \n')
     # Input time intervals t1-t2,t3-t4 in seconds
-    p.stdin.write('INDEF \n')
+    p.stdin.write('@' + time_range + ' \n')
     # Minimum energy bin to include in Spectra
     p.stdin.write('INDEF \n')
     # Maximum energy bin to include in Spectra
@@ -65,7 +65,7 @@ def seextrct(mode, path_data, filterfile, channels, output, print_output):
         p.wait()
 
 
-def saextrct(path_background, filterfile, channels, output_background, print_output):
+def saextrct(path_background, filterfile, time_range, channels, output_background, print_output):
     '''
     Function to extract a light curve file from background files
     '''
@@ -103,7 +103,7 @@ def saextrct(path_background, filterfile, channels, output_background, print_out
     # Ending time for summation in seconds
     p.stdin.write('INDEF \n')
     # Input time intervals t1-t2,t3-t4 in seconds
-    p.stdin.write('INDEF \n')
+    p.stdin.write('@' + time_range + ' \n')
     # Minimum energy bin to include in Spectra
     p.stdin.write('INDEF \n')
     # Maximum energy bin to include in Spectra
@@ -156,9 +156,14 @@ def extract_light_curves(print_output=False):
                 for i in range(len(d[obsid][mode]['path_list'])):
                 
                     # Define the parameters needed for input into seextrct
-                    path_data = d[obsid][mode]['path_list'][i]
+                    if mode == 'event':
+                        path_data = d[obsid][mode]['path_list'][i]
+                    else:
+                        path_data = d[obsid][mode]['path_list_fits'][i]
+                    
                     resolution = d[obsid][mode]['resolutions'][i]
                     filterfile = d[obsid]['filter']['path_list']
+                    time_range = d[obsid]['filter']['time_range']
                     channels = d[obsid][mode]['channels'][i]
                     output = filterfile.split('time')[0]+'lightcurve_' + mode + '_' + resolution
 
@@ -171,22 +176,27 @@ def extract_light_curves(print_output=False):
                     if channels != '':
 
                         # Add information to the dictionary
-                        d[obsid][mode]['path_lc'].append(output)
-                        d[obsid][mode]['path_bkg_lc'].append(output_background)
+                        d[obsid][mode]['path_lc'].append(output + '.lc')
+                        d[obsid][mode]['path_bkg_lc'].append(output_background + '.lc')
                         
                         # Tell the user what you're about to embark on
                         if print_output:
                             print '    ', obsid, '-->', 'Extracting lightcurve'
                             
                         # Run the extraction program
-                        seextrct(mode, path_data, filterfile, channels, output, print_output)
+                        seextrct(mode, path_data, filterfile, time_range, channels, output, print_output)
                         
                         # Tell the user what you're about to embark on
                         if print_output:
                             print '    ', obsid, '-->', 'Extracting background'
     
                         # Run the extraction program for the background
-                        saextrct(path_background, filterfile, channels, output_background, print_output)
+                        saextrct(path_background, 
+                                 filterfile,
+                                 time_range, 
+                                 channels, 
+                                 output_background, 
+                                 print_output)
                         
     # Write dictionary with all information to file
     with open('./info_on_files.json', 'w') as info:

@@ -20,7 +20,9 @@ for obsid in d:
             if 'path' in data:
                 
                 if isinstance(d[obsid][mode][data], list):
-                    for path in d[obsid][mode][data]:
+                    for i, path in enumerate(d[obsid][mode][data]):
                         if 'pca' not in path:
+                            if '500us' in path or len(path)==0:
+                                continue
                             if os.path.isfile(path) is False:
-                                print obsid, path.split('/')[-1], os.path.isfile(path)
+                                print obsid, mode, d[obsid][mode]['resolutions'][i], path.split('/')[-1], os.path.isfile(path)

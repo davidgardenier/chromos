@@ -24,7 +24,9 @@ def split_files(objectname, print_output=False):
 
     # For all files created by find_data_files loop through
     all_files = glob.glob('./*/' + objectname + '*.list')
-
+    # Remove all 500us event files
+    all_files = [a for a in all_files if '500us' not in a]
+    
     for a in all_files:
         mode = a.split('.')[-2]
 
