@@ -34,7 +34,7 @@ H               cut_xray_flares---------
 I             create_power_spectrum
                        |
 J             create_power_colours
-'''
+```
 ---------------
 
 Author: David Gardenier
