@@ -14,7 +14,7 @@ run multiple times without causing errors. Ideally this should be transformed
 to a class, with functions returning the paths.
 
 File structure:
-
+```
 A                find_all_data
                        |
 B                 split_files -----------
@@ -34,7 +34,7 @@ H               cut_xray_flares---------
 I             create_power_spectrum
                        |
 J             create_power_colours
-
+'''
 ---------------
 
 Author: David Gardenier
