@@ -32,4 +32,4 @@ os.chdir(PATH)
 #create_power_spectra(print_output=PRINT_OUTPUT)
 create_power_colours(print_output=PRINT_OUTPUT)
 # ---------------------------------------------
-#print_dictionary()
+print_dictionary()
