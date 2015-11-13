@@ -5,10 +5,10 @@ from subprocess import Popen, PIPE, STDOUT
 
 def cut_pcu_change(print_output=False):
     '''
-    Function to determine if pcu changes have take place, and if so cut 32s 
+    Function to determine if pcu changes have take place, and if so cut 32s
     around them. Returns a string suitable for input in extracting lightcurves.
     '''
-    
+
     # Let the user know what's going to happen
     purpose = 'Determine if number of PCUs has changed'
     print purpose + '\n' + '='*len(purpose)
@@ -16,7 +16,7 @@ def cut_pcu_change(print_output=False):
     # Import data
     with open('./info_on_files.json', 'r') as info:
         d = json.load(info)
-    
+
     for obsid in d:
         path = d[obsid]['filter']['paths'][0]
 
@@ -29,7 +29,7 @@ def cut_pcu_change(print_output=False):
         # Remember time has an offset due to spacecraft time
         time -= time[0]
         #time += tstart + timezero
-        
+
         # Counter to determine when the number of pcus changes
         pcu = num_pcu_on[0]
         # The acceptable time range
@@ -38,14 +38,14 @@ def cut_pcu_change(print_output=False):
         for i, n in enumerate(num_pcu_on):
             # Check if the number of pcus has changed
             if n != pcu:
-            
+
                 pcu = n
-                
+
                 # Cut 32s around it
                 low_t = time[i] - 16
                 high_t = time[i] + 16
                 previous_t = float(t_range.split('-')[-2].split(',')[-1])
-                
+
                 # Check whether there's any overlap
                 if low_t <= previous_t:
                     # Replace the previous upper time if there is
@@ -53,14 +53,14 @@ def cut_pcu_change(print_output=False):
                     continue
                 else:
                     t_range += repr(low_t) + ','
-                
+
                 # Check whether you've reached the end
                 if high_t > time[-1]:
                     t_range = t_range[:-1]
                     break
                 else:
                     t_range += repr(high_t) + '-'
-                
+
 
 
         if t_range[-1] == '-':
@@ -70,13 +70,13 @@ def cut_pcu_change(print_output=False):
             print '    ', obsid, '-->', t_range
 
         output = path.split('std')[0] + 'pcu.tint'
-        
+
         time_command = ['timetrans',
                         '-i', # Input file
                         path,
                         '-f', # Output file
                         output,
-                        '-t', # Time range 
+                        '-t', # Time range
                         t_range]
 
         # Execute timetrans
@@ -90,12 +90,11 @@ def cut_pcu_change(print_output=False):
 #                    print '        ' + line,
 #                p.stdout.close()
 #                p.wait()
-                    
+
         d[obsid]['filter']['time_range'] = output
-        
+
     # Write dictionary with all information to file
     with open('./info_on_files.json', 'w') as info:
         info.write(json.dumps(d))
-        
+
     print '---> Determined if PCU changes have taken place'
-        

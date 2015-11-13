@@ -6,12 +6,12 @@ def seextrct(mode, path_data, filterfile, time_range, channels, output, print_ou
     Run seextrct over all event mode files
     '''
     command = ['seextrct']
-    
+
     # Bitmasks should only be applied to event mode files (and not to goodxenon
     # files)
     if mode == 'event':
         command.append('bitfile=./../scripts/subscripts/bitfile_M')
-        
+
     # Execute seextrct with the required bitfile
     p = Popen(command, stdout=PIPE, stdin=PIPE, stderr=STDOUT, bufsize=1)
 
@@ -124,13 +124,13 @@ def saextrct(path_background, filterfile, time_range, channels, output_backgroun
                 print '        ' + oline,
         p.stdout.close()
         p.wait()
-        
+
 
 def extract_light_curves(print_output=False):
     '''
     Function to extract all light curves from event & goodxenon files
     '''
-    
+
     # Let the user know what's going to happen
     purpose = 'Extracting light curves'
     print purpose + '\n' + '='*len(purpose)
@@ -142,35 +142,40 @@ def extract_light_curves(print_output=False):
     # Apply the necassary extractions for each obsid
     for obsid in d:
         for mode in d[obsid]:
-        
+
             # These files both use seextrct
-            if mode == 'event' or mode == 'goodxenon':
-            
+            if mode == 'event' or mode == 'goodxenon' or mode == 'std2':
+
                 # Set up dictionaries
                 d[obsid][mode]['path_lc'] = []
                 d[obsid][mode]['path_bkg_lc'] = []
-                
+
                 # For each path of a list of paths to event/goodmode mode
                 # files (may be more than one if there are different
                 # resolutions within one obsid)
                 for i in range(len(d[obsid][mode]['path_list'])):
-                
+
                     # Define the parameters needed for input into seextrct
-                    if mode == 'event':
+                    if mode == 'event' or mode == 'std2':
                         path_data = d[obsid][mode]['path_list'][i]
                     else:
                         path_data = d[obsid][mode]['path_list_fits'][i]
-                    
-                    resolution = d[obsid][mode]['resolutions'][i]
+
+                    if 'resolutions' in d[obsid][mode].keys():
+                        resolution = d[obsid][mode]['resolutions'][i]
+
                     filterfile = d[obsid]['filter']['path_list']
                     time_range = d[obsid]['filter']['time_range']
                     channels = d[obsid][mode]['channels'][i]
-                    output = filterfile.split('time')[0]+'lightcurve_' + mode + '_' + resolution
+                    output = filterfile.split('time')[0]+'lightcurve_' + mode
 
                     # Define the additional parameters for the background files
                     path_background = d[obsid][mode]['background_path_list']
-                    output_background = filterfile.split('time')[0]+'backgroundlc_'+mode+'_'+resolution
-                    
+                    output_background = filterfile.split('time')[0]+'backgroundlc_'+mode
+
+                    if mode != 'std2':
+                        output += '_' + resolution
+                        output_background += '_' + resolution
                     # Ensure there is a channel range between which a
                     # light curve can be extracted
                     if channels != '':
@@ -178,28 +183,43 @@ def extract_light_curves(print_output=False):
                         # Add information to the dictionary
                         d[obsid][mode]['path_lc'].append(output + '.lc')
                         d[obsid][mode]['path_bkg_lc'].append(output_background + '.lc')
-                        
+
                         # Tell the user what you're about to embark on
                         if print_output:
-                            print '    ', obsid, '-->', 'Extracting lightcurve'
-                            
-                        # Run the extraction program
-                        seextrct(mode, path_data, filterfile, time_range, channels, output, print_output)
-                        
+                            print '    ', obsid, mode, '-->', 'Extracting lightcurve'
+
+                        if mode != 'std2':
+                            # Run the extraction program
+                            seextrct(mode,
+                                     path_data,
+                                     filterfile,
+                                     time_range,
+                                     channels,
+                                     output,
+                                     print_output)
+                        else:
+                            # Run the extraction program
+                            saextrct(path_data,
+                                     filterfile,
+                                     time_range,
+                                     channels,
+                                     output,
+                                     print_output)
+
                         # Tell the user what you're about to embark on
                         if print_output:
-                            print '    ', obsid, '-->', 'Extracting background'
-    
+                            print '    ', obsid, mode, '-->', 'Extracting background'
+
                         # Run the extraction program for the background
-                        saextrct(path_background, 
+                        saextrct(path_background,
                                  filterfile,
-                                 time_range, 
-                                 channels, 
-                                 output_background, 
+                                 time_range,
+                                 channels,
+                                 output_background,
                                  print_output)
-                        
+
     # Write dictionary with all information to file
     with open('./info_on_files.json', 'w') as info:
         info.write(json.dumps(d))
 
-    print '---> Extracted the lightcurves' 
+    print '---> Extracted the lightcurves'

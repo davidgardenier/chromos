@@ -157,11 +157,16 @@ def create_power_colours(print_output=False):
             if ms.count('event') > 1:
                 print 'WARNING: Multiple event modes present'
 
+            elif 'goodxenon' in ms and 'event' in ms and 'std2' in ms:
+                i_del.append(ii[ms.index('event')])
+                i_del.append(ii[ms.index('std2')])
             elif 'goodxenon' in ms and 'event' in ms:
                 i_del.append(ii[ms.index('event')])
-
+            elif 'event' in ms and 'std2' in ms:
+                i_del.append(ii[ms.index('std2')])
             else:
-                print 'WARNING: Multiple data modes, but not both gx and event'
+                print('WARNING: Multiple data modes, but not not been able to \
+                      catch it')
 
     # Ugly way of deleting unwanted elements
     pc1 = [pc1[i] for i in range(len(pc1)) if i not in i_del]
@@ -178,6 +183,8 @@ def create_power_colours(print_output=False):
             colour = 'r'
         if modes[i] == 'event':
             colour = 'b'
+        if modes[i] == 'std2':
+            colour = 'g'
 
         if constraints[i] is True:
             plt.errorbar(pc1[i], pc2[i], xerr=pc1_error[i], yerr=pc2_error[i],
