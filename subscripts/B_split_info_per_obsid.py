@@ -6,14 +6,14 @@ from collections import defaultdict
 def split_files(objectname, print_output=False):
     '''
     Function to split out the files created by Phil's script in find_data_files
-    over each obsid folder, allowing code to be executed per obsid. Also 
+    over each obsid folder, allowing code to be executed per obsid. Also
     creates a dictionary with information on each obsid
     '''
-    
+
     # Let the user know what's going to happen
     purpose = 'Splitting out data over files'
     print purpose + '\n' + '='*len(purpose)
-    
+
     # Find all obsids
     initial_obsids = sorted([r.split('/')[-1] for r in glob.glob('./*/?????-??-??-*')])
     # Getting rid of obsids with letters at the end
@@ -26,7 +26,7 @@ def split_files(objectname, print_output=False):
     all_files = glob.glob('./*/' + objectname + '*.list')
     # Remove all 500us event files
     all_files = [a for a in all_files if '500us' not in a]
-    
+
     for a in all_files:
         mode = a.split('.')[-2]
 
@@ -129,8 +129,29 @@ def split_files(objectname, print_output=False):
         if 'goodxenon1' in d[obsid]:
             d[obsid]['goodxenon'] = d[obsid]['goodxenon1']
 
+        if 'goodxenon' not in d[obsid] and 'event' not in d[obsid]:
+            print('!'*79,
+                  'WARNING - NO SUITABLE DATAMODES FOUND',
+                  'IMPLEMENT SUPPORT FOR STANDARD2 DATA',
+                  '!'*79)
+      
+        '''
+        # Create a filter: only use event files if goodxenon not present
+        # else use Standard2 files (not necessary in this case)
+        # Note this doesn't account for the length of observations - it could
+        # well be that event mode files have longer, and thus more useful
+        # lightcurves
+        if 'goodxenon' in d[obsid] and 'event' in d[obsid]:
+            del d[obsid]['event']
+        if 'goodxenon' not in d[obsid] and 'event' not in d[obsid]:
+            print('!'*79,
+                  'WARNING - NO SUITABLE DATAMODES FOUND',
+                  'IMPLEMENT SUPPORT FOR STANDARD2 DATA',
+                  '!'*79)
+        '''
+
     # Write dictionary with all information to file
     with open('./info_on_files.json', 'w') as info:
         info.write(json.dumps(d))
 
-    print '---> Split out information to each obsid folder' 
+    print '---> Split out information to each obsid folder'

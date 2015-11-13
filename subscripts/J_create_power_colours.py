@@ -126,13 +126,51 @@ def create_power_colours(print_output=False):
     # Sort the power colours
     srt_list = []
     for i in range(len(pc_1)):
-        srt_list.append((pc_1[i], pc_2[i], pc_1_error[i], pc_2_error[i], obsids[i], constraints[i]))
+        srt_list.append((pc_1[i],
+                         pc_2[i],
+                         pc_1_error[i],
+                         pc_2_error[i],
+                         obsids[i],
+                         modes[i],
+                         constraints[i]))
 
     sorted_list = sorted(srt_list, key=lambda obsid: obsid[4])
-    pc1, pc2, pc1_error, pc2_error, obsid, constraints = zip(*sorted_list)
+    pc1, pc2, pc1_error, pc2_error, obsids, modes, constraints = zip(*sorted_list)
 
     # Define colour for plotting
     #color=iter(plt.cm.rainbow(np.linspace(0,1,len(pc1))))
+
+    # Remove instances where obsids have both a goodxenon and event mode file
+    # Choose for goodxenon above event mode file
+    obsids = np.array(obsids)
+
+    i_del = []
+
+    for io, o in enumerate(obsids):
+
+        ii = np.where(obsids == o)[0]
+
+        if len(ii)>1:
+
+            ms = [modes[l] for l in ii]
+
+            if ms.count('event') > 1:
+                print 'WARNING: Multiple event modes present'
+
+            elif 'goodxenon' in ms and 'event' in ms:
+                i_del.append(ii[ms.index('event')])
+
+            else:
+                print 'WARNING: Multiple data modes, but not both gx and event'
+
+    # Ugly way of deleting unwanted elements
+    pc1 = [pc1[i] for i in range(len(pc1)) if i not in i_del]
+    pc1_error = [pc1_error[i] for i in range(len(pc1_error)) if i not in i_del]
+    pc2 = [pc2[i] for i in range(len(pc2)) if i not in i_del]
+    pc2_error = [pc2_error[i] for i in range(len(pc2_error)) if i not in i_del]
+    obsids = [obsids[i] for i in range(len(obsids)) if i not in i_del]
+    modes = [modes[i] for i in range(len(modes)) if i not in i_del]
+    constraints = [constraints[i] for i in range(len(constraints)) if i not in i_del]
 
     for i in range(len(pc1)):
 
@@ -143,7 +181,7 @@ def create_power_colours(print_output=False):
 
         if constraints[i] is True:
             plt.errorbar(pc1[i], pc2[i], xerr=pc1_error[i], yerr=pc2_error[i],
-                         ls='none', marker='x', c=colour, label=obsid[i])
+                         ls='none', marker='x', c=colour, label=obsids[i])
         else:
             continue
 

@@ -20,4 +20,8 @@ n = 0
 o = 0
 for obsid in d:
     if 'event' not in d[obsid].keys() and 'goodxenon' not in d[obsid].keys():
-        print obsid
+        print 'Not present:', obsid
+    if 'event' in d[obsid].keys() and 'goodxenon' in d[obsid].keys():
+        print 'Present:', obsid
+        for m in ['event','goodxenon']:
+            print d[obsid][m]

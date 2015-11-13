@@ -76,7 +76,7 @@ def plot_obsid(show=False):
                         # Get the data
                         rate, t, dt, n_bins, error, t_0 = read_light_curve(path)
                     except IOError:
-                        print obsid, mode, 'File not present'
+                        print '    ', obsid, mode, 'File not present'
                         continue
 
                     ax1 = fig.add_subplot(gs[0,-2:])
@@ -116,7 +116,7 @@ def plot_obsid(show=False):
                         ps, ps_error, freq, freq_error, _ , _ = np.loadtxt(path,dtype=float,
                                                                 unpack=True)
                     except IOError:
-                        print obsid, mode, 'PS file not present'
+                        print '    ', obsid, mode, 'PS file not present'
                         continue
 
                     res = path.split('_')[-1].split('.')[0]
@@ -176,14 +176,21 @@ def plot_obsid(show=False):
 
                     # Find the right power colour colour value
                     h = np.where(obs == obsid)[0]
+                    n = np.where(m == mode)[0]
+                    h = [e for e in h if e in n]
+
                     print '    ', obsid
                     if len(h) > 1:
+                        print('WARNING: Multiple datamodes encountered for a \
+                               single obsid')
                         for v in h:
                             if mode == m[v]:
                                 h = v
                                 break
                             else:
                                 continue
+
+                    h = h[0]
 
                     # Add a red dot showing the power colour colour value
                     ax4.scatter([pc1[h]],[pc2[h]], c='r', lw=0, s=50, zorder=2)
