@@ -1,16 +1,16 @@
-from subscripts.A_find_data_files import *
-from subscripts.B_split_info_per_obsid import *
-from subscripts.C_create_time_filters import *
-from subscripts.C_goodxenon_to_fits import *
-from subscripts.C_cut_pcu_change import *
-from subscripts.D_create_background import *
-from subscripts.D_find_channels import *
-from subscripts.E_extract_light_curves import *
-from subscripts.FG_rebin_background import *
-from subscripts.H_cut_xray_flares import *
-from subscripts.I_create_power_spectra import *
-from subscripts.J_create_power_colours import *
-from subscripts.print_dictionary import *
+from ss_pc.A_find_data_files import *
+from ss_pc.B_split_info_per_obsid import *
+from ss_pc.C_create_time_filters import *
+from ss_pc.C_goodxenon_to_fits import *
+from ss_pc.C_cut_pcu_change import *
+from ss_pc.D_create_background import *
+from ss_pc.D_find_channels import *
+from ss_pc.E_extract_light_curves import *
+from ss_pc.FG_rebin_background import *
+from ss_pc.H_cut_xray_flares import *
+from ss_pc.I_create_power_spectra import *
+from ss_pc.J_create_power_colours import *
+from ss_pc.print_dictionary import *
 
 PATH = '/scratch/david/master_project/full_data'
 OBJECT_NAME = 'aquila'
