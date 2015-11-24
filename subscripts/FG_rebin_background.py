@@ -43,6 +43,7 @@ def rebin(path_lc, path_bkg, mode, resolution):
         rate, t, dt, n_bins, error = read_light_curve(path_lc)
         bkg_rate, bkg_t, bkg_dt, bkg_n_bins, bkg_error = read_light_curve(path_bkg)
     except IOError:
+        print '    IOError'
         return None
 
     # Output
@@ -61,7 +62,7 @@ def rebin(path_lc, path_bkg, mode, resolution):
         for k in range(n_bins):
             # If its time value is smaller than the background time
             if t[k] <= bkg_t[0]:
-                # Then always take the rate value of the smallest background time
+                # Then always take the rate value of the smallest bkg time
                 rebinned_bkg_rate.append(bkg_rate[0])
             # If its time value is larger than the background time
             elif t[k] >= bkg_t[-1]:
@@ -100,11 +101,19 @@ def rebin(path_lc, path_bkg, mode, resolution):
 
     else:
         bkg_corrected_lc = rate - bkg_rate
-        
+        # Write the rebinned background data to a file
+        with open(path_rebinned_bkg, 'w') as out_file:
+            for n in range(n_bins):
+                out_file.write(repr(bkg_rate[n]) + '\n')
+
     # Write the background corrected data to a file
     with open(path_bkg_corrected_lc, 'w') as out_file:
         for n in range(n_bins):
-            out_file.write(repr(bkg_corrected_lc[n]) + ' ' + repr(t[n]) + ' ' + repr(dt) + ' ' + str(n_bins) + ' ' + repr(error[n]) + '\n')
+            out_file.write(repr(bkg_corrected_lc[n]) + ' ' +
+                           repr(t[n]) + ' ' +
+                           repr(dt) + ' ' +
+                           str(n_bins) + ' ' +
+                           repr(error[n]) + '\n')
 
     return path_rebinned_bkg, path_bkg_corrected_lc
 

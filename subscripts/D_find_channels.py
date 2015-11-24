@@ -98,7 +98,7 @@ def calculated_energy_range(date,min_energy,max_energy):
     return str(lower_range) + '-' + str(upper_range)
 
 
-def get_channel_range(cer, path_event):
+def get_channel_range(mode, cer, path_event):
     '''
     Look inside each event mode file to get the channel range it contains
     '''
@@ -108,11 +108,15 @@ def get_channel_range(cer, path_event):
     path = path_event
 
     # Get the list in which you want search for channels
-    tevtb2 = fits.open(path)[1].header['TEVTB2']
-
-    # Cut out the channels
-    rel_channels = tevtb2.split(',C')[1][1:].split(']')[0].replace('~','-')
-
+    if mode == 'event':
+        tevtb2 = fits.open(path)[1].header['TEVTB2']
+        # Cut out the channels
+        rel_channels = tevtb2.split(',C')[1][1:].split(']')[0].replace('~','-')
+    elif mode == 'binned':
+        tddes2 = fits.open(path)[1].header['TDDES2']
+        rel_channels = tddes2.split('& C')[1][1:].split(']')[0].replace('~','-')
+        if ',' not in rel_channels:
+            return ''
     # Indexes between which the abs channels are.
     indexes = []
 
@@ -126,7 +130,10 @@ def get_channel_range(cer, path_event):
                 break
             except:
                 # Else keep adding to the value
-                c = str(int(c) + 1)
+                if c < 300:
+                    c = str(int(c) + 1)
+                else:
+                    return ''
 
         # Make sure you cut in the right places,
         # for the first index, just after a comma
@@ -160,50 +167,63 @@ def find_channels(print_output=False):
 
 
     for obsid in d:
-       
+
         # In case of 'event' mode, determine the binned channels (extract from
         # header of eventmode file)
         if 'event' in d[obsid].keys():
             d[obsid]['event']['channels'] = []
-            
-            # For each path calculate the absolute channels, and then the 
+
+            # For each path calculate the absolute channels, and then the
             # binned channel range
             for i, path in enumerate(d[obsid]['event']['paths']):
                 abs_channels = calculated_energy_range(d[obsid]['event']['times'][i],MIN_E,MAX_E)
-                bin_channels = get_channel_range(abs_channels, path)
+                bin_channels = get_channel_range('event', abs_channels, path)
                 d[obsid]['event']['channels'].append(bin_channels)
-                
+
                 if print_output:
                     print'    ', 'E', obsid, '-->', bin_channels
-            
-        # In case of 'std2' mode, determine the absolute channels (from the 
+
+        # In case of 'std2' mode, determine the absolute channels (from the
         # energy conversion table)
         if 'std2' in d[obsid].keys():
             d[obsid]['std2']['channels'] = []
-            
+
             # For each path calculate the absolute channels
             for i, path in enumerate(d[obsid]['std2']['paths']):
                 abs_channels = calculated_energy_range(d[obsid]['std2']['times'][i],MIN_E,MAX_E)
                 d[obsid]['std2']['channels'].append(abs_channels)
-                
+
                 if print_output:
                     print '    ', 'S', obsid, '-->', abs_channels
-        
+
         # In case of 'goodxenon' mode, determine the absolute channels
         if 'goodxenon' in d[obsid].keys():
             d[obsid]['goodxenon']['channels'] = []
-            
-            # For each path calculate the absolute channels, and then the 
+
+            # For each path calculate the absolute channels, and then the
             # binned channel range
             for i, path in enumerate(d[obsid]['goodxenon']['paths']):
                 abs_channels = calculated_energy_range(d[obsid]['goodxenon']['times'][i],MIN_E,MAX_E)
                 d[obsid]['goodxenon']['channels'].append(abs_channels)
-                
+
                 if print_output:
                     print '    ', 'G', obsid, '-->', abs_channels
-                    
+
+        # In case of 'binned' mode, determine the absolute channels (from the
+        # energy conversion table)
+        if 'binned' in d[obsid].keys():
+            d[obsid]['binned']['channels'] = []
+
+            # For each path calculate the absolute channels
+            for i, path in enumerate(d[obsid]['binned']['paths']):
+                abs_channels = calculated_energy_range(d[obsid]['binned']['times'][i],MIN_E,MAX_E)
+                bin_channels = get_channel_range('binned', abs_channels, path)
+                d[obsid]['binned']['channels'].append(bin_channels)
+                if print_output:
+                    print '    ', 'B', obsid, '-->', bin_channels
+
     # Write dictionary with all information to file
     with open('./info_on_files.json', 'w') as info:
         info.write(json.dumps(d))
 
-    print '---> Calculated the required energy ranges' 
+    print '---> Calculated the required energy ranges'

@@ -60,8 +60,10 @@ def power_colour(path):
     pc1 = variances[2]/float(variances[0])
     pc2 = variances[1]/float(variances[3])
 
-    pc1_error = np.sqrt((variance_errors[2]/float(variances[2]))**2 + (variance_errors[0]/float(variances[0]))**2)*pc1
-    pc2_error = np.sqrt((variance_errors[1]/float(variances[1]))**2 + (variance_errors[3]/float(variances[3]))**2)*pc2
+    pc1_error = np.sqrt((variance_errors[2]/float(variances[2]))**2 +
+                        (variance_errors[0]/float(variances[0]))**2)*pc1
+    pc2_error = np.sqrt((variance_errors[1]/float(variances[1]))**2 +
+                        (variance_errors[3]/float(variances[3]))**2)*pc2
 
     # Applying similar filter to Lucy, only plotting if variance constrained
     # within 3sigma
@@ -91,6 +93,9 @@ def create_power_colours(print_output=False):
     with open('./info_on_files.json', 'r') as info:
         d = json.load(info)
 
+    # For printing template
+    template = '{0:14} {1:8} {2:1}'
+
     pc_1 = []
     pc_1_error = []
     pc_2 = []
@@ -111,7 +116,8 @@ def create_power_colours(print_output=False):
                 if output is not None:
 
                     if print_output:
-                        print '    ', obsid, mode
+                        statement = ('    ', obsid, mode)
+                        print template.format(*statement)
 
                     pc1, pc1err, pc2, pc2err, constrained = output
 
@@ -153,20 +159,23 @@ def create_power_colours(print_output=False):
         if len(ii)>1:
 
             ms = [modes[l] for l in ii]
+            nm = [[x,ms.count(x)] for x in set(ms)]
 
-            if ms.count('event') > 1:
-                print 'WARNING: Multiple event modes present'
+            for n in nm:
+                if n[1] > 1:
+                    print 'WARNING: Multiple modes of same type present'
 
-            elif 'goodxenon' in ms and 'event' in ms and 'std2' in ms:
-                i_del.append(ii[ms.index('event')])
-                i_del.append(ii[ms.index('std2')])
-            elif 'goodxenon' in ms and 'event' in ms:
-                i_del.append(ii[ms.index('event')])
-            elif 'event' in ms and 'std2' in ms:
-                i_del.append(ii[ms.index('std2')])
+            if 'goodxenon' in ms:
+                i2d = [ii[i] for i in range(len(ii)) if ms[i] != 'goodxenon']
+                i_del.extend(i2d)
+            elif 'event' in ms:
+                i2d = [ii[i] for i in range(len(ii)) if ms[i] != 'event']
+                i_del.extend(i2d)
+            elif 'binned' in ms:
+                i2d = [ii[i] for i in range(len(ii)) if ms[i] != 'binned']
+                i_del.extend(i2d)
             else:
-                print('WARNING: Multiple data modes, but not not been able to \
-                      catch it')
+                print('WARNING: Choosing data mode has failed')
 
     # Ugly way of deleting unwanted elements
     pc1 = [pc1[i] for i in range(len(pc1)) if i not in i_del]
@@ -183,7 +192,7 @@ def create_power_colours(print_output=False):
             colour = 'r'
         if modes[i] == 'event':
             colour = 'b'
-        if modes[i] == 'std2':
+        if modes[i] == 'binned':
             colour = 'g'
 
         if constraints[i] is True:
@@ -191,14 +200,6 @@ def create_power_colours(print_output=False):
                          ls='none', marker='x', c=colour, label=obsids[i])
         else:
             continue
-
-    plt.xscale('log', nonposx='clip')
-    plt.yscale('log', nonposy='clip')
-    plt.xlim([0.001, 1000])
-    plt.ylim([0.001, 1000])
-    #plt.legend()
-    plt.show()
-    #plt.savefig('./pwr_colours.png')
 
     # Write power colours to file
     f = open('./pwr_colours.dat', 'w')
@@ -212,5 +213,14 @@ def create_power_colours(print_output=False):
         f.write(line)
 
     f.close()
+
+    # Plot power colours
+    plt.xscale('log', nonposx='clip')
+    plt.yscale('log', nonposy='clip')
+    plt.xlim([0.001, 1000])
+    plt.ylim([0.001, 1000])
+    #plt.legend()
+    plt.show()
+    #plt.savefig('./pwr_colours.png')
 
     print '---> Calculated power colours'

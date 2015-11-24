@@ -65,10 +65,15 @@ def seextrct(mode, path_data, filterfile, time_range, channels, output, print_ou
         p.wait()
 
 
-def saextrct(path_background, filterfile, time_range, channels, output_background, print_output):
+def saextrct(mode, path_background, filterfile, time_range, channels, output_background, print_output):
     '''
     Function to extract a light curve file from background files
     '''
+
+    if mode == 'binned':
+        b = '0.0078125 \n'
+    else:
+        b = '16 \n'
 
     # Execute saextrct
     p = Popen(['saextrct'], stdout=PIPE, stdin=PIPE, stderr=STDOUT,
@@ -91,7 +96,7 @@ def saextrct(path_background, filterfile, time_range, channels, output_backgroun
     # Name of COLUMN to be accumulated
     p.stdin.write('GOOD \n')
     # Input the binsize in seconds
-    p.stdin.write('16 \n')
+    p.stdin.write(b)
     # Chose print option, LIGHTCURVE, SPECTRUM, or BOTH
     p.stdin.write('LIGHTCURVE \n')
     # Type of binning for LIGHTCURVE
@@ -142,9 +147,9 @@ def extract_light_curves(print_output=False):
     # Apply the necassary extractions for each obsid
     for obsid in d:
         for mode in d[obsid]:
-
+            m = ['event', 'binned', 'goodxenon']
             # These files both use seextrct
-            if mode == 'event' or mode == 'goodxenon' or mode == 'std2':
+            if mode in m:
 
                 # Set up dictionaries
                 d[obsid][mode]['path_lc'] = []
@@ -156,7 +161,7 @@ def extract_light_curves(print_output=False):
                 for i in range(len(d[obsid][mode]['path_list'])):
 
                     # Define the parameters needed for input into seextrct
-                    if mode == 'event' or mode == 'std2':
+                    if mode != 'goodxenon':
                         path_data = d[obsid][mode]['path_list'][i]
                     else:
                         path_data = d[obsid][mode]['path_list_fits'][i]
@@ -168,6 +173,9 @@ def extract_light_curves(print_output=False):
                     time_range = d[obsid]['filter']['time_range']
                     channels = d[obsid][mode]['channels'][i]
                     output = filterfile.split('time')[0]+'lightcurve_' + mode
+
+                    if channels == '':
+                        continue
 
                     # Define the additional parameters for the background files
                     path_background = d[obsid][mode]['background_path_list']
@@ -188,7 +196,7 @@ def extract_light_curves(print_output=False):
                         if print_output:
                             print '    ', obsid, mode, '-->', 'Extracting lightcurve'
 
-                        if mode != 'std2':
+                        if mode != 'binned':
                             # Run the extraction program
                             seextrct(mode,
                                      path_data,
@@ -199,7 +207,8 @@ def extract_light_curves(print_output=False):
                                      print_output)
                         else:
                             # Run the extraction program
-                            saextrct(path_data,
+                            saextrct(mode,
+                                     path_data,
                                      filterfile,
                                      time_range,
                                      channels,
@@ -210,8 +219,9 @@ def extract_light_curves(print_output=False):
                         if print_output:
                             print '    ', obsid, mode, '-->', 'Extracting background'
 
-                        # Run the extraction program for the background
-                        saextrct(path_background,
+                        # # Run the extraction program for the background
+                        saextrct('std2',
+                                 path_background,
                                  filterfile,
                                  time_range,
                                  channels,

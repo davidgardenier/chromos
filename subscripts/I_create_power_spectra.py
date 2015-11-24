@@ -17,10 +17,13 @@ def power_spectrum(path_lc, path_bkg, print_output):
         bkg_rate = np.loadtxt(path_bkg, dtype=float, unpack=True)
 
     except IOError:
-        return None
+        return
 
     # Determine the number of bins
-    n_bins = int(n_bins[0])
+    try:
+        n_bins = int(n_bins[0])
+    except IndexError:
+        return
 
     # Determine the (time) width of each bin
     dt = dt[0]
@@ -147,17 +150,21 @@ def create_power_spectra(print_output=False):
     num_obsid = float(len(d))
     o = 0
     t0 = datetime.now()
-    
+
+    # For print statements
+    template = "{0:14} {1:8} {2:1} {3:20}"
+
     # For each path to a light curve
     for obsid in d:
         o += 1
         t = datetime.now()
         update_progress(o/num_obsid, t0, t)
-        
+
         for mode in d[obsid]:
             if 'path_xray_corrected_lc' in d[obsid][mode].keys():
 
                 for i, path in enumerate(d[obsid][mode]['path_xray_corrected_lc']):
+
                     # If path is empty, use the standard bkg_corrected lightcurve
                     if path == '':
                         if d[obsid][mode]['path_rebinned_bkg'][i] != '':
@@ -173,7 +180,9 @@ def create_power_spectra(print_output=False):
                     output = power_spectrum(path, path_bkg, print_output)
                     # Create list for paths to power spectra
                     d[obsid][mode]['path_ps'] = []
-                    
+
+                    # Deal with the various outputs
+                    success = False
                     if output is None:
                         d[obsid][mode]['path_ps'].append('')
                         message = 'File doesn\'t exsist'
@@ -182,13 +191,21 @@ def create_power_spectra(print_output=False):
                         message = 'No segments'
                     else:
                         message = 'Writing spectrum to file'
-                        if print_output:
-                            statement = ['\r   ', obsid, mode, 
-                                         path.split('_')[-1],
-                                         '--> ', message, '\n']
-                            stdout.write(' '.join(statement))
-                            update_progress(o/num_obsid, t0, t)
-                            
+                        success = True
+
+                    # Define the resolution
+                    if mode != 'std2':
+                        res = path.split('_')[-1]
+                    else:
+                        res = ''
+
+                    if print_output:
+                        statement = ['\r   ', obsid, mode, res,
+                                     '--> ', message, '\n']
+                        stdout.write(template.format(*statement))
+                        update_progress(o/num_obsid, t0, t)
+
+                    if success:
                         ps, ps_er, ps_sq, num_seg, freq, freq_er = output
                         file_path = ('/').join(path.split('/')[:3]) + '/'
                         file_name = 'power_spectrum_'
@@ -215,9 +232,9 @@ def create_power_spectra(print_output=False):
                         f.close()
 
                         d[obsid][mode]['path_ps'].append(output_file)
-                        
+
     # Write dictionary with all information to file
     with open('./info_on_files.json', 'w') as info:
         info.write(json.dumps(d))
-        
+
     print '---> Created power spectra'

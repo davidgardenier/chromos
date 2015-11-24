@@ -23,6 +23,7 @@ def create_background(print_output=False):
         event_mode = False
         goodxenon_mode = False
         std2_mode = False
+        binned_mode = False
 
         if 'event' in d[obsid].keys():
             d[obsid]['event']['background_paths']=[]
@@ -42,6 +43,12 @@ def create_background(print_output=False):
             d[obsid]['std2']['background_paths'] = []
             std2_mode = True
             n_s = 0
+
+        if 'binned' in d[obsid].keys():
+            d[obsid]['binned']['background_paths']=[]
+            binned_mode = True
+            # Set up a counter to determine the number of background files per obsid
+            n_b = 0
 
         # For each standard2 file
         for path in d[obsid]['std2']['paths']:
@@ -91,6 +98,53 @@ def create_background(print_output=False):
                 # Write the list of paths to file
                 with open(list_with_paths, 'w') as text:
                     text.write('\n'.join(d[obsid]['event']['background_paths']) + '\n')
+
+            # Add to the counter
+            if binned_mode:
+                n_b += 1
+                output = path.split('pca')[0] + 'background_binned_mode_' + str(n_b)
+                # Determine the output names of the background
+                d[obsid]['binned']['background_paths'].append(output)
+
+                # Set up the command for pcabackest
+                pcabackest = ['pcabackest',
+                              'infile=' + path,
+                              'outfile=' + output,
+                              'filterfile=' + d[obsid]['filter']['paths'][0],
+                              'modelfile=./../scripts/subscripts/pca_bkgd_cmbrightvle_eMv20051128.mdl',
+                              'saahfile=./../scripts/subscripts/pca_saa_history.gz',
+                              'modeltype=both',
+                              'interval=16',
+                              'propane=no',
+                              'layers=no',
+                              'gaincorr=yes',
+                              'gcorrfile=caldb',
+                              'fullspec=yes',
+                              'interp=yes',
+                              'syserr=no',
+                              'clobber=yes',
+                              'mode=no']
+
+                # Execute pcabackest
+                p = Popen(pcabackest, stdout=PIPE, stdin=PIPE, stderr=STDOUT, bufsize=1)
+
+                # Print output of program
+                if print_output is True:
+                    with p.stdout:
+                        for line in iter(p.stdout.readline, b''):
+                            print '    ' + line,
+                        p.stdout.close()
+                        p.wait()
+
+                # Write the paths to each background files which has just been created
+                # to a file for input during the extraction of the light curve
+                loc = d[obsid]['binned']['background_paths'][0].split('background')[0]
+                list_with_paths = loc + 'paths_background_binned_mode'
+                # Add the path to the dictionary
+                d[obsid]['binned']['background_path_list'] = list_with_paths
+                # Write the list of paths to file
+                with open(list_with_paths, 'w') as text:
+                    text.write('\n'.join(d[obsid]['binned']['background_paths']) + '\n')
 
             if std2_mode:
                 n_s += 1
