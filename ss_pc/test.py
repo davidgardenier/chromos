@@ -16,12 +16,20 @@ obsids = [o for o in initial_obsids if o[-1].isdigit()]
 with open('./info_on_files.json', 'r') as info:
     d = json.load(info)
 
-n = 0
-o = 0
 for obsid in d:
-    if 'event' not in d[obsid].keys() and 'goodxenon' not in d[obsid].keys():
-        print 'Not present:', obsid
-    if 'event' in d[obsid].keys() and 'goodxenon' in d[obsid].keys():
-        print 'Present:', obsid
-        for m in ['event','goodxenon']:
-            print d[obsid][m]
+    for mode in d[obsid]:
+
+        # Split out event mode files
+        if mode == 'binned':
+            # This complicated code returns a list with per element,
+            # the resolution and index of the resolution, to enable those
+            # to be joined
+            resolutions = map(lambda val: (val, [i for i in xrange(len(d[obsid][mode]['resolutions'])) if d[obsid][mode]['resolutions'][i] == val]), list(set(d[obsid][mode]['resolutions'])))
+            print d[obsid][mode]['resolutions']
+            resolutions = sorted(resolutions, key=lambda tup: tup[1])
+            # for each resolution, create a paths_<event_500us> file
+            for r in resolutions:
+                res = r[0]
+                filename = 'paths_'+mode+'_'+res
+                path_to_output = '/'.join([os.getcwd(),'P'+obsid.split('-')[0],obsid,filename])
+                print path_to_output
