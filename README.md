@@ -1,7 +1,17 @@
+There are two parts to this repository:
+
+TL;DR:
+- \_hid: Scripts to create hardness intensity diagrams
+- \_pc: Scripts to create power colour-colour diagrams
+
+**hid**
+
+Yet to come.
+
+**pc**
+
 Scripts to automate the extraction of light curves from RXTE data, create power
 spectra and subsequently plot power colour colour diagrams for Aquila X-1
-
----------------
 
 File structure of scripts is on basis of execution order, and built in modular
 style. It is safe to run subscripts with larger letters (say J) without 
@@ -35,6 +45,7 @@ I             create_power_spectrum
                        |
 J             create_power_colours
 ```
+
 ---------------
 
 Author: David Gardenier
