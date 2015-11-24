@@ -76,13 +76,13 @@ def plot_obsid(show=False):
                         # Get the data
                         rate, t, dt, n_bins, error, t_0 = read_light_curve(path)
                     except IOError:
-                        print '    ', obsid, mode, 'File not present'
+                        print '    ', obsid, mode, 'LC file not present'
                         continue
 
                     ax1 = fig.add_subplot(gs[0,-2:])
 
                     # Plot with a time offset
-                    ax1.plot(t-t_0, rate, 'r-')
+                    ax1.plot(t-t_0, rate, 'r-', markevery=5)
 
                     # Graph details
                     ax1.set_xlabel('Time (s)')
@@ -159,15 +159,28 @@ def plot_obsid(show=False):
                     pc1 = [float(i) for i in pc1]
                     pc2 = [float(i) for i in pc2]
 
+                    for i in range(len(pc1)):
+                        if pc1[i] <= 0 or pc1[i] <= 0:
+                            pc1[i] = np.nan
+                            pc2[i] = np.nan
+                            obs[i] = np.nan
+                            m[i] = np.nan
+                            const[i] = np.nan
+
                     # Plot details
                     ax4 = fig.add_subplot(gs[1,-1:])
 
                     for i in range(len(pc1)):
                         if const[i] == 'True':
                             colour = 'b'
+                            marker = 'o'
                         else:
                             colour = 'k'
-                        ax4.loglog(pc1[i], pc2[i], 'o', c=colour, zorder=1)
+                            marker = 'x'
+                        if np.isnan(pc1[i]) or np.isnan(pc2[i]):
+                            continue
+                        else:
+                            ax4.loglog(pc1[i], pc2[i], marker, c=colour, zorder=1)
 
                     ax4.set_xlim([0.01, 1000])
                     ax4.set_ylim([0.01, 1000])
@@ -190,10 +203,24 @@ def plot_obsid(show=False):
                             else:
                                 continue
 
-                    h = h[0]
+                    if len(h) == 0:
+                        continue
+                    else:
+                        h = h[0]
 
                     # Add a red dot showing the power colour colour value
-                    ax4.scatter([pc1[h]],[pc2[h]], c='r', lw=0, s=50, zorder=2)
+                    ax4.scatter([pc1[h]],
+                                [pc2[h]],
+                                c='r',
+                                marker='^',
+                                lw=0,
+                                s=50,
+                                zorder=2)
+
+                    # If plotted
+                    if const[h] == 'True':
+                        plt.figtext(0.17, 0.75, 'Used in PC diagram',
+                                    fontsize=14, horizontalalignment='center')
 
                     plot = True
 
@@ -203,7 +230,7 @@ def plot_obsid(show=False):
                     plt.clf()
                 else:
                     filename = str(obsid) + '_' + str(mode) + '_' + str(res)
-                    plt.savefig('./../plots/full_' + filename)
+                    plt.savefig('./../plots/full/' + filename)
                     plt.clf()
 
 plot_obsid()
