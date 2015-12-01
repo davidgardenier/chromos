@@ -71,7 +71,7 @@ def calculated_energy_range(date,min_energy,max_energy):
      - Channel range
     '''
 
-    with open('./../scripts/subscripts/energy_channel_conversion.txt', 'r') as txt:
+    with open('./../scripts/pc_ss/energy_channel_conversion.txt', 'r') as txt:
         text = list(txt)
         stop_dates = [x + y for x, y in zip(text[2].split()[2:6], text[3].split()[2:6])]
         end_dates = [datetime.strptime(t, '%m/%d/%y(%H:%M)') for t in stop_dates]
@@ -151,7 +151,7 @@ def get_channel_range(mode, cer, path_event):
     return channel_ranges
 
 
-def find_channels(print_output=False):
+def find_channels(verbose=False):
     '''
     Function to determine the channel range needed for input during extraction.
     Requires the file energy_conversion_table.txt to determine the initial
@@ -180,7 +180,7 @@ def find_channels(print_output=False):
                 bin_channels = get_channel_range('event', abs_channels, path)
                 d[obsid]['event']['channels'].append(bin_channels)
 
-                if print_output:
+                if verbose:
                     print'    ', 'E', obsid, '-->', bin_channels
 
         # In case of 'std2' mode, determine the absolute channels (from the
@@ -193,7 +193,7 @@ def find_channels(print_output=False):
                 abs_channels = calculated_energy_range(d[obsid]['std2']['times'][i],MIN_E,MAX_E)
                 d[obsid]['std2']['channels'].append(abs_channels)
 
-                if print_output:
+                if verbose:
                     print '    ', 'S', obsid, '-->', abs_channels
 
         # In case of 'goodxenon' mode, determine the absolute channels
@@ -206,7 +206,7 @@ def find_channels(print_output=False):
                 abs_channels = calculated_energy_range(d[obsid]['goodxenon']['times'][i],MIN_E,MAX_E)
                 d[obsid]['goodxenon']['channels'].append(abs_channels)
 
-                if print_output:
+                if verbose:
                     print '    ', 'G', obsid, '-->', abs_channels
 
         # In case of 'binned' mode, determine the absolute channels (from the
@@ -219,7 +219,7 @@ def find_channels(print_output=False):
                 abs_channels = calculated_energy_range(d[obsid]['binned']['times'][i],MIN_E,MAX_E)
                 bin_channels = get_channel_range('binned', abs_channels, path)
                 d[obsid]['binned']['channels'].append(bin_channels)
-                if print_output:
+                if verbose:
                     print '    ', 'B', obsid, '-->', bin_channels
 
     # Write dictionary with all information to file

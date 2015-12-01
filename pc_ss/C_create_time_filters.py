@@ -3,7 +3,7 @@ import glob
 import os
 from subprocess import Popen, PIPE, STDOUT
 
-def create_time_filters(print_output=False):
+def create_time_filters(verbose=False):
     '''
     Function to run the ftool maketime over all filter files (.xfl.gz files).
     Creates time_filter.gz files. Updates the dictionary with for instance the
@@ -33,13 +33,16 @@ def create_time_filters(print_output=False):
 
             # Ensure maketime doesn't complain about previous versions of the
             # output already being created
-            os.system('rm ' + output)
-            
+            try:
+                os.system('rm ' + output)
+            except OSError:
+                continue
+
             # Execute maketime
             p = Popen(['maketime'], stdout=PIPE, stdin=PIPE,
                       stderr=STDOUT, bufsize=1)
 
-            if print_output is True:
+            if verbose is True:
                 print('----------\n Running maketime on ' + obsid)
 
             # Give the required input
@@ -61,7 +64,7 @@ def create_time_filters(print_output=False):
             p.stdin.write('TIME \n')
 
             # Print output of program
-            if print_output is True:
+            if verbose is True:
                 with p.stdout:
                     for line in iter(p.stdout.readline, b''):
                         print '    ' + line,

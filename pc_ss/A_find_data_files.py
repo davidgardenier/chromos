@@ -1,57 +1,38 @@
 import os
+import glob
 from subprocess import Popen, PIPE
 
-# -----------------------------------------------------------------------------
-# ------------------------- Find data files -----------------------------------
-# -----------------------------------------------------------------------------
-
-def determine_files(object_name, print_output=False):
+def find_data(obj, verbose=False):
     '''
-    Function to determine which files are needed for later extraction. 
-    Creates a file named <object>.obsid.list containing the paths to the
-    different modes in each P<number> folder
-    
-    Required:
-     - Cshell script xtescan2 in same working directiory as this script
-     
+    Create a list with all obsids, and feed it into Phil's xtescan2 program
+    to find where each data file is located. Creates a file named
+    <object>.obsid.list containing the paths to the different modes in each
+    P<number> folder.
+
     Arguments:
-     - object_name: for file creation
-     - print_output: if True, will print the output of xtescan2 function
+     - obj: Object name
+     - verbose: Give output of xtescan2 or not
     '''
-    
-    purpose = 'Determining data files'
-    print purpose + '\n' + '='*len(purpose) 
-        
-    for folder in os.listdir('.'):
-        if folder.startswith('P'):
-            subfolder = os.path.join('./', folder)
-            
-            if print_output is True:
-                print '-----------' 
-            
-            obsid = []
+    purpose = 'Determine file types'
+    print purpose + '\n' + '='*len(purpose)
 
-            # Find obsids
-            for dirs in os.listdir(subfolder):
-                if dirs[-1].isdigit() and len(dirs) > 9:
-                    obsid.append(dirs)
+    for e in glob.glob('./P*'):
 
-            # Write them to list to give to xtescan2
-            with open(subfolder + '/obsid.list','w') as f:
-                f.write('\n'.join(obsid))
-            
-            # Execute xtescan2
-            os.chdir(subfolder)
-            p = Popen(['csh','./../../scripts/subscripts/xtescan2','obsid.list', object_name],
-                      stdout=PIPE)
-            
-            # Print output
-            if print_output is True:
-                for line in p.stdout:
-                    print '    ' + line
-            p.wait()
+        os.chdir(e)
 
-            f.close()
-            os.chdir('./../')
+        # Find obsid folders
+        obsids = [o.split('/')[-1] for o in glob.glob('./*-*-*-*')]
+        with open('./obsids.list','w') as f:
+            f.write('\n'.join(obsids))
 
-    print '---> Determined location of all data files' 
+        # Execute Phil's script to determine location of files
+        command = ['csh','./../../scripts/pc_ss/xtescan2','obsids.list', obj]
+        p = Popen(command, stdout=PIPE)
+
+        if verbose:
+            for line in p.stdout:
+                print '    ' + line
+
+        p.wait()
+
+    print '--> Determined file types'

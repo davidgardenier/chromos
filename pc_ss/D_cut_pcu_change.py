@@ -3,7 +3,7 @@ import json
 import os
 from subprocess import Popen, PIPE, STDOUT
 
-def cut_pcu_change(print_output=False):
+def cut_pcu_change(verbose=False):
     '''
     Function to determine if pcu changes have take place, and if so cut 32s
     around them. Returns a string suitable for input in extracting lightcurves.
@@ -66,7 +66,7 @@ def cut_pcu_change(print_output=False):
         if t_range[-1] == '-':
             t_range += repr(time[-1])
 
-        if print_output:
+        if verbose:
             print '    ', obsid, '-->', t_range
 
         output = path.split('std')[0] + 'pcu.tint'
@@ -84,7 +84,7 @@ def cut_pcu_change(print_output=False):
                   stderr=STDOUT, bufsize=1)
 
         # Print output of program
-#        if print_output is True:
+#        if verbose:
 #            with p.stdout:
 #                for line in iter(p.stdout.readline, b''):
 #                    print '        ' + line,

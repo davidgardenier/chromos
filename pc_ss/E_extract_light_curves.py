@@ -1,7 +1,7 @@
 import json
 from subprocess import Popen, PIPE, STDOUT
 
-def seextrct(mode, path_data, filterfile, time_range, channels, output, print_output):
+def seextrct(mode, path_data, filterfile, time_range, channels, output, verbose):
     '''
     Run seextrct over all event mode files
     '''
@@ -59,13 +59,13 @@ def seextrct(mode, path_data, filterfile, time_range, channels, output, print_ou
             # Ensure an aborting error is caught and displayed
             if oline.strip()=='Aborting...':
                 print 'Had to abort while working on ' + mode + '\n'
-            elif print_output is True:
+            elif verbose is True:
                 print '        ' + oline,
         p.stdout.close()
         p.wait()
 
 
-def saextrct(mode, path_background, filterfile, time_range, channels, output_background, print_output):
+def saextrct(mode, path_background, filterfile, time_range, channels, output_background, verbose):
     '''
     Function to extract a light curve file from background files
     '''
@@ -125,13 +125,13 @@ def saextrct(mode, path_background, filterfile, time_range, channels, output_bac
             # Ensure an aborting error is caught and displayed
             if oline.strip()=='Aborting...':
                 print 'Had to abort bkg \n'
-            elif print_output is True:
+            elif verbose is True:
                 print '        ' + oline,
         p.stdout.close()
         p.wait()
 
 
-def extract_light_curves(print_output=False):
+def extract_light_curves(verbose=False):
     '''
     Function to extract all light curves from event & goodxenon files
     '''
@@ -147,7 +147,7 @@ def extract_light_curves(print_output=False):
     # Apply the necassary extractions for each obsid
     for obsid in d:
         for mode in d[obsid]:
-            m = ['event', 'binned', 'goodxenon']
+            m = ['event', 'binned', 'goodxenon', 'std2']
             # These files both use seextrct
             if mode in m:
 
@@ -193,10 +193,10 @@ def extract_light_curves(print_output=False):
                         d[obsid][mode]['path_bkg_lc'].append(output_background + '.lc')
 
                         # Tell the user what you're about to embark on
-                        if print_output:
+                        if verbose:
                             print '    ', obsid, mode, '-->', 'Extracting lightcurve'
 
-                        if mode != 'binned':
+                        if mode != ('binned' or 'std2'):
                             # Run the extraction program
                             seextrct(mode,
                                      path_data,
@@ -204,7 +204,7 @@ def extract_light_curves(print_output=False):
                                      time_range,
                                      channels,
                                      output,
-                                     print_output)
+                                     verbose)
                         else:
                             # Run the extraction program
                             saextrct(mode,
@@ -213,10 +213,10 @@ def extract_light_curves(print_output=False):
                                      time_range,
                                      channels,
                                      output,
-                                     print_output)
+                                     verbose)
 
                         # Tell the user what you're about to embark on
-                        if print_output:
+                        if verbose:
                             print '    ', obsid, mode, '-->', 'Extracting background'
 
                         # # Run the extraction program for the background
@@ -226,7 +226,7 @@ def extract_light_curves(print_output=False):
                                  time_range,
                                  channels,
                                  output_background,
-                                 print_output)
+                                 verbose)
 
     # Write dictionary with all information to file
     with open('./info_on_files.json', 'w') as info:

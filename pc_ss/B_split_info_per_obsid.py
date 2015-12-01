@@ -3,7 +3,7 @@ import json
 import os
 from collections import defaultdict
 
-def split_files(objectname, print_output=False):
+def split_files(objectname, verbose=False):
     '''
     Function to split out the files created by Phil's script in find_data_files
     over each obsid folder, allowing code to be executed per obsid. Also
@@ -15,9 +15,9 @@ def split_files(objectname, print_output=False):
     print purpose + '\n' + '='*len(purpose)
 
     # Find all obsids
-    initial_obsids = sorted([r.split('/')[-1] for r in glob.glob('./*/?????-??-??-*')])
+    init_obsids = sorted([r.split('/')[-1] for r in glob.glob('./*/*-??-??-*')])
     # Getting rid of obsids with letters at the end
-    obsids = [o for o in initial_obsids if o[-1].isdigit()]
+    obsids = [o for o in init_obsids if o[-1].isdigit()]
     # Form into dictionary of form
     # d['<obsid>']['<datamode>']['<paths/time/etc.>'] = []
     d = {el:defaultdict(lambda : defaultdict(list)) for el in obsids}
@@ -47,14 +47,12 @@ def split_files(objectname, print_output=False):
         if 'Standard2f' in mode:
             with open(a) as s:
                 for i, line in enumerate(s):
-                    # Only every third line is needed
-                    if i%3 == 0:
-                        obsid = line.split('/')[0]
-                        path = os.getcwd() + '/P' + obsid.split('-')[0] + '/' + line.split(' ')[0].split('.')[0]
-                        time = line.split(' ')[2]
+                    obsid = line.split('/')[0]
+                    path = os.getcwd() + '/P' + obsid.split('-')[0] + '/' + line.split(' ')[0].split('.')[0]
+                    time = line.split(' ')[2]
 
-                        d[obsid]['std2']['paths'].append(path)
-                        d[obsid]['std2']['times'].append(time)
+                    d[obsid]['std2']['paths'].append(path)
+                    d[obsid]['std2']['times'].append(time)
 
         if 'GoodXenon1' in mode:
             with open(a) as g:
@@ -103,7 +101,7 @@ def split_files(objectname, print_output=False):
                 # to be joined
                 resolutions = map(lambda val: (val, [i for i in xrange(len(d[obsid][mode]['resolutions'])) if d[obsid][mode]['resolutions'][i] == val]), list(set(d[obsid][mode]['resolutions'])))
                 resolutions = sorted(resolutions, key=lambda tup: tup[1])
-                
+
                 # for each resolution, create a paths_<event_500us> file
                 for r in resolutions:
                     res = r[0]
