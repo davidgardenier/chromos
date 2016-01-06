@@ -22,36 +22,50 @@ def create_response(verbose=False):
 
             mode = 'std2'
             sp = d[obsid][mode]['path_sp'][0]
+            bkg_sp = d[obsid][mode]['path_bkg_sp'][0]
             fltr = d[obsid]['filter']['paths'][0]
 
             root = sp.split('std2')[0]
             output = root + mode + '.rsp'
+            bkg_output = root + 'background_' + mode + '.rsp'
             d[obsid][mode]['rsp'] = [output]
-            print obsid, output
+            d[obsid][mode]['bkg_rsp'] = [bkg_output]
+
+            print obsid, output, bkg_output
+
             # Set up the command for pcarsp
+
             pcarsp = ['pcarsp',
                       '-f' + sp, #Input
                       '-a' + fltr, #Filter file
                       '-n' + output, #Output file
                       '-s'] #Use smart std2 mode
 
-            # Execute pcarsp
-            p = Popen(pcarsp,
-                      stdout=PIPE,
-                      stdin=PIPE,
-                      stderr=STDOUT,
-                      bufsize=1)
+            # Set up the command for pcarsp
+            bkgpcarsp = ['pcarsp',
+                      '-f' + bkg_sp, #Input
+                      '-a' + fltr, #Filter file
+                      '-n' + bkg_output, #Output file
+                      '-s'] #Use smart std2 mode
 
-            # Print output of program
-            if verbose:
-                with p.stdout:
-                    for line in iter(p.stdout.readline, b''):
-                        print '    ' + line,
-                    p.stdout.close()
-                    p.wait()
+            # Execute pcarsp
+            for s in [pcarsp, bkgpcarsp]:
+                p = Popen(s,
+                          stdout=PIPE,
+                          stdin=PIPE,
+                          stderr=STDOUT,
+                          bufsize=1)
+
+                # Print output of program
+                if verbose:
+                    with p.stdout:
+                        for line in iter(p.stdout.readline, b''):
+                            print '    ' + line,
+                        p.stdout.close()
+                        p.wait()
 
     # Write dictionary with all information to file
     with open('./info_on_files.json', 'w') as info:
         info.write(json.dumps(d))
 
-    print '---> Created a background for all files'
+    print '---> Created a response file for all files'

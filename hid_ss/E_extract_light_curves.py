@@ -57,7 +57,7 @@ def saextrct(mode,
     # Maximum energy bin to include in Spectra
     p.stdin.write('INDEF \n')
     # Input energy intervals to be retained 0-1,2-255
-    p.stdin.write(channels + ' \n')
+    p.stdin.write('INDEF \n')
     # Input channels for each bin 0-5,6-255
     p.stdin.write('INDEF \n')
 
@@ -131,7 +131,6 @@ def extract_light_curves(verbose=False):
                     # Tell the user what you're about to embark on
                     if verbose:
                         print '    ', obsid, mode, '-->', 'Extracting lightcurve'
-
 
                     # Run the extraction program
                     saextrct(mode,
