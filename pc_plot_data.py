@@ -154,7 +154,7 @@ def plot_obsid(show=False):
 
                     # POWER COLOUR COLOUR
                     # -------------------
-                    pc1, pc2, obs, m, const = np.genfromtxt('./pwr_colours.dat',delimiter=' ',dtype=np.str,unpack=True)
+                    pc1, pc1e, pc2, pc2e, obs, m, const = np.genfromtxt('./pwr_colours.dat',delimiter=' ',dtype=np.str,unpack=True)
 
                     pc1 = [float(i) for i in pc1]
                     pc2 = [float(i) for i in pc2]

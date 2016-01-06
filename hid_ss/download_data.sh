@@ -6,15 +6,15 @@
 ## Requires a list of proposal IDs with the archive prefix, and for each
 ## proposal ID a corresponding list of obsIDs to download.
 ##
-## Usage: ./data_dl.sh <proposal_ID_list>
+## Usage: bash ./<something>/download_data.sh <proposal_ID_list>
 ##
 ## Written by Abigail Stevens, A.L.Stevens@uva.nl, 2013-2015
-##
+## Adaped by David Gardenier, davidgardenier@gmail.com, 2015-2016
 ################################################################################
 
 ## Make sure the input arguments are ok
 if (( $# != 1 )); then
-    echo -e "\t\tUsage: ./data_dl.sh <proposal ID list>"
+    echo -e "\t\tbash ./<something>/download_data.sh <proposal_ID_list>"
     exit
 fi
 
@@ -22,10 +22,10 @@ obsID_list=$1
 
 
 home_dir=$(pwd)
-list_dir="$home_dir/../../data_J1701_462/lists"
-data_dir="$home_dir/../../data_J1701_462/"  ## Saves as {data_dir_prefix}/propID/obsID
-dl_log="$home_dir/../../data_J1701_462/download.log"
-dl_list="$list_dir/new_downloads.txt"
+list_dir="/scratch/david/master_project/garching/lists/"
+data_dir="/scratch/david/master_project/garching/"  ## Saves as {data_dir_prefix}/propID/obsID
+dl_log="/scratch/david/master_project/garching/lists/download.log"
+dl_list="/scratch/david/master_project/garching/lists/new_downloads.txt"
 web_prefix="ftp://legacy.gsfc.nasa.gov/xte/data/archive"  ## The web archive prefix
 
 ################################################################################
