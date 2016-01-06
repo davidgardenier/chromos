@@ -168,7 +168,9 @@ def create_background(print_output=False):
                               'syserr=no',
                               'clobber=yes',
                               'mode=no']
-
+                              # fullspec ought to be a no, if using for std2 files.
+                              # Can't change it here due to dependance of
+                              # goodxenon backgrounds on it (see below)
                 # Execute pcabackest
                 p = Popen(pcabackest, stdout=PIPE, stdin=PIPE, stderr=STDOUT, bufsize=1)
 

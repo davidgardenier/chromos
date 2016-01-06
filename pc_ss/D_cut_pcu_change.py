@@ -18,6 +18,7 @@ def cut_pcu_change(verbose=False):
         d = json.load(info)
 
     for obsid in d:
+
         path = d[obsid]['filter']['paths'][0]
 
         # Import data

@@ -206,7 +206,9 @@ def create_power_colours(print_output=False):
 
     for i, value in enumerate(pc1):
         line = (repr(pc1[i]) + ' ' +
+                repr(pc1_error[i]) + ' ' +
                 repr(pc2[i]) + ' ' +
+                repr(pc2_error[i]) + ' ' +
                 obsids[i] + ' ' +
                 modes[i] + ' ' +
                 str(constraints[i]) + '\n')

@@ -16,8 +16,9 @@ def find_data(obj, verbose=False):
     purpose = 'Determine file types'
     print purpose + '\n' + '='*len(purpose)
 
-    for e in glob.glob('./P*'):
+    root = os.getcwd()
 
+    for e in glob.glob('./P*'):
         os.chdir(e)
 
         # Find obsid folders
@@ -34,5 +35,6 @@ def find_data(obj, verbose=False):
                 print '    ' + line
 
         p.wait()
+        os.chdir(root)
 
     print '--> Determined file types'
