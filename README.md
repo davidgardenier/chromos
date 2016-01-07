@@ -14,16 +14,18 @@ Scripts to automate the extraction of light curves from RXTE data, create power
 spectra and subsequently plot power colour colour diagrams for Aquila X-1
 
 File structure of scripts is on basis of execution order, and built in modular
-style. It is safe to run subscripts with larger letters (say J) without 
-changing the output of lower letters (say B). The same goes for files with the 
+style. It is safe to run subscripts with larger letters (say J) without
+changing the output of lower letters (say B). The same goes for files with the
 same letter (C and C).
 
-Essential to the data extraction is the dictionary with paths to different 
+Essential to the data extraction is the dictionary with paths to different
 files. This is updated as subscripts are executed, and allows subscripts to be
-run multiple times without causing errors. Ideally this should be transformed 
+run multiple times without causing errors. Ideally this should be transformed
 to a class, with functions returning the paths.
 
 File structure:
+
+![Image]('./flowcharts/pc_flowchart.pdf')
 ```
 A                find_all_data
                        |
