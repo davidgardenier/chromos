@@ -25,30 +25,7 @@ to a class, with functions returning the paths.
 
 File structure:
 
-![Image](./flowcharts/pc_flowchart.pdf)
-```
-A                find_all_data
-                       |
-B                 split_files -----------
-                 /   | | |  |            \
-C create_time_filter | | | gx_to_fits    cut_pcu_change
-      |          |   / | \  |             |
-D     |    create_bkg_ |  find_channels   |
-      \          \     |    /             /
-E      -----------extract_lc--------------
-                       |
-F               rebin_background--------
-                       |               |
-G            account_for_background    |
-                       |               |
-H               cut_xray_flares---------
-                       |
-I             create_power_spectrum
-                       |
-J             create_power_colours
-```
-
----------------
+![Image](./flowcharts/pc_flowchart.png)
 
 Author: David Gardenier
 
