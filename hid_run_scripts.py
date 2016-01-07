@@ -35,4 +35,4 @@ if __name__ == '__main__':
     #create_response(verbose=VERBOSE)
     #create_hid(DATA, SCRIPTS, verbose=VERBOSE)
     plot_hid(verbose=VERBOSE)
-    #print_dictionary()
+    print_dictionary()

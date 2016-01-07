@@ -19,5 +19,5 @@ pp = color.cmyk(0,0.8,0.69,0.39)
 g = graph.graphxy(width=8,
                   x=graph.axis.log(min=0.05, max=101, title=r"PC1"),
                   y=graph.axis.log(min=0.01, max=12, title=r"PC2"))
-g.plot(graph.data.values(x=pc1, dx=pc1_error, y=pc2, dy=pc2_error),[graph.style.symbol(symbolattrs=[pp]), graph.style.errorbar(errorbarattrs=[pp])])
+g.plot(graph.data.values(x=pc1, dx=pc1_error, y=pc2, dy=pc2_error),[graph.style.symbol(size=0.08,symbolattrs=[pp]), graph.style.errorbar(errorbarattrs=[pp])])
 g.writePDFfile(PLOTS + 'aquila_pcs')
