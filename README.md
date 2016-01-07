@@ -25,7 +25,7 @@ to a class, with functions returning the paths.
 
 File structure:
 
-![Image]('./flowcharts/pc_flowchart.pdf')
+![Image](./flowcharts/pc_flowchart.pdf)
 ```
 A                find_all_data
                        |
