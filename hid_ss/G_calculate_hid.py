@@ -39,12 +39,25 @@ def create_hid(DATA, SCRIPTS, verbose=False):
               continue
 
             # XSPEC Commands to unfold spectrum around flat powerlaw
+            # Reason as per Heil et al. (see doi:10.1093/mnras/stv240):
+            # "In order to measure the energy spectral hardness independantly of
+            # long term changes in the PCA instrument response, fluxes are
+            # generated in a model-independant way by dividing the PCA standard
+            # 2 mode spectrum by the effective area of the intstrument response
+            # in each spectral channel. This is carried out by unfolding the
+            # spectrum with respect to a zero-slope power law (i.e. a constant)
+            # in the XSPEC spectral-fitting software, and measuring the unfolded
+            # flux over the specified energy range (interpolating where the
+            # specified energy does not fall neatly at the each of a spectral
+            # channel)."
             #xspec.Plot.device = '/xs'
             s1 = xspec.Spectrum(path)
             s1.background = bkg_path
             # Not really sure why you need to do ignore, and then notice
-            s1.ignore('**-3.0 13.0-**') #RANGE
-            s1.notice('2.0-13.0') #RANGE
+            #s1.ignore('**-2.0 60.0-**') #Joel RANGE
+            #s1.notice('2-60') #Joel RANGE
+            s1.ignore('**-3.0 12.0-**') #RANGE
+            s1.notice('2-13') #RANGE
             xspec.Model('powerlaw')
             xspec.AllModels(1).setPars(0.0, 1.0) # Index, Norm
             xspec.AllModels(1)(1).frozen = True
@@ -74,6 +87,8 @@ def create_hid(DATA, SCRIPTS, verbose=False):
             # Create a file to input into integflux
             integflux = root + 'integflux.in'
             with open(integflux, 'w') as f:
+                #intgr_low, intgr_high, soft_low, soft_high, hard_low, hard_high
+                #line = ['eufspec.dat', 2.0, 60.0, 7.3, 9.8, 9.8, 18.2] #JOEL
                 line = ['eufspec.dat', 2.0, 13.0, 2.0, 6.0, 6.0, 13.0] #RANGE
                 line = [str(e) for e in line]
                 f.write(' '.join(line) + '\n')

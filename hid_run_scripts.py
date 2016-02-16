@@ -34,5 +34,5 @@ if __name__ == '__main__':
     #extract_light_curves(verbose=VERBOSE)
     #create_response(verbose=VERBOSE)
     #create_hid(DATA, SCRIPTS, verbose=VERBOSE)
-    plot_hid(verbose=VERBOSE)
+    #plot_hid(verbose=VERBOSE)
     print_dictionary()

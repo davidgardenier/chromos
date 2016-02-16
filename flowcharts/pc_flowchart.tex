@@ -6,13 +6,10 @@
 \begin{document}
 \pagestyle{empty}
 
-
-% Define block styles
 \tikzstyle{block} = [rectangle, text centered, rounded corners, minimum height = 1.8em, text depth=.25ex]
 \tikzstyle{line} = [draw, thick, ->]
 
 \begin{tikzpicture}[align=center,node distance=0.5cm]
-    % Place nodes
     \node [block] (fd) {find all data};
     \node [block, below = of fd] (sf) {split out files};
     \node [block, below right = of sf] (gx) {goodxenon to fits};
@@ -53,23 +50,6 @@
     \node [block] (H) at (l|-cx) {H};
     \node [block] (I) at (l|-cps) {I};
     \node [block] (J) at (l|-cpc) {J};
-%     \node [cloud, left = of init] (expert) {expert};
-%     \node [cloud, right = of init] (system) {system};
-%     \node [block, below = of init] (identify) {identify candidate models};
-%     \node [block, below = of identify] (evaluate) {evaluate candidate models};
-%     \node [block, left = of evaluate, node distance=3cm] (update) {update model};
-%     \node [decision, below = of evaluate] (decide) {is best candidate better?};
-%     \node [block, below = of decide, node distance=3cm] (stop) {stop};
-%     % Draw edges
-%     \path [line] (init) to (identify);
-%     \path [line] (identify) to (evaluate);
-%     \path [line] (evaluate) to (decide);
-%     \path [line] (decide) -| node [near start] {yes} (update);
-%     \path [line] (update) |- (identify);
-%     \path [line] (decide) to node {no}(stop);
-%     \path [line,dashed] (expert) to (init);
-%     \path [line,dashed] (system) to (init);
-%     \path [line,dashed] (system) |- (evaluate);
 \end{tikzpicture}
 
 

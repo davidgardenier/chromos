@@ -43,10 +43,10 @@ def create_response(verbose=False):
 
             # Set up the command for pcarsp
             bkgpcarsp = ['pcarsp',
-                      '-f' + bkg_sp, #Input
-                      '-a' + fltr, #Filter file
-                      '-n' + bkg_output, #Output file
-                      '-s'] #Use smart std2 mode
+                         '-f' + bkg_sp, #Input
+                         '-a' + fltr, #Filter file
+                         '-n' + bkg_output, #Output file
+                         '-s'] #Use smart std2 mode
 
             # Execute pcarsp
             for s in [pcarsp, bkgpcarsp]:

@@ -1,3 +1,16 @@
+Master Project - Scripts for working with RXTE-data
+-----
+Author: David Gardenier
+Project: Master Project @ Anton Pannekoek Institute for Astronomy
+Date: July 2015 - July 2016
+Contact: Contact davidgardenier@gmail.com for questions and 
+queries regarding the use of the presented software. For issues or ideas 
+please use the github page for this software available on:
+https://github.com/astrocoding/master_project
+-----
+**Software Structure**
+
+
 There are two parts to this repository:
 
 TL;DR:
@@ -26,9 +39,3 @@ to a class, with functions returning the paths.
 File structure:
 
 ![Image](./flowcharts/pc_flowchart.png)
-
-Author: David Gardenier
-
-Project: Master Project @ Anton Pannekoek Institute for Astronomy
-
-Date: July 2015 - July 2016
