@@ -16,7 +16,7 @@ def download():
     import os
     import paths
     import logs
-    from subprocess import Popen, PIPE, STDOUT
+    import execute_shell_commands as shell
 
     # Check whether a file structure is in place for downloading the data, if
     # not then create the necessary file structure
@@ -41,11 +41,4 @@ def download():
                 paths.data,
                 paths.data_info[:-1]]
 
-    p = Popen(command, stdout=PIPE, stdin=PIPE, stderr=STDOUT, bufsize=1)
-
-    # Print output of program
-    with p.stdout:
-        for oline in iter(p.stdout.readline, b''):
-            print oline,
-        p.stdout.close()
-        p.wait()
+    shell.execute(command)
