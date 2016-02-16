@@ -20,10 +20,10 @@ def download():
 
     # Check whether a file structure is in place for downloading the data, if
     # not then create the necessary file structure
-    if not os.path.exists(paths.data):
-        os.makedirs(paths.data)
-        os.makedirs(paths.data_info)
-        os.makedirs(paths.logs)
+    folders = [paths.data, paths.data_info, paths.logs]
+    for f in folders:
+        if not os.path.exists(f):
+            os.makedirs(f)
 
     # Set log file
     filename = __file__.split('/')[-1].split('.')[0]

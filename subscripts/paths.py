@@ -8,7 +8,7 @@ root = '/scratch/david/master_project/'
 data = root + selection + '/'
 data_info = data + 'info/'
 
-logs = data_info + 'logs/'
+logs = data_info + 'log_scripts/'
 terminal_output = True
 
 obsid_lists = root + 'obsid_lists/'
