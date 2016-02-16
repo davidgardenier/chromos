@@ -22,10 +22,10 @@ obsID_list=$1
 
 
 home_dir=$(pwd)
-list_dir="/scratch/david/master_project/garching/lists/"
-data_dir="/scratch/david/master_project/garching/"  ## Saves as {data_dir_prefix}/propID/obsID
-dl_log="/scratch/david/master_project/garching/lists/download.log"
-dl_list="/scratch/david/master_project/garching/lists/new_downloads.txt"
+list_dir="/scratch/david/master_project/garching2/lists/"
+data_dir="/scratch/david/master_project/garching2/"  ## Saves as {data_dir_prefix}/propID/obsID
+dl_log="/scratch/david/master_project/garching2/lists/download.log"
+dl_list="/scratch/david/master_project/garching2/lists/new_downloads.txt"
 web_prefix="ftp://legacy.gsfc.nasa.gov/xte/data/archive"  ## The web archive prefix
 
 ################################################################################
