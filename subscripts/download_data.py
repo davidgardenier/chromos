@@ -10,8 +10,8 @@ def download():
     of the selection (object name etc.)
     '''
 
-    message = 'Downloading data'
-    print message + '\n' + len(message)*'='
+    purpose = 'Downloading data'
+    print len(purpose)*'=' + '\n' + purpose + '\n' + len(purpose)*'='
 
     import os
     import paths

@@ -1,13 +1,22 @@
 # Short function to simplify capturing output of executing subprocesses
 
 def execute(command):
-    from subprocess import Popen, PIPE, STDOUT
-    
-    p = Popen(command, stdout=PIPE, stdin=PIPE, stderr=STDOUT, bufsize=1)
-    
-    # Print output of program
-    with p.stdout:
-        for oline in iter(p.stdout.readline, b''):
-            print oline,
-        p.stdout.close()
-        p.wait()
+    import subprocess
+
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    # Poll process for new output until finished
+    while True:
+        nextline = process.stdout.readline()
+        if nextline == '' and process.poll() != None:
+            break
+        print nextline.strip('\n')
+        #sys.stdout.flush()
+
+    output = process.communicate()[0]
+    exitCode = process.returncode
+
+    if (exitCode == 0):
+        return output
+    else:
+        raise ProcessException(command, exitCode, output)

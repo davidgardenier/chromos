@@ -1,3 +1,8 @@
+# Program to capture any output normally directed to the terminal and save it
+# to a log. In the paths file you can choose to turn off terminal output, upon
+# which this program will only log the terminal output without displaying it.
+# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+
 import sys
 import paths
 import os

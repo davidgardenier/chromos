@@ -1,0 +1,194 @@
+#!/bin/csh
+# -------------------------------------------------------
+#
+# xtescan.csh by Simon Vaughan 2007, modified by Phil Uttley to
+# determine configs for a list of obs-IDs rather than a single
+# proposal and target
+#
+# C-shell script to extract PCA/EA configurations
+# from entire proposal-object set of XTE data
+# (using FTOOLS)
+#
+# Calling sequence:
+#    > xtescan <obsid list> <filename prefix>
+#
+# Example:
+#    > xtescan obsid.lst cygobs1
+#
+# Output are the following files:
+#     <fileprefix>.obsid.list       - details of every file
+#     <fileprefix>.config.list      - list of unique data modes
+#     <fileprefix>.<datamode>.list  - one per unique data mode
+#
+# History:
+#     13/04/2007 -- v1.0 -- first working version
+#     18/04/2007 -- v1.1 -- added .xdf output files
+#     17/05/2007 -- philv1.2 -- modified to use input obsid list
+# -------------------------------------------------------
+
+# make sure the input arguments are ok
+
+  if ( $#argv < 2 ) then
+    echo \*\* Usage: xtescan2 \<obsid list\> \<filename prefix\>
+    goto done
+  else
+    set obslist = $argv[1]
+    set prefix = $argv[2]
+  endif
+
+# clear files for recording output
+
+    if ( -e $prefix.obsid.list) rm -f $prefix.obsid.list
+    touch $prefix.obsid.list
+
+    if ( -e $prefix.config.list) rm -f $prefix.config.list
+    touch $prefix.config.list
+
+# -------------------------------------------------------
+# loop over all PCA index files (ObsIDs)
+
+  foreach dataset (`more $obslist`)
+    echo --
+
+# recover the name of the ObsID
+
+    set temp = `echo $dataset | awk '{gsub("/"," "); print $0}'`
+    set obsid = `echo $temp[$#temp]`
+
+# list all the PCA science files
+
+    ls $obsid/pca/FS* >! pcafiles.list
+    set n = `cat pcafiles.list | wc -l`
+    if ( n == 0 ) then
+	echo \*\* No PCA science files for $obsid.
+	continue
+    else
+	echo -- Searching $obsid found $n files
+    endif
+
+# loop over each PCA data file within the ObsID
+
+    set i = 0
+    foreach pcafile (`more pcafiles.list`)
+	@ i = $i + 1
+
+# extract the PCA/EA data conguration/mode from PCA data file
+
+	fkeyprint infile=$pcafile+1 keynam=DATAMODE outfile=datamode.txt clobber=yes
+	set datastring = `grep '=' datamode.txt`
+	set datamode = $datastring[2]
+	set datamodefull = `echo $datamode | awk '{gsub("'"'"'"," " ) ; print $0}'`
+	set datamode = `echo $datamodefull | awk '{gsub("_"," "); print $0}'`
+
+# Find time resolution from PCA data file
+
+	if ($datamode[1] == "B" || $datamode[1] == "CB" || $datamode[1] == "SB") then
+	    fkeyprint infile=$pcafile+1 keynam=1CDLT2 outfile=timestep.txt clobber=yes
+	    set timestring = `grep '=' timestep.txt`
+	    set deltaT = `echo $timestring[3]`
+	else
+	    fkeyprint infile=$pcafile+1 keynam=TIMEDEL outfile=timestep.txt clobber=yes
+	    set timestring = `grep '=' timestep.txt`
+	    set deltaT = `echo $timestring[3]`
+	endif
+
+# Convert from scientific (1.0E-1) notation to floating if needed (for 'bc')
+
+  set float = `echo $deltaT | cut -d 'e' -f1`
+  set expo = `echo $deltaT | cut -d 'e' -f2`
+  if ( $float != $expo ) then
+    set deltaT = `echo "scale=14; ($float)*10^($expo)" | bc -l`
+  endif
+
+# convert dT from floating point seconds to 2^x seconds
+
+	set dt = `echo "scale=14 ; l($deltaT)/l(2.0)" | bc -l`
+	set dt2 = `echo "scale=0 ; ($dt)/1" | bc -l`
+
+# extract the obs time from PCA data file
+
+	fkeyprint infile=$pcafile+1 keynam=TSTART outfile=timestart.txt clobber=yes
+	set timestring = `grep '=' timestart.txt`
+	set obstime = `echo $timestring[3]`
+
+# extract the obs date and (hh:mm:ss) time from PCA data file
+
+	fkeyprint infile=$pcafile+1 keynam=DATE-OBS outfile=timestart.txt clobber=yes
+	set timestring = `grep '=' timestart.txt`
+	set obsdate = `echo $timestring[2] | awk '{gsub("'"'"'"," " ) ; print $0}'`
+
+	fkeyprint infile=$pcafile+1 keynam=TIME-OBS outfile=timestart.txt clobber=yes
+	set timestring = `grep '=' timestart.txt`
+	set obshms = `echo $timestring[2] | awk '{gsub("'"'"'"," " ) ; print $0}'`
+
+# Tell the user what we have found so far
+
+	echo -- $i/$n $pcafile $obsdate $obshms $datamode $deltaT 2^$dt2
+
+# for this file add the filename, config, date and time to the output file
+
+	echo $pcafile $datamodefull $obsdate $obshms 2^$dt2 >> $prefix.obsid.list
+
+# check whether the datamode for the current file is listed in the list of datamodes.
+# If not then add it to the list of (unique) datamodes
+
+	grep $datamodefull $prefix.config.list >! config.txt
+        set foundit = `cat config.txt | wc -l`
+        if ( $foundit == 0 ) then
+	    echo $datamodefull >> $prefix.config.list
+	endif
+
+# End of loop over PCA data files within the ObsID
+
+    end
+
+# End of loop over each ObsID
+
+  end
+  echo --
+
+# -------------------------------------------------------
+
+# For each unique datamode used, make a list of filenames
+
+  echo -- Number of files per unique PCA data mode:
+  echo --
+  foreach datamode (`more $prefix.config.list`)
+
+    if ( -e $prefix.$datamode.list ) rm -f $prefix.$datamode.list
+    touch $prefix.$datamode.list
+    grep $datamode $prefix.obsid.list >> $prefix.$datamode.list
+    set count = `cat $prefix.$datamode.list | wc -l`
+    echo -- $count $datamode
+
+# put the filenames only in an .xdf file, with full path
+
+    cat  $prefix.$datamode.list | cut -d ' ' -f1 >! temp.xdf
+    if ( -e $prefix.$datamode.xdf) rm -f $prefix.$datamode.xdf
+    touch $prefix.$datamode.xdf
+    foreach file   (`more temp.xdf`)
+	echo $cwd/$file:r >> $prefix.$datamode.xdf
+    end
+  end
+
+# tell the user where the output files are
+
+  if (-e $prefix.obsid.list) echo -- All data in file $prefix.obsid.list
+  echo --
+  echo -- Information on each data mode in files $prefix.\<datamode\>.list
+  echo -- "                                      " $prefix.\<datamode\>.xdf
+  echo --
+
+# -------------------------------------------------------
+# All done
+
+  done:
+
+    if (-e timestep.txt) rm -f timestep.txt
+    if (-e timestart.txt) rm -f timestart.txt
+    if (-e datamode.txt) rm -f datamode.txt
+    if (-e config.txt) rm -f config.txt
+
+    echo -- Finished.
+
+# -------------------------------------------------------
