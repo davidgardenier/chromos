@@ -192,7 +192,7 @@ def create_power_spectra(print_output=False):
                     else:
                         message = 'Writing spectrum to file'
                         success = True
-
+                    print success
                     # Define the resolution
                     if mode != 'std2':
                         res = path.split('_')[-1]
@@ -202,7 +202,8 @@ def create_power_spectra(print_output=False):
                     if print_output:
                         statement = ['\r   ', obsid, mode, res,
                                      '--> ', message, '\n']
-                        stdout.write(template.format(*statement))
+                        print ' '.join(statement)
+                        #stdout.write(template.format(*statement))
                         update_progress(o/num_obsid, t0, t)
 
                     if success:

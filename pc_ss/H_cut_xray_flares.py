@@ -114,7 +114,7 @@ def cut_xray_flares(print_output=False):
     for obsid in d:
         for mode in d[obsid]:
 
-            if 'path_bkg_corrected_lc' in d[obsid][mode] and mode !='std2':
+            if 'path_bkg_corrected_lc' in d[obsid][mode]:
 
                 d[obsid][mode]['path_xray_corrected_lc'] = []
                 d[obsid][mode]['path_xray_corrected_bkg_lc'] = []

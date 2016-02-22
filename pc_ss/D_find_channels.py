@@ -142,8 +142,11 @@ def get_channel_range(mode, cer, path_event):
                 index -= 1
         # and for the last index just before a comma
         if i == 1:
+            end = len(rel_channels)
             while rel_channels[index] != ',':
                 index += 1
+                if index == end:
+                    break
         indexes.append(index)
 
     channel_ranges = rel_channels[indexes[0]:indexes[1]]

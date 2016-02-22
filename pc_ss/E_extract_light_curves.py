@@ -196,7 +196,7 @@ def extract_light_curves(verbose=False):
                         if verbose:
                             print '    ', obsid, mode, '-->', 'Extracting lightcurve'
 
-                        if mode != ('binned' or 'std2'):
+                        if mode != 'binned' and mode != 'std2':
                             # Run the extraction program
                             seextrct(mode,
                                      path_data,
