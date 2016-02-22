@@ -3,15 +3,12 @@ import os
 selection = 'test'
 subscripts = os.getcwd() + '/subscripts/'
 
-root = '/scratch/david/master_project/'
-
-data = root + selection + '/'
+data = '/scratch/david/master_project/test/'
 data_info = data + 'info/'
+database = data_info + 'database.csv'
 
 logs = data_info + 'log_scripts/'
 terminal_output = True
 
-obsid_lists = root + 'obsid_lists/'
+obsid_lists = '/scratch/david/master_project/obsid_lists/'
 obsid_list = obsid_lists + selection + '.lst'
-
-

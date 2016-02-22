@@ -27,8 +27,12 @@ class Logger(object):
         self.log.write(message)
 
 def output(filename):
+    if not os.path.exists(paths.logs):
+        os.makedirs(paths.log)
+
     logfile = paths.logs + filename + '.log'
     if not os.path.exists(logfile):
         open(logfile, 'w')
+
     sys.stdout = Logger(logfile, 'output')
     sys.stderr = Logger(logfile, 'error')

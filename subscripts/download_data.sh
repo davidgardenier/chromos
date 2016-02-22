@@ -20,7 +20,7 @@ if (( $# != 3 )); then
 fi
 
 obsID_list=$1
-
+echo $obsID_list
 list_dir=$3
 data_dir=$2  ## Saves as {data_dir_prefix}/propID/obsID
 dl_log="$list_dir/download.log"

@@ -31,7 +31,7 @@ def download():
 
     # Check whether obsid file exists
     if not os.path.exists(paths.obsid_list):
-        print('No obsid list for %s in the obsids_list folder' %(paths.selection))
+        print('No obsid list for %s in obsids_list folder' %(paths.selection))
         return
 
     # Execute an adapted version of Abbie's code

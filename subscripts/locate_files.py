@@ -9,7 +9,6 @@ def locate_files():
 
     import os
     import glob
-    from subprocess import Popen, PIPE
     import paths
     import logs
     import execute_shell_commands as shell
@@ -24,15 +23,20 @@ def locate_files():
 
         os.chdir(e)
 
-        # The shell script needs an obsid file per folder
-        obsids = [o.split('/')[-1] for o in glob.glob('./*-*-*-*')]
-        with open('../obsids.list','w') as f:
+        # Ensure only obsids in the list are used
+        with open(paths.obsid_list,'r') as f:
+            full_obsids = [l.strip() for l in f.readlines()]
+        found_obsids = [o.split('/')[-1] for o in glob.glob('./*-*-*-*')]
+        obsids = [o for o in full_obsids if o in found_obsids]
+
+        # The shell script needs an obsid file per <P>-folder
+        with open('obsids.list','w') as f:
             f.write('\n'.join(obsids))
 
         # Execute Phil's code to circumvent having to use xdf
         command = ['csh',
                     paths.subscripts + 'xtescan2',
-                    '../obsids.list',
+                    'obsids.list',
                     paths.selection]
 
         shell.execute(command)

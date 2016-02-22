@@ -3,7 +3,9 @@
 
 from subscripts.download_data import *
 from subscripts.locate_files import *
+from subscripts.determine_info import *
 
 # Run setup_xray first
 #download()
-locate_files()
+#locate_files()
+determine_info()
