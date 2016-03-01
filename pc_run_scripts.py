@@ -12,7 +12,7 @@ from pc_ss.I_create_power_spectra import *
 from pc_ss.J_create_power_colours import *
 from pc_ss.print_dictionary import *
 
-PATH = '/scratch/david/master_project/garching2/'
+PATH = '/scratch/david/master_project/garching_special/'
 OBJECT_NAME = 'various'
 VERBOSE = True
 

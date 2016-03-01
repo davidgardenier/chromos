@@ -14,9 +14,45 @@ def create_db():
     db.to_csv(paths.database)
 
 
-def add_info():
-    db.loc[:,'f'] = p.Series(np.random.randn(sLength), index=db.index)
-    return None
+def merge(db, df, columns):
+    '''
+    Careful with merging not to lose any data. This method checks whether it is
+    merely an update of the database, or an extension.
+
+    Arguments:
+     - Main database (pandas dataframe)
+     - New database (pandas dataframe)
+     - Columns to be overwritten if already existing (list)
+
+    Output:
+     - Updated main database
+    '''
+    # Remove unnamed columns from merges
+    for col in db.columns:
+       if 'Unnamed' in col:
+           del db[col]
+
+    # Allow previously calculated columns to be overwritten
+    for c in columns:
+        if c in db:
+            del db[c]
+
+    db = db.drop_duplicates()
+    # Ensuring any duplicates for instance in Phil's xtescan2 are removed
+    df = df.drop_duplicates()
+
+    ns = [n for n in df if n in db]
+    db = pd.merge(db,df, on=ns, how='left')
+
+    return db
+
+def save(db):
+    # Remove unnamed columns from merges
+    for col in db.columns:
+       if 'Unnamed' in col:
+           del db[col]
+    db.drop_duplicates()
+    db.to_csv(paths.database)
 
 
 if not os.path.exists(paths.database):

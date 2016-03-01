@@ -31,6 +31,7 @@ def determine_info():
 
     # Find all files created by Phil's xtescan2 script
     all_files = []
+
     for f in db['P'].unique():
         p = os.path.join(paths.data, f, paths.selection + '*.list*')
         all_files.extend(glob.glob(p))
@@ -116,26 +117,35 @@ def determine_info():
 
     # Add information to database
     new_data = pd.DataFrame(d)
-    db = pd.merge(db, new_data, how='left')
+    db = database.merge(db, new_data, ['paths_data', 'times', 'resolutions', 'modes'])
 
     d = defaultdict(list)
 
     # List all data files per obsid, per mode, per res
     for obsid in db.obsids.unique():
-        cond1 = (db.obsids == obsid)
-        for mode in db[cond1].modes.unique():
-            cond2 = cond1 & (db.modes==mode)
-            for res in db[cond2].resolutions.unique():
-                cond3 = cond2 & (db.resolutions==res)
+        print obsid
+        condo = (db.obsids == obsid)
+        for mode in db[condo].modes.unique():
+            condm = condo & (db.modes==mode)
+            for res in db[condm].resolutions.unique():
+                condr = condm & (db.resolutions==res)
+
+                sf = mode
+
+                # Ensure goodxenon files are listed together
+                if mode[:2] == 'gx':
+                    condr = condo & ((db.modes=='gx1') | (db.modes=='gx2')) & (db.resolutions==res)
+                    sf = 'gx'
 
                 # Create subdatabase of values
-                sdb = db[cond3]
+                sdb = db[condr]
 
                 # Write paths to file per obsid per mode per resolution
-                filename = 'paths_' + mode + '_' + res
-                path_to_output = obsid + filename
+                filename = 'paths_' + sf + '_' + res
+                path_to_output = sdb.paths_obsid.values[0] + filename
                 with open(path_to_output, 'w') as text:
-                    text.write('\n'.join(sdb.paths_data))
+                    text.write('\n'.join(sdb.paths_data) + '\n')
+
                 d['obsids'].append(obsid)
                 d['modes'].append(mode)
                 d['resolutions'].append(res)
@@ -143,15 +153,11 @@ def determine_info():
 
     #Add to database
     new_data = pd.DataFrame(d)
-    db = pd.merge(db, new_data, how='left')
+    db = database.merge(db, new_data, ['paths_po_pm_pr'])
 
     # Print info of database
     #pd.options.display.max_colwidth = 20
     #print db.head()
+    #print db.modes.value_counts()
 
-    # Remove unnamed columns from merges
-    for col in db.columns:
-       if 'Unnamed' in col:
-           del db[col]
-
-    db.to_csv(paths.database)
+    database.save(db)
