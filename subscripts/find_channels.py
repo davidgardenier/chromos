@@ -99,7 +99,7 @@ def calculated_energy_range(date,min_energy,max_energy):
 
 def get_channel_range(mode, cer, path_event):
     '''
-    Look inside each event mode file to get the channel range it contains
+    Look inside each file to get the channel range it contains
     '''
     # Get the channels you're looking for
     abs_channels = cer.split('-')
@@ -116,41 +116,40 @@ def get_channel_range(mode, cer, path_event):
         rel_channels = tddes2.split('& C')[1][1:].split(']')[0].replace('~','-')
         if ',' not in rel_channels:
             return float('NaN')
-    # Indexes between which the abs channels are.
-    indexes = []
 
-    # For each absolute channel
-    for i, c in enumerate(abs_channels):
-        # Find the index of the closest value
-        while True:
-            try:
-                # If in the list, that's fine
-                index = rel_channels.index(c)
-                break
-            except:
-                # Else keep adding to the value
-                if c < 300:
-                    c = str(int(c) + 1)
-                else:
-                    return float('NaN')
+    # Get a list of numbers to actually search through
+    chs = []
+    for cr in rel_channels.split(','):
+        if '-' in cr:
+            cr = [e for e in range(int(cr.split('-')[0]), int(cr.split('-')[1])+1)]
+        else:
+            cr = [int(cr)]
+        chs.append(cr)
 
-        # Make sure you cut in the right places,
-        # for the first index, just after a comma
-        if i == 0:
-            while rel_channels[index - 1] != ',':
-                index -= 1
-        # and for the last index just before a comma
-        if i == 1:
-            end = len(rel_channels)
-            while rel_channels[index] != ',':
-                index += 1
-                if index == end:
-                    break
-        indexes.append(index)
+    low_ch = int(abs_channels[0])
+    high_ch = int(abs_channels[-1])
 
-    channel_ranges = rel_channels[indexes[0]:indexes[1]]
+    # Find whether the absolute channels are in the relative channel range
+    low_ind = [(i, c.index(low_ch)) for i, c in enumerate(chs) if low_ch in c]
+    high_ind = [(i, c.index(high_ch)) for i, c in enumerate(chs) if high_ch in c]
 
-    return channel_ranges
+    # If not, return Nan
+    if not low_ind or not high_ind:
+        return float('NaN')
+    # Else return a string in the original type of format (with dashes and
+    # commas refering to different channel ranges, or different channels)
+    else:
+        ch_ranges = chs[low_ind[0][0]:high_ind[0][0]+1]
+        ch_str = []
+        for c in ch_ranges:
+            if len(c) == 1:
+                c = str(c[0])
+            else:
+                c = '-'.join([str(c[0]),str(c[-1])])
+            ch_str.append(c)
+        channels = ','.join(ch_str)
+
+    return channels
 
 
 def find_channels():
@@ -185,9 +184,11 @@ def find_channels():
 
         for mode, path, time in zip(group.modes,group.paths_data,group.times):
 
+            # Determine channels according to epoch
             abs_channels = calculated_energy_range(time,MIN_E,MAX_E)
             final_channels = abs_channels
 
+            # Check in which fashion the channels are binned, and return these
             if mode == 'event' or mode == 'binned':
                 bin_channels = get_channel_range(mode, abs_channels, path)
                 final_channels = bin_channels
@@ -201,3 +202,4 @@ def find_channels():
     df = pd.DataFrame(d)
     db = database.merge(db,df,['energy_channels'])
     database.save(db)
+    logs.stop_logging()

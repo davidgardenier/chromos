@@ -56,3 +56,4 @@ def spacecraft_filters():
             shell.execute(command)
 
     database.save(db)
+    logs.stop_logging()

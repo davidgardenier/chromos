@@ -37,6 +37,7 @@ def determine_info():
         all_files.extend(glob.glob(p))
 
     # Remove all 500us event files
+    # See above Table 1 on heasarc.gsfc.nasa.gov/docs/xte/recipes/bitmasks.html
     all_files = [a for a in all_files if '500us' not in a]
 
     d = defaultdict(list)
@@ -101,7 +102,8 @@ def determine_info():
                     d['resolutions'].append(resolution)
                     d['modes'].append('gx2')
 
-        if 'B_' in mode:
+        if mode.startswith('B_'):
+            print mode
             with open(a) as e:
                 for line in e:
                     obsid = line.split('/')[0]
@@ -161,3 +163,4 @@ def determine_info():
     #print db.modes.value_counts()
 
     database.save(db)
+    logs.stop_logging()

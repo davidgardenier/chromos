@@ -46,6 +46,7 @@ def merge(db, df, columns):
 
     return db
 
+
 def save(db):
     # Remove unnamed columns from merges
     for col in db.columns:

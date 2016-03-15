@@ -41,3 +41,5 @@ def locate_files():
 
         shell.execute(command)
         os.chdir(paths.data)
+
+    logs.stop_logging()

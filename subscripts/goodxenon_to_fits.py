@@ -73,3 +73,4 @@ def goodxenon_to_fits():
     db = database.merge(db,df,['paths_gx'])
 
     database.save(db)
+    logs.stop_logging()

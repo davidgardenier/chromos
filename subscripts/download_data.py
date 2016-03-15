@@ -42,3 +42,5 @@ def download():
                 paths.data_info[:-1]]
 
     shell.execute(command)
+
+    logs.stop_logging()
