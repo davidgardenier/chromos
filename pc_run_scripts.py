@@ -12,24 +12,32 @@ from pc_ss.I_create_power_spectra import *
 from pc_ss.J_create_power_colours import *
 from pc_ss.print_dictionary import *
 
-PATH = '/scratch/david/master_project/garching_special/'
-OBJECT_NAME = 'various'
+PATH = '/scratch/david/master_project/aquila_X1/'
+OBJECT_NAME = 'aquila'
 VERBOSE = True
 
 os.chdir(PATH)
 
-#find_data(OBJECT_NAME, verbose=VERBOSE)
+find_data(OBJECT_NAME, verbose=VERBOSE)
 # Note running split_files will reset the dictionary with information
-#split_files(OBJECT_NAME, verbose=VERBOSE)
-#create_time_filters(verbose=VERBOSE)
-#xenon2fits(print_output=VERBOSE)
-#cut_pcu_change(verbose=VERBOSE)
-#create_background(print_output=VERBOSE)
-#find_channels(verbose=VERBOSE)
-#extract_light_curves(verbose=VERBOSE)
-#rebin_background(print_output=VERBOSE)
-#cut_xray_flares(print_output=VERBOSE)
-#create_power_spectra(print_output=VERBOSE)
+split_files(OBJECT_NAME, verbose=VERBOSE)
+create_time_filters(verbose=VERBOSE)
+xenon2fits(print_output=VERBOSE)
+cut_pcu_change(verbose=VERBOSE)
+create_background(print_output=VERBOSE)
+find_channels(verbose=VERBOSE)
+extract_light_curves(verbose=VERBOSE)
+rebin_background(print_output=VERBOSE)
+cut_xray_flares(print_output=VERBOSE)
+create_power_spectra(print_output=VERBOSE)
 create_power_colours(print_output=VERBOSE)
 # ---------------------------------------------
-#print_dictionary()
+print_dictionary()
+
+# Import data
+#with open('./info_on_files.json', 'r') as info:
+#    d = json.load(info)
+    
+#for obsid in d:
+#    for mode in d[obsid]:
+#        print d[obsid][mode]['path_list']

@@ -22,7 +22,7 @@ def find_data(obj, verbose=False):
         os.chdir(e)
 
         # Find obsid folders
-        obsids = [o.split('/')[-1] for o in glob.glob('./*-*-*-*')]
+        obsids = [o.split('/')[-1] for o in glob.glob('./*-*-*-??')]
         with open('./obsids.list','w') as f:
             f.write('\n'.join(obsids))
 

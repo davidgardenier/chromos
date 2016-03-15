@@ -15,7 +15,7 @@ def split_files(objectname, verbose=False):
     print purpose + '\n' + '='*len(purpose)
 
     # Find all obsids
-    init_obsids = sorted([r.split('/')[-1] for r in glob.glob('./*/*-??-??-*')])
+    init_obsids = sorted([r.split('/')[-1] for r in glob.glob('./*/*-??-??-??')])
     # Getting rid of obsids with letters at the end
     obsids = [o for o in init_obsids if o[-1].isdigit()]
     # Form into dictionary of form

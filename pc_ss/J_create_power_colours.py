@@ -221,6 +221,8 @@ def create_power_colours(print_output=False):
     plt.yscale('log', nonposy='clip')
     plt.xlim([0.001, 1000])
     plt.ylim([0.001, 1000])
+    plt.xlabel('PC1 ([0.25-2.0]/[0.0039-0.031])')
+    plt.ylabel('PC2 ([0.031-0.25]/[2.0-16.0])')
     #plt.legend()
     plt.show()
     #plt.savefig('./pwr_colours.png')

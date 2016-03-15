@@ -148,6 +148,7 @@ def extract_light_curves(verbose=False):
     for obsid in d:
         for mode in d[obsid]:
             m = ['event', 'binned', 'goodxenon', 'std2']
+            #m = ['binned']
             # These files both use seextrct
             if mode in m:
 
