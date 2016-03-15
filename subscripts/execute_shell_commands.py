@@ -1,4 +1,5 @@
 # Short function to simplify capturing output of executing subprocesses
+# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
 
 def execute(command):
     import subprocess
@@ -10,13 +11,15 @@ def execute(command):
         nextline = process.stdout.readline()
         if nextline == '' and process.poll() != None:
             break
-        print nextline.strip('\n')
-        #sys.stdout.flush()
+        if len(nextline) != 0:
+            print nextline.strip()
 
-    output = process.communicate()[0]
+    output = process.communicate()
+    normal_output = output[0]
+    error = output[1]
     exitCode = process.returncode
 
     if (exitCode == 0):
-        return output
+        return normal_output
     else:
-        raise ProcessException(command, exitCode, output)
+        print 'ERROR:', ' '.join(command), error
