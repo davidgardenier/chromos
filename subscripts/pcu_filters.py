@@ -27,7 +27,8 @@ def pcu_filters():
     db = pd.read_csv(paths.database)
 
     d = defaultdict(list)
-    for obsid, path, filt in zip(db.obsids.unique(), db.paths_obsid, db.filters):
+    for obsid, group in db.groupby(['obsids']):
+        filt = group.filters.values[0]
 
         # Import data
         hdulist = fits.open(filt)
@@ -35,9 +36,10 @@ def pcu_filters():
         timezero = hdulist[0].header['TIMEZERO']
         num_pcu_on = hdulist[1].data.field('NUM_PCU_ON')
         time = hdulist[1].data.field('Time')
+
         # Remember time has an offset due to spacecraft time
-        time -= time[0]
-        time += tstart + timezero
+        #time -= time[0]
+        time += timezero
         # Counter to determine when the number of pcus changes
         pcu = num_pcu_on[0]
         # The acceptable time range
@@ -74,27 +76,18 @@ def pcu_filters():
 
         print obsid, '-->', t_range
 
-        # Bit convoluted method to get the times, but couldn't be bothered
-        # changing my previous code which took ages to debug
-        '''
-        t = []
-        for v in t_range.replace('-',' ').replace(',',' ').split():
-            try:
-                t.append(float(v))
-            except ValueError:
-                pass
-
-        pcu_h = t[0:][::2],
-        pcu_l = t[1:][::2]
-
-        filters.addtimes(obsid, 'pcu', pcu_h, pcu_l)
-        '''
+        filename = group.paths_obsid.values[0] + 'times_pcu.dat'
+        with open(filename, 'w') as f:
+            text = t_range.replace(',','\n').replace('-',' ')
+            f.write(text)
 
         d['obsids'].append(obsid)
         d['times_obsid'].append(str(tstart+timezero) + '-' + str(time[-1]))
         d['times_pcu'].append(t_range)
+        d['times_pcu_file'].append(filename)
 
     # Add starting times of each obsid to database
     df = pd.DataFrame(d)
-    db = database.merge(db,df,['rxte_time', 'times_pcu'])
+    db = database.merge(db,df,['times_obsid', 'times_pcu', 'times_pcu_file'])
     database.save(db)
+    logs.stop_logging()
