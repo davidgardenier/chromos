@@ -95,12 +95,12 @@ def create_backgrounds():
                 outfile = r.paths_obsid + 'bkg_' + mode + '_' + str(n)
                 filt = r.filters
 
-                #pcabackest(mode,infile,outfile,filt)
+                pcabackest(mode,infile,outfile,filt)
 
                 # Make special backgrounds for when you extract spectra per layer
                 if mode == 'std2':
                     outfile = r.paths_obsid + 'bkg_' + mode + '_' + str(n) + '_per_layer'
-                    #pcabackest(mode,infile,outfile,filt,allpcus=False)
+                    pcabackest(mode,infile,outfile,filt,allpcus=False)
 
             # Find all the files pcabackest has created
             bkgs = glob.glob(path_obsid + 'bkg_' + mode + '_?')
@@ -133,3 +133,4 @@ def create_backgrounds():
     df = pd.DataFrame(d)
     db = database.merge(db,df,['paths_bkg'])
     database.save(db)
+    logs.stop_logging()
