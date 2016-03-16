@@ -57,18 +57,7 @@ docs/_build/
 target/
 
 # Manual files to ignore
-P60054/
-P40047/
-abstracts/
-appidlist
-bitfile_M
-deprecated_scripts/
-lucy/
-phil/
-plots/
-pwr_colours.dat
 logs/
 *.*~
 ss2/
 *.pdf
-*.png
