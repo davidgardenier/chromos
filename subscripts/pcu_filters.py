@@ -83,11 +83,10 @@ def pcu_filters():
 
         d['obsids'].append(obsid)
         d['times_obsid'].append(str(tstart+timezero) + '-' + str(time[-1]))
-        d['times_pcu'].append(t_range)
-        d['times_pcu_file'].append(filename)
+        d['times_pcu'].append(filename)
 
     # Add starting times of each obsid to database
     df = pd.DataFrame(d)
-    db = database.merge(db,df,['times_obsid', 'times_pcu', 'times_pcu_file'])
+    db = database.merge(db,df,['times_obsid', 'times_pcu'])
     database.save(db)
     logs.stop_logging()

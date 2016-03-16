@@ -23,37 +23,44 @@ def spacecraft_filters():
     os.chdir(paths.data)
     db = pd.read_csv(paths.database)
 
-    # Determine filter files
-    db['filters'] = db.paths_obsid + 'stdprod/x' + db.obsids.str.replace('-','') + '.xfl.gz'
-    db['gti'] = db.paths_obsid + 'time_filter.gti'
-
     # Run maketime for each obsid
-    for f, gti, obsid in zip(db.filters.unique(), db.gti, db.obsids):
+    d = defaultdict(list)
+    for obsid, group in db.groupby(['obsids']):
 
-            print obsid
+        print obsid
 
-            # Remove previous version (maketime doesn't like them)
-            try:
-                os.system('rm ' + gti)
-            except OSError:
-                continue
+        f = group.paths_obsid.values[0] + 'stdprod/x' + obsid.replace('-','') + '.xfl.gz'
+        gti = group.paths_obsid.values[0] + 'time_filter.gti'
 
-            # Selection expression for maketime
-            sel = ('elv.gt.10.and.' +
-                  'offset.lt.0.02.and.' +
-                  'num_pcu_on.ge.1.and.' +
-                  '(time_since_saa.gt.10.or.' + #South Atlantic Anomality
-                  'time_since_saa.lt.0.0).and.' +
-                  'electron2.lt.0.1')
+        # Remove previous version (maketime doesn't like them)
+        try:
+            os.remove(gti)
+        except OSError:
+            pass
 
-            command = ['maketime',
-                       f, # Name of FITS file
-                       gti, # Name of output FITS file
-                       sel, # Selection expression
-                       'compact=no', # Flag yes, if HK format is compact
-                       'time="TIME"'] # Column containing HK parameter times
+        # Selection expression for maketime
+        sel = ('elv.gt.10.and.' +
+              'offset.lt.0.02.and.' +
+              'num_pcu_on.ge.1.and.' +
+              '(time_since_saa.gt.10.or.' + #South Atlantic Anomality
+              'time_since_saa.lt.0.0).and.' +
+              'electron2.lt.0.1')
 
-            shell.execute(command)
+        command = ['maketime',
+                   f, # Name of FITS file
+                   gti, # Name of output FITS file
+                   sel, # Selection expression
+                   'compact=no', # Flag yes, if HK format is compact
+                   'time="TIME"'] # Column containing HK parameter times
 
+        shell.execute(command)
+
+        d['obsids'].append(obsid)
+        d['filters'].append(f)
+        d['gti'].append(gti)
+
+    # Update database and save
+    df = pd.DataFrame(d)
+    db = database.merge(db,df,['filters','gti'])
     database.save(db)
     logs.stop_logging()
