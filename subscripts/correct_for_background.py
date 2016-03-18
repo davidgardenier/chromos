@@ -1,3 +1,6 @@
+# Functions to correct each lightcurve of non-std2 type for their background
+# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+
 def read_light_curve(path):
     '''
     Function to read the data from the lightcurve fits files.
@@ -30,10 +33,10 @@ def read_light_curve(path):
 
 def rebin(path_obsid, path_lc, path_bkg, mode, resolution):
     '''
-    Function to rebin lbackgrounds and correct lightcurves for them
+    Function to rebin backgrounds and correct lightcurves for them
     '''
     import numpy as np
-    
+
     try:
         rate, t, dt, n_bins, error = read_light_curve(path_lc)
         bkg_rate, bkg_t, bkg_dt, bkg_n_bins, bkg_error = read_light_curve(path_bkg)
@@ -42,7 +45,7 @@ def rebin(path_obsid, path_lc, path_bkg, mode, resolution):
         return float('NaN'), float('Nan')
 
     # Output
-    path_rebinned_bkg = path_obsid + 'rebinned_bkg_lc_' + mode #TODO
+    path_rebinned_bkg = path_obsid + 'rebinned_bkg_lc_' + mode
     path_bkg_corrected_lc = path_obsid + 'bkg_corrected_lc_' + mode
 
     if mode != 'std2':
@@ -141,25 +144,25 @@ def correct_for_background():
 
     d = defaultdict(list)
     for path_lc, group in db.groupby('lightcurves'):
-        
+
         # Layer background subtraction is done in xspec, so skip these
         if path_lc.endswith('per_layer.lc'):
             continue
-        
+
         obsid = group.obsids.values[0]
         path_obsid = group.paths_obsid.values[0]
-        path_bkg = group.lightcurves_bkg.values[0]    
+        path_bkg = group.lightcurves_bkg.values[0]
         res = group.resolutions.values[0]
         mode = group.modes.values[0]
         if (mode == 'gx1' or mode == 'gx2'):
             mode = 'gx'
         print obsid, mode, res
-        
+
         # Rebin, and create a corrected version
         paths = rebin(path_obsid, path_lc, path_bkg, mode, res)
         rebinned_bkg = paths[0]
         bkg_corrected_lc = paths[1]
-        
+
         d['lightcurves'].append(path_lc)
         d['rebinned_bkg'].append(rebinned_bkg)
         d['bkg_corrected_lc'].append(bkg_corrected_lc)
@@ -167,6 +170,5 @@ def correct_for_background():
     # Update database and save
     df = pd.DataFrame(d)
     db = database.merge(db,df,['rebinned_bkg','bkg_corrected_lc'])
-    print db.info()
     database.save(db)
     logs.stop_logging()

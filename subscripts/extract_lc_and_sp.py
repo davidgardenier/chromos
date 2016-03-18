@@ -112,7 +112,6 @@ def extract_lc_and_sp():
     # extracted
 
     d = defaultdict(list)
-    print db.drop_duplicates(['paths_bkg','resolutions']).apply(pd.Series.nunique)
     for names, df in db.drop_duplicates(['paths_bkg','resolutions']).groupby(['paths_bkg', 'resolutions']):
         path_bkg = names[0]
         res = names[1]
