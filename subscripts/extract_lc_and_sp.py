@@ -1,3 +1,6 @@
+# Functions to extract lightcurves and spectra from RXTE-data
+# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+
 def seextrct(mode, path_data, gti, output, time_range, channels):
     '''
     Run seextrct over all event and goodxenon mode files. See the cookbooks and
@@ -107,17 +110,17 @@ def extract_lc_and_sp():
     # Backgrounds together with resolutions are the longest list over which one
     # loops - want to prevent having to extract a file which has already been
     # extracted
-    db = db.drop_duplicates(['paths_bkg','resolutions'])
 
     d = defaultdict(list)
-    for names, df in db.groupby(['paths_bkg', 'resolutions']):
+    print db.drop_duplicates(['paths_bkg','resolutions']).apply(pd.Series.nunique)
+    for names, df in db.drop_duplicates(['paths_bkg','resolutions']).groupby(['paths_bkg', 'resolutions']):
         path_bkg = names[0]
         res = names[1]
 
         # Set parameters
         obsid = df.obsids.values[0]
         gti = df.gti.values[0]
-        times_pcu = df.times_pcu_file.values[0]
+        times_pcu = df.times_pcu.values[0]
 
         # Adapt vaules depending on goodxenon
         mode = df.modes.values[0]
@@ -149,6 +152,7 @@ def extract_lc_and_sp():
 
         print obsid, mode, res, '--> Extracting Lightcurve'
 
+        # Extract files
         if mode == 'event' or mode =='gx':
             seextrct(mode, path_data, gti, output, times_pcu, channels)
         if mode == 'std2' or mode == 'binned':
@@ -161,37 +165,27 @@ def extract_lc_and_sp():
         lc = output + '.lc'
         lc_bkg = output_bkg + '.lc'
         if not (os.path.isfile(lc) or os.path.isfile(lc_bkg)):
-            print 'WARNING: Lightcurve not created'
+            print 'ERROR: Lightcurve not created'
             continue
         if layer:
             sp = output + '.pha'
             sp_bkg = output_bkg + '.pha'
             if not (os.path.isfile(sp) or os.path.isfile(sp_bkg)):
-                print 'WARNING: Spectrum not created'
+                print 'ERROR: Spectrum not created'
                 continue
         else:
             sp = float('NaN')
             sp_bkg = float('NaN')
 
-        # Ugly, I know
-        if mode == 'gx':
-            d['path_bkg'].append(path_bkg)
-            d['modes'].append('gx2')
-            d['lightcurve'].append(lc)
-            d['lightcurve_bkg'].append(lc_bkg)
-            d['spectrum'].append(sp)
-            d['spectrum_bkg'].append(sp_bkg)
-            mode = 'gx1'
-
-        d['path_bkg'].append(path_bkg)
-        d['modes'].append(mode)
-        d['lightcurve'].append(lc)
-        d['lightcurve_bkg'].append(lc_bkg)
-        d['spectrum'].append(sp)
-        d['spectrum_bkg'].append(sp_bkg)
+        d['paths_bkg'].append(path_bkg)
+        d['resolutions'].append(res)
+        d['lightcurves'].append(lc)
+        d['lightcurves_bkg'].append(lc_bkg)
+        d['spectra'].append(sp)
+        d['spectra_bkg'].append(sp_bkg)
 
     # Update database and save
     df = pd.DataFrame(d)
-    db = database.merge(db,df,['lightcurve','lightcurve_bkg','spectrum','spectrum_bkg'])
+    db = database.merge(db,df,['lightcurves','lightcurves_bkg','spectra','spectra_bkg'])
     database.save(db)
     logs.stop_logging()
