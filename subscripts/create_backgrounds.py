@@ -87,16 +87,22 @@ def create_backgrounds():
                 mode = 'gx'
             if mode == 'gx2':
                 continue
-                
+
             n = 0
             # To ensure you're not running more times than necessary
-            ngroup = modegroup.drop_duplicates('paths_data')
+            ngroup = group[group.modes=='std2'].drop_duplicates('paths_data')
+
+            # Keep track of files you'll create
+            bkgs = []
+            bkgs_per_layer = []
 
             for i, r in ngroup.iterrows():
                 n += 1
+                
                 # Note infile is always a std2-data file, but not always the same mode!
                 infile = r.paths_data
                 outfile = r.paths_obsid + 'bkg_' + mode + '_' + str(n)
+                bkgs.append(outfile)
                 filt = r.filters
 
                 pcabackest(mode,infile,outfile,filt)
@@ -104,10 +110,10 @@ def create_backgrounds():
                 # Make special backgrounds for when you extract spectra per layer
                 if mode == 'std2':
                     outfile = r.paths_obsid + 'bkg_' + mode + '_' + str(n) + '_per_layer'
+                    bkgs_per_layer.append(outfile)
                     pcabackest(mode,infile,outfile,filt,allpcus=False)
 
-            # Find all the files pcabackest has created
-            bkgs = glob.glob(path_obsid + 'bkg_' + mode + '_?')
+            # Save a list of all the files pcabackest has created
             outfile = path_obsid + 'bkg_' + mode + '.lst'
             with open(outfile, 'w') as text:
                 text.write('\n'.join(bkgs) + '\n')
@@ -125,10 +131,9 @@ def create_backgrounds():
 
             # Ugly way of getting the files for the layered background
             if mode == 'std2':
-                bkgs = glob.glob(path_obsid + 'bkg_' + mode + '_?_per_layer*')
                 outfile = path_obsid + 'bkg_std2_per_layer.lst'
                 with open(outfile, 'w') as text:
-                    text.write('\n'.join(bkgs) + '\n')
+                    text.write('\n'.join(bkgs_per_layer) + '\n')
                 d['obsids'].append(obsid)
                 d['modes'].append(mode)
                 d['paths_bkg'].append(outfile)
