@@ -154,6 +154,12 @@ def correct_for_background():
         path_bkg = group.lightcurves_bkg.values[0]
         res = group.resolutions.values[0]
         mode = group.modes.values[0]
+
+        # Std2 files won't have a high enough time resolution to create
+        # power colours in the high band
+        if mode == 'std2':
+            continue
+
         if (mode == 'gx1' or mode == 'gx2'):
             mode = 'gx'
         print obsid, mode, res
