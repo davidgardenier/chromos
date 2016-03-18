@@ -8,8 +8,10 @@ import paths
 import os
 from datetime import datetime
 
-def time():
+def current_time():
     return datetime.now()
+
+t = current_time()
 
 class Logger(object):
     def __init__(self, filename, output):
@@ -18,16 +20,17 @@ class Logger(object):
         if self.output == 'output':
             self.terminal = sys.stdout
             self.log = open(self.filename, 'w')
-            self.log.write(str(time()) + '\n')
+            self.log.write(str(current_time()) + '\n')
         if self.output == 'error':
             self.terminal = sys.stderr
             self.log = open(self.filename, 'a')
-            self.log.write(str(time()) + '\n')
+            self.log.write('\n')
 
     def write(self, message):
         if paths.terminal_output:
             self.terminal.write(message)
         self.log.write(message)
+
 
 def output(filename):
     if not os.path.exists(paths.logs):
@@ -40,6 +43,9 @@ def output(filename):
     sys.stdout = Logger(logfile, 'output')
     sys.stderr = Logger(logfile, 'error')
 
+
 def stop_logging():
+    end_time = current_time()
+    print 'Finished: %s, Runtime: %s' % (str(end_time), (str(end_time - t)))
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__
