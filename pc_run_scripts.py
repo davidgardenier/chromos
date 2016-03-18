@@ -33,11 +33,3 @@ create_power_spectra(print_output=VERBOSE)
 create_power_colours(print_output=VERBOSE)
 # ---------------------------------------------
 print_dictionary()
-
-# Import data
-#with open('./info_on_files.json', 'r') as info:
-#    d = json.load(info)
-    
-#for obsid in d:
-#    for mode in d[obsid]:
-#        print d[obsid][mode]['path_list']

@@ -10,6 +10,7 @@ from subscripts.pcu_filters import *
 from subscripts.create_backgrounds import *
 from subscripts.find_channels import *
 from subscripts.extract_lc_and_sp import *
+from subscripts.correct_for_background import *
 
 # Run setup_xray first
 # Do not deviate from this order in pipeline, as the subscripts all depend on
@@ -24,3 +25,4 @@ from subscripts.extract_lc_and_sp import *
 #create_backgrounds()
 #find_channels()
 extract_lc_and_sp()
+correct_for_background()
