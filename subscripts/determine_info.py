@@ -1,3 +1,6 @@
+# Function to create a database of the files present and their properties
+# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+
 def determine_info():
     '''
     Function to split out the files created by Phil's script in find_data_files
@@ -103,7 +106,6 @@ def determine_info():
                     d['modes'].append('gx2')
 
         if mode.startswith('B_'):
-            print mode
             with open(a) as e:
                 for line in e:
                     obsid = line.split('/')[0]
@@ -141,12 +143,17 @@ def determine_info():
 
                 # Create subdatabase of values
                 sdb = db[condr]
+                sdb.drop_duplicates('paths_data')
 
                 # Write paths to file per obsid per mode per resolution
                 filename = 'paths_' + sf + '_' + res
                 path_to_output = sdb.paths_obsid.values[0] + filename
+
+                # Remove previous versions
+                data = list(set(sdb.paths_data))
+
                 with open(path_to_output, 'w') as text:
-                    text.write('\n'.join(sdb.paths_data) + '\n')
+                    text.write('\n'.join(data) + '\n')
 
                 d['obsids'].append(obsid)
                 d['modes'].append(mode)
@@ -158,9 +165,8 @@ def determine_info():
     db = database.merge(db, new_data, ['paths_po_pm_pr'])
 
     # Print info of database
-    #pd.options.display.max_colwidth = 20
-    #print db.head()
-    #print db.modes.value_counts()
+    #pd.options.display.max_colwidth = 100
+    #print db[db.obsids=='40048-01-09-00']
 
     database.save(db)
     logs.stop_logging()

@@ -1,7 +1,12 @@
+# Creates time filters on basis of properties of the spacecraft, whether
+# the electron count wasn't too high, whether it was passing through
+# the south Atlantic Anomality etc. Uses the ftool maketime
+# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+
 def spacecraft_filters():
     '''
     Function to run the ftool maketime over all filter files (.xfl.gz files).
-    Creates time_filter.gz files and updates database with path to gti files
+    Creates time_filter.gti files and updates database with path to gti files
     '''
 
     purpose = 'Create time filters'

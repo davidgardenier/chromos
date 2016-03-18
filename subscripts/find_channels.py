@@ -1,3 +1,8 @@
+# Function to determine the energy channel range needed for input during
+# extraction. Requires the file energy_conversion_table.txt to determine the
+# initial channel selection.
+# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+
 from datetime import datetime
 from astropy.io import fits
 

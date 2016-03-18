@@ -1,3 +1,6 @@
+# Function to find where which data is stored, using Phil's xtescan2
+# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+
 def locate_files():
     '''
     Function to locate the zipped files across multiple data folders,

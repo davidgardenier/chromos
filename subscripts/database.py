@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import paths
 
+
 def create_db():
 
     if os.path.exists(paths.database):
@@ -43,7 +44,6 @@ def merge(db, df, columns):
 
     ns = [n for n in df if n in db]
     db = pd.merge(db,df, on=ns, how='left')
-
     return db
 
 
@@ -58,3 +58,7 @@ def save(db):
 
 if not os.path.exists(paths.database):
     create_db()
+
+# Handy print statements:
+#print 'DBNUNIQUE\n', db.apply(pd.Series.nunique)
+#pd.options.display.max_colwidth = 100

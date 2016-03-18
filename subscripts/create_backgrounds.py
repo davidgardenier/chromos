@@ -1,3 +1,8 @@
+# Functions to create a background files for each standard2 data file, and
+# create a list of paths directing to these piles. Uses the ftool pcabackest
+# to create the backgrounds.
+# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+
 def pcabackest(mode,infile,outfile,filt,allpcus=True):
     '''
     Determine input commands for pcabackest
@@ -72,21 +77,20 @@ def create_backgrounds():
     db = pd.read_csv(paths.database)
 
     d = defaultdict(list)
-    for obsid, group in db[db.modes=='std2'].groupby(['obsids']):
-        modes = db[db.obsids==obsid].modes.unique()
+    for obsid, group in db.groupby(['obsids']):
         path_obsid = group.paths_obsid.values[0]
 
-        for mode in modes:
+        for mode, modegroup in group.groupby('modes'):
             print obsid, mode
             # Don't overdo pcabackest - will be same for gx1 or gx2
             if mode == 'gx1':
                 mode = 'gx'
             if mode == 'gx2':
                 continue
-
+                
             n = 0
             # To ensure you're not running more times than necessary
-            ngroup = group.drop_duplicates('paths_data')
+            ngroup = modegroup.drop_duplicates('paths_data')
 
             for i, r in ngroup.iterrows():
                 n += 1

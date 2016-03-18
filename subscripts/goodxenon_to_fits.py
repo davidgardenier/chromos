@@ -1,8 +1,11 @@
+# Function to convert goodxenon files to fits files
+# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+
 def goodxenon_to_fits():
     '''
     Function to convert GoodXenon files to fitsfiles using make_se. Subsequently
     groups the paths to the produced files into a file
-    path_goodxenonfits_<resolution> and updates db.
+    path_gxfits_<resolution> and updates db.
     '''
 
     purpose = 'Converting GoodXenon files to fits files'
