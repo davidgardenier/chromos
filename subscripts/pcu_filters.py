@@ -84,7 +84,7 @@ def pcu_filters():
         filename = group.paths_obsid.values[0] + 'times_pcu.dat'
         with open(filename, 'w') as f:
             text = t_range.replace(',','\n').replace('-',' ')
-            f.write(text)
+            f.write(text + '\n')
 
         d['obsids'].append(obsid)
         d['times_obsid'].append(str(tstart+timezero) + '-' + str(time[-1]))

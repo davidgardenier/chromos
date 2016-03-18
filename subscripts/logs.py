@@ -34,7 +34,7 @@ class Logger(object):
 
 def output(filename):
     if not os.path.exists(paths.logs):
-        os.makedirs(paths.log)
+        os.makedirs(paths.logs)
 
     logfile = paths.logs + filename + '.log'
     if not os.path.exists(logfile):

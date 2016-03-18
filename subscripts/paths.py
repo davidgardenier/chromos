@@ -1,9 +1,9 @@
 import os
 
-selection = 'aquila_X1'
+selection = 'test_aquila'
 subscripts = os.getcwd() + '/subscripts/'
 
-data = '/scratch/david/master_project/aquila_X1/'
+data = '/scratch/david/master_project/test_aquila/'
 data_info = data + 'info/'
 database = data_info + 'database.csv'
 
