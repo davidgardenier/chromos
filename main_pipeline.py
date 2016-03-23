@@ -11,7 +11,11 @@ from subscripts.create_backgrounds import *
 from subscripts.find_channels import *
 from subscripts.extract_lc_and_sp import *
 from subscripts.correct_for_background import *
-
+from subscripts.find_xray_flares import *
+from subscripts.create_power_spectra import *
+from subscripts.create_power_colours import *
+from subscripts.create_responses import *
+from subscripts.calculate_hi import *
 # Run setup_xray first
 # Do not deviate from this order in pipeline, as the subscripts all depend on
 # each other to have run in a particular order.
@@ -24,5 +28,10 @@ from subscripts.correct_for_background import *
 #pcu_filters()
 #create_backgrounds()
 #find_channels()
-extract_lc_and_sp()
-correct_for_background()
+#extract_lc_and_sp()
+#correct_for_background()
+#cut_xray_flares()
+#create_power_spectra()
+#create_power_colours()
+#create_response()
+calculate_hi()
