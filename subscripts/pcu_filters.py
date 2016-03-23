@@ -36,7 +36,11 @@ def pcu_filters():
         filt = group.filters.values[0]
 
         # Import data
-        hdulist = fits.open(filt)
+        try:
+            hdulist = fits.open(filt)
+        except IOError:
+            print 'ERROR: File not found'
+            continue
         tstart = hdulist[0].header['TSTART']
         timezero = hdulist[0].header['TIMEZERO']
         num_pcu_on = hdulist[1].data.field('NUM_PCU_ON')
