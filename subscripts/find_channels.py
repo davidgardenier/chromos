@@ -114,6 +114,9 @@ def get_channel_range(mode, cer, path_event):
     # Get the list in which you want search for channels
     if mode == 'event':
         tevtb2 = fits.open(path)[1].header['TEVTB2']
+        if 'C' not in tevtb2:
+            print 'ERROR: No channel information in this file'
+            return float('NaN')
         # Cut out the channels
         rel_channels = tevtb2.split(',C')[1][1:].split(']')[0].replace('~','-')
     elif mode == 'binned':
@@ -125,10 +128,22 @@ def get_channel_range(mode, cer, path_event):
     # Get a list of numbers to actually search through
     chs = []
     for cr in rel_channels.split(','):
-        if '-' in cr:
+
+        # Spent ages looking, but couldn't find what 0~4,(5:35) means, or (0-4),
+        # (5:35). Am assuming ':' means all channel in that range (on basis of
+        # an extracted spectrum), and not sure what () means
+        if '(' in cr:
+            cr = cr.split(')')[0].split('(')[1]
+            if '-' in cr:
+                crs = cr.split('-')
+            if ':' in cr:
+                crs = cr.split(':')
+            cr = [e for e in range(int(crs[0]), int(crs[1])+1)]
+        elif '-' in cr:
             cr = [e for e in range(int(cr.split('-')[0]), int(cr.split('-')[1])+1)]
         else:
             cr = [int(cr)]
+
         chs.append(cr)
 
     low_ch = int(abs_channels[0])
@@ -183,10 +198,17 @@ def find_channels():
     os.chdir(paths.data)
     db = pd.read_csv(paths.database)
 
+    # Remove after use
+    unfound_obsids = db[db.modes.isnull()].obsids.values
+    if len(unfound_obsids) > 0:
+        print 'ERROR: NO DATA FOR THESE OBSIDS', unfound_obsids
+        db = db[db.modes.notnull()]
+
     d = defaultdict(list)
     for obsid, group in db.groupby(['obsids']):
         group = group.drop_duplicates('paths_data')
 
+        print obsid
         for mode, path, time in zip(group.modes,group.paths_data,group.times):
 
             # Determine channels according to epoch
@@ -198,7 +220,7 @@ def find_channels():
                 bin_channels = get_channel_range(mode, abs_channels, path)
                 final_channels = bin_channels
 
-            print obsid, mode, '-->', final_channels
+            print '   ', mode, '-->', final_channels
 
             d['paths_data'].append(path)
             d['energy_channels'].append(final_channels)
