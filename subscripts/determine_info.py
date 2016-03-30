@@ -163,7 +163,10 @@ def determine_info():
     #Add to database
     new_data = pd.DataFrame(d)
     db = database.merge(db, new_data, ['paths_po_pm_pr'])
-
+    unfound_obsids = db[db.modes.isnull()].obsids.values
+    if len(unfound_obsids) > 0:
+        print 'ERROR: NO DATA FOR THESE OBSIDS', unfound_obsids
+        db = db[db.modes.notnull()]
     # Print info of database
     #pd.options.display.max_colwidth = 100
     #print db[db.obsids=='40048-01-09-00']
