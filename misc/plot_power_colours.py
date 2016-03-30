@@ -10,7 +10,7 @@ def path(o):
     return '/scratch/david/master_project/' + o + '/info/database.csv'
 
 
-objects = ['aquila_X1', '4u_1705_m44']
+objects = ['4u_1705_m44', 'xte_J1808_369', '4U_1728_34', 'J1701_462', 'aquila_X1', 'HJ1900d1_2455']
 
 plt.figure()
 
@@ -18,15 +18,15 @@ for o in objects:
 
     p = path(o)
     db = pd.read_csv(p)
-    db = db[(db.modes!='std2')]
     print o, db.shape
     print '=======================\n', db.apply(pd.Series.nunique)
-    print db.rsp
+
+    db = db[(db.pc1.notnull() & db.lt3sigma==True)]
+    db = db.drop_duplicates(['obsids','pc1'])
     x = db.pc1.values
     y = db.pc2.values
     xerror = db.pc1_err.values
     yerror = db.pc2_err.values
-
 
     plt.errorbar(x, y, xerr=xerror, yerr=yerror, ls='none', label=o)
 

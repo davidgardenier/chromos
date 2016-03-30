@@ -61,3 +61,5 @@ logs/
 *.*~
 ss2/
 *.pdf
+venv/
+fort.50

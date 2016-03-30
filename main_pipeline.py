@@ -16,6 +16,8 @@ from subscripts.create_power_spectra import *
 from subscripts.create_power_colours import *
 from subscripts.create_responses import *
 from subscripts.calculate_hi import *
+from subscripts.find_errors import *
+
 # Run setup_xray first
 # Do not deviate from this order in pipeline, as the subscripts all depend on
 # each other to have run in a particular order.
@@ -27,11 +29,12 @@ from subscripts.calculate_hi import *
 #goodxenon_to_fits()
 #pcu_filters()
 #create_backgrounds()
-#find_channels()
-#extract_lc_and_sp()
-#correct_for_background()
-#cut_xray_flares()
-#create_power_spectra()
-#create_power_colours()
-#create_response()
+find_channels()
+extract_lc_and_sp()
+correct_for_background()
+cut_xray_flares()
+create_power_spectra()
+create_power_colours()
+create_response()
 calculate_hi()
+#find_errors()
