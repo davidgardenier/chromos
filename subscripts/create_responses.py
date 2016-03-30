@@ -13,6 +13,7 @@ def create_response():
     import os
     import pandas as pd
     import glob
+    from astropy.io import fits
     from collections import defaultdict
     from math import isnan
     import paths
@@ -67,6 +68,14 @@ def create_response():
         # Create responses
         shell.execute(pcarsp)
         shell.execute(bkgpcarsp)
+
+        # pcarsp doesn't allow for long file name to be written in the header
+        # of the spectrum, so have to manually do it
+        # Must have astropy version >1.0. Trust me.
+        hdulist = fits.open(sp)
+        hdu = hdulist[1]
+        hdu.header['RESPFILE'] = out
+        hdu.writeto(sp, clobber=True)
 
         d['spectra'].append(sp)
         d['rsp'].append(out)

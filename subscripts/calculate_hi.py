@@ -75,9 +75,10 @@ def calculate_hi(low_e=2.0,
         # specified energy does not fall neatly at the each of a spectral
         # channel)."
         #xspec.Plot.device = '/xs'
+
         s1 = xspec.Spectrum(sp)
         s1.background = bkg_sp
-        s1.response = rsp
+        s1.response = os.path.join(paths.data, rsp)
         # Not really sure why you need to do ignore, and then notice
         s1.ignore('**-' + str(low_e+1.) + ' ' + str(high_e-1) + '-**')
         s1.notice(str(low_e) + '-' + str(high_e))
@@ -149,10 +150,13 @@ def calculate_hi(low_e=2.0,
 
         # Clear xspec spectrum
         xspec.AllData.clear()
+        os.system('rm ' + rsp + '&')
 
     # Update database and save
     df = pd.DataFrame(d)
     db = database.merge(db,df,['flux','flux_err','hardness','hardness_err'])
-    print '=======================\n', db.apply(pd.Series.nunique)
+    print 'Number of unique elements in database'
+    print '======================='
+    print db.apply(pd.Series.nunique)
     database.save(db)
     logs.stop_logging()
