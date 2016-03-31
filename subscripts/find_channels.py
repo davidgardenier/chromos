@@ -169,6 +169,10 @@ def get_channel_range(mode, cer, path_event):
             ch_str.append(c)
         channels = ','.join(ch_str)
 
+    # Ensure the lowest energy channel is not returned
+    # See Gleissner T., Wilms J., Pottschimdt K. etc. 2004
+    if channels.startswith('0'):
+        channels = channels[4:] #Assuming channels doesn't do 0-19,etc
     return channels
 
 
@@ -197,12 +201,6 @@ def find_channels():
 
     os.chdir(paths.data)
     db = pd.read_csv(paths.database)
-
-    # Remove after use
-    unfound_obsids = db[db.modes.isnull()].obsids.values
-    if len(unfound_obsids) > 0:
-        print 'ERROR: NO DATA FOR THESE OBSIDS', unfound_obsids
-        db = db[db.modes.notnull()]
 
     d = defaultdict(list)
     for obsid, group in db.groupby(['obsids']):
