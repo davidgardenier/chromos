@@ -28,6 +28,11 @@ def merge(db, df, columns):
     Output:
      - Updated main database
     '''
+
+    # Check if dataframe has values
+    if df.shape[0]==0:
+        return db
+
     # Remove unnamed columns from merges
     for col in db.columns:
        if 'Unnamed' in col:
