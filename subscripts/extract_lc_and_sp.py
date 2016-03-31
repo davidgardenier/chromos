@@ -133,7 +133,11 @@ def extract_lc_and_sp():
         channels = df.energy_channels.values[0]
         if type(channels)==float:
             if isnan(channels):
-                print obsid, mode, res, 'ABORTING: No energy channels'
+                print obsid, mode, res, 'ERROR: No energy channels'
+                continue
+        if type(times_pcu)==float:
+            if isnan(times_pcu):
+                print obsid, mode, res, 'ERROR: No pcu times, as no filter file'
                 continue
 
         # Check whether layering is needed
