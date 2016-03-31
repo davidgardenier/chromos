@@ -39,7 +39,7 @@ def pcu_filters():
         try:
             hdulist = fits.open(filt)
         except IOError:
-            print 'ERROR: File not found'
+            print 'ERROR: File not found for obsid ', obsid
             continue
         tstart = hdulist[0].header['TSTART']
         timezero = hdulist[0].header['TIMEZERO']
