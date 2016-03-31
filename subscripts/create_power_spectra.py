@@ -160,9 +160,10 @@ def create_power_spectra():
 
         # Check whether x-ray flare was present
         path_bkg = group.rebinned_bkg.values[0]
-        if pd.notnull(group.lc_no_flare.values[0]):
-            path_lc = group.lc_no_flare.values[0]
-            path_bkg = group.bkg_no_flare.values[0]
+        if 'lc_no_flare' in group:
+            if pd.notnull(group.lc_no_flare.values[0]):
+                path_lc = group.lc_no_flare.values[0]
+                path_bkg = group.bkg_no_flare.values[0]
 
         # Determine parameters
         obsid = group.obsids.values[0]
