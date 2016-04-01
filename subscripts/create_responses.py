@@ -47,7 +47,7 @@ def create_response():
         # Must be short, otherwise it can't be written in the header of the
         # spectrum file
         out = path_obsid + 'sp.rsp'
-        out_bkg = path_obsid + 'sb.rsp'
+        #out_bkg = path_obsid + 'sb.rsp'
 
         print obsid
 
@@ -58,31 +58,31 @@ def create_response():
                   '-n' + out, #Output file
                   '-s'] #Use smart std2 mode
 
-        # Set up the command for pcarsp
-        bkgpcarsp = ['pcarsp',
-                     '-f' + bkg_sp, #Input
-                     '-a' + fltr, #Filter file
-                     '-n' + out_bkg, #Output file
-                     '-s'] #Use smart std2 mode
+        # # Set up the command for pcarsp
+        # bkgpcarsp = ['pcarsp',
+        #              '-f' + bkg_sp, #Input
+        #              '-a' + fltr, #Filter file
+        #              '-n' + out_bkg, #Output file
+        #              '-s'] #Use smart std2 mode
 
         # Create responses
         shell.execute(pcarsp)
-        shell.execute(bkgpcarsp)
+        #shell.execute(bkgpcarsp)
 
         # pcarsp doesn't allow for long file name to be written in the header
         # of the spectrum, so have to manually do it
         # Must have astropy version >1.0. Trust me.
-        hdulist = fits.open(sp)
+        hdulist = fits.open(sp, mode='update')
         hdu = hdulist[1]
         hdu.header['RESPFILE'] = out
-        hdu.writeto(sp, clobber=True)
+        hdulist.flush() #.writeto(sp, clobber=True)
 
         d['spectra'].append(sp)
         d['rsp'].append(out)
-        d['rsp_bkg'].append(out_bkg)
+        #d['rsp_bkg'].append(out_bkg)
 
     # Update database and save
     df = pd.DataFrame(d)
-    db = database.merge(db,df,['rsp', 'rsp_bkg'])
+    db = database.merge(db,df,['rsp'])#, 'rsp_bkg'])
     database.save(db)
     logs.stop_logging()

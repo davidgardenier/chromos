@@ -62,6 +62,11 @@ def calculate_hi(low_e=2.0,
 
         print obsid
 
+        # Check whether response file is there
+        if not os.path.isfile(rsp):
+            print 'ERROR: No response file'
+            continue
+
         # XSPEC Commands to unfold spectrum around flat powerlaw
         # Reason as per Heil et al. (see doi:10.1093/mnras/stv240):
         # "In order to measure the energy spectral hardness independantly of
@@ -158,5 +163,7 @@ def calculate_hi(low_e=2.0,
     print 'Number of unique elements in database'
     print '======================='
     print db.apply(pd.Series.nunique)
+    print '======================='
+    print 'Pipeline completed'
     database.save(db)
     logs.stop_logging()
