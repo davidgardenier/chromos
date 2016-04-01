@@ -141,6 +141,9 @@ def get_channel_range(mode, cer, path_event):
             cr = [e for e in range(int(crs[0]), int(crs[1])+1)]
         elif '-' in cr:
             cr = [e for e in range(int(cr.split('-')[0]), int(cr.split('-')[1])+1)]
+        elif ':' in cr:
+            crs = cr.split(':')
+            cr = [e for e in range(int(crs[0]), int(crs[1])+1)]
         else:
             cr = [int(cr)]
 
