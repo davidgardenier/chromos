@@ -16,19 +16,28 @@ from subscripts.create_power_spectra import *
 from subscripts.create_power_colours import *
 from subscripts.create_responses import *
 from subscripts.calculate_hi import *
-from subscripts.find_errors import *
 
-# Run setup_xray first
+# Run the following first:
+# --------------------------------------
+# virtualenv venv --system-site-packages
+# source venv/bin/activate
+# setup_xray
+# pip install --no-deps astropy==1.0.3
+# --------------------------------------
+# To quit the virtual enviroment, use:
+# --------------------------------------
+# deactivate
+# --------------------------------------
 # Do not deviate from this order in pipeline, as the subscripts all depend on
 # each other to have run in a particular order.
 
-#download()
-#locate_files()
-#determine_info()
-#spacecraft_filters()
-#goodxenon_to_fits()
-#pcu_filters()
-#create_backgrounds()
+download()
+locate_files()
+determine_info()
+spacecraft_filters()
+goodxenon_to_fits()
+pcu_filters()
+create_backgrounds()
 find_channels()
 extract_lc_and_sp()
 correct_for_background()
@@ -37,4 +46,3 @@ create_power_spectra()
 create_power_colours()
 create_response()
 calculate_hi()
-#find_errors()

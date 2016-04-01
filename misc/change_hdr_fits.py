@@ -1,21 +1,21 @@
 from astropy.io import fits
 import astropy
-out = '/scratch/david/master_project/HJ1900d1_2455/P91015/91015-01-01-00/sp.rsp'
-sp = '/scratch/david/master_project/HJ1900d1_2455/P91015/91015-01-01-00/std2_16s_per_layer.pha'
+out = '/scratch/david/master_project/EXO_0748_676/P40039/40039-02-04-00sp.rsp'
+sp = '/scratch/david/master_project/EXO_0748_676/P40039/40039-02-04-00/std2_16s_per_layer.pha'
+test = '/scratch/david/master_project/HJ1900d1_2455/P91015/91015-01-01-00/stdprod/xp91015010100_b2.pha.gz'
+#hdulist = fits.open(sp)
+#hdu = hdulist[1]
+#hdu.header['RESPFILE'] = out
+#print hdu.header['RESPFILE']
+#hdu.writeto(sp, clobber=True)
 
-hdulist = fits.open(sp)
+# pcarsp doesn't allow for long file name to be written in the header
+# of the spectrum, so have to manually do it
+# Must have astropy version >1.0. Trust me.
+hdulist = fits.open(sp, mode='update')
 hdu = hdulist[1]
 hdu.header['RESPFILE'] = out
-print astropy.__version__
-print hdu.header['RESPFILE']
-hdu.writeto(sp, clobber=True)
-
-#Check whether it worked
-hdulist2 = fits.open(sp)
-hdu2 = hdulist[1]
-print hdu2.header
-print hdu2.header['RESPFILE']
-
+hdulist.flush() #.writeto(sp, clobber=True)
 #import fitsio
 
 #sp_fits = fitsio.FITS(sp)

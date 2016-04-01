@@ -1,9 +1,9 @@
 import os
 
-selection = 'sco_x1'
+selection = 'KS_1731m260'
 subscripts = os.getcwd() + '/subscripts/'
 
-data = '/scratch/david/master_project/sco_x1/'
+data = '/scratch/david/master_project/KS_1731m260/'
 data_info = data + 'info/'
 database = data_info + 'database.csv'
 
