@@ -22,7 +22,6 @@ def pcu_filters():
     import logs
     import execute_shell_commands as shell
     import database
-    import filters
 
     # Set log file
     filename = __file__.split('/')[-1].split('.')[0]

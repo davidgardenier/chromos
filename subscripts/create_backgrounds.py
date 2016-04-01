@@ -91,6 +91,9 @@ def create_backgrounds():
             n = 0
             # To ensure you're not running more times than necessary
             ngroup = group[group.modes=='std2'].drop_duplicates('paths_data')
+            if ngroup.shape[0]==0:
+                print 'ERROR: No standard-2 files for this obsid'
+                continue
 
             # Keep track of files you'll create
             bkgs = []
@@ -98,7 +101,7 @@ def create_backgrounds():
 
             for i, r in ngroup.iterrows():
                 n += 1
-                
+
                 # Note infile is always a std2-data file, but not always the same mode!
                 infile = r.paths_data
                 outfile = r.paths_obsid + 'bkg_' + mode + '_' + str(n)
@@ -141,5 +144,5 @@ def create_backgrounds():
     # Update database and save
     df = pd.DataFrame(d)
     db = database.merge(db,df,['paths_bkg'])
-    database.save(db)
+    #database.save(db)
     logs.stop_logging()
