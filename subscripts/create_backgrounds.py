@@ -144,5 +144,5 @@ def create_backgrounds():
     # Update database and save
     df = pd.DataFrame(d)
     db = database.merge(db,df,['paths_bkg'])
-    #database.save(db)
+    database.save(db)
     logs.stop_logging()
