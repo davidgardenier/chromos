@@ -121,7 +121,7 @@ def extract_lc_and_sp():
         obsid = df.obsids.values[0]
         gti = df.gti.values[0]
 
-        # You get problems if the file name is longer than 80 characters
+        # You get problems if the file name is longer than 80 characters (incl@)
         times_pcu = df.times_pcu.values[0]
         filenametoolong = False
         if len(times_pcu) > 79:
