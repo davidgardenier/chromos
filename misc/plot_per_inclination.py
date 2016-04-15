@@ -57,29 +57,27 @@ def plot_allpcs():
     import numpy as np
     import itertools
 
-    objects = ['4u_1705_m44',
-               'xte_J1808_369',
-               'cir_x1',
-               'cyg_x2',
-               'EXO_0748_676',
-               'HJ1900d1_2455',
-               'sco_x1',
-               'v4634_sgr',
-               '4U_1728_34',
-               '4U_0614p09',
-               '4U_1702m43',
-               'J1701_462',
-               'aquila_X1',
-               '4U_1636_m53',
-               'gx_339_d4']
+    #Name, inclination ('e'dge if <45, 'f'ace if >45)
+    objects = [('4u_1705_m44', 'e'),
+               ('xte_J1808_369', 'e'),
+               ('cir_x1', 'f'),
+               ('cyg_x2', 'e'),
+               ('EXO_0748_676', 'e'),
+               ('HJ1900d1_2455', 'f'),
+               ('sco_x1', 'f'),
+               ('4U_1728_34', 'f'),
+               ('aquila_X1', 'e'),
+               ('4U_1636_m53','e' )]
 
     # Set up plot details
     plt.figure(figsize=(10,10))
-    colormap = plt.cm.Paired
-    colours = [colormap(i) for i in np.linspace(0.1, 0.9, len(objects))]
+    #colormap = plt.cm.Paired
+    #plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, len(objects))])
     marker = itertools.cycle(('^', '+', '.', 'o', '*'))
 
-    for i, o in enumerate(objects):
+    for details in objects:
+        o = details[0]
+        incl = details[1]
 
         p = path(o)
         db = pd.read_csv(p)
@@ -91,7 +89,12 @@ def plot_allpcs():
         yerror = db.pc2_err.values
 
         # One big plot
-        plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', marker=marker.next(), label=o, linewidth=2, color=colours[i])
+        if incl == 'e':
+            colour = 'b'
+        else:
+            colour = 'r'
+
+        plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', c=colour, marker=marker.next(), label=o, linewidth=2)
         # Subplots
         #plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', linewidth=2)
 
@@ -104,11 +107,11 @@ def plot_allpcs():
         plt.legend(loc='best', numpoints=1)
 
         # In case you want to save each figure individually
-        plt.savefig('/scratch/david/master_project/plots/pc_' + o + '.png', transparent=True)
-        plt.gcf().clear()
+        #plt.savefig('/scratch/david/master_project/plots/pc_' + o + '.png')
+        #plt.gcf().clear()
         #plt.clf()
 
-    #plt.show()
+    plt.show()
 
 if __name__=='__main__':
     plot_allpcs()
