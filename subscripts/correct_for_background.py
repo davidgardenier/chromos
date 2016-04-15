@@ -27,6 +27,7 @@ def read_light_curve(path):
     t = data['TIME']
     rate = data['RATE']
     error = data['ERROR']
+    hdulist.close()
 
     return rate, t, dt, n_bins, error
 
