@@ -52,13 +52,13 @@ def merge(db, df, columns):
     return db
 
 
-def save(db):
+def save(db,location=paths.database):
     # Remove unnamed columns from merges
     for col in db.columns:
        if 'Unnamed' in col:
            del db[col]
     db.drop_duplicates()
-    db.to_csv(paths.database)
+    db.to_csv(location)
 
 
 if not os.path.exists(paths.database):
