@@ -59,15 +59,20 @@ def plot_allpcs():
 
     #Name, inclination ('e'dge if <45, 'f'ace if >45)
     objects = [('4u_1705_m44', 'e'),
-               ('xte_J1808_369', 'e'),
-               ('cir_x1', 'f'),
-               ('cyg_x2', 'e'),
-               ('EXO_0748_676', 'e'),
-               ('HJ1900d1_2455', 'f'),
-               ('sco_x1', 'f'),
-               ('4U_1728_34', 'f'),
-               ('aquila_X1', 'e'),
-               ('4U_1636_m53','e' )]
+              ('xte_J1808_369', 'e'),
+              ('cir_x1', 'f'),
+              ('cyg_x2', 'e'),
+              ('EXO_0748_676', 'e'),
+              ('HJ1900d1_2455', 'f'),
+              ('sco_x1', 'f'),
+              ('v4634_sgr', 'x'),
+              ('4U_1728_34', 'f'),
+              ('4U_0614p09', 'e'),
+              ('4U_1702m43', 'x'),
+              ('J1701_462', 'e'),
+              ('aquila_X1', 'e'),
+              ('4U_1636_m53', 'e'),
+              ('gx_339_d4', 'x')]
 
     # Set up plot details
     plt.figure(figsize=(10,10))
@@ -103,7 +108,7 @@ def plot_allpcs():
         plt.xscale('log', nonposx='clip')
         plt.ylabel('PC2 (B/D = [0.031-0.25]/[2.0-16.0])')
         plt.yscale('log', nonposy='clip')
-        plt.title('Power Colours')
+        plt.title('Blue is edge, red is face-on')
         plt.legend(loc='best', numpoints=1)
 
         # In case you want to save each figure individually

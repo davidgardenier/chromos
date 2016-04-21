@@ -1,4 +1,4 @@
-# Quick script to overplot power colour values
+# Quick script to plot hardness intensity diagrams
 # Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
 
 import os

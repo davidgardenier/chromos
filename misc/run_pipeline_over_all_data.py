@@ -2,17 +2,26 @@
 import os
 import glob
 
-objects = [#'4u_1705_m44.lst',
-           '4U_1636_m53.lst',
-           #'aquila_X1.lst',
-           'cen_x1.lst',
-           'gx_3+1.lst',
-           'gx_13+1.lst',
-           'J1701_462.lst',
-           'sco_x1.lst',
-           'v4634_sgr.lst',
-           'XB_1254_m690.lst',
-           'xte_J2123_m058.lst']
+objects = ['4u_1705_m44',
+          'xte_J1808_369',
+          'cir_x1',
+          'cyg_x2',
+          'EXO_0748_676',
+          'HJ1900d1_2455',
+          'sco_x1',
+          'v4634_sgr',
+          '4U_1728_34',
+          '4U_0614p09',
+          '4U_1702m43',
+          'J1701_462',
+          'aquila_X1',
+          '4U_1636_m53',
+          'cyg_x2',
+          'gx_5m1',
+          'gx_340p0',
+          'sco_x1',
+          'gx_17p2',
+          'gx_349p2']
 
 filein = '/scratch/david/master_project/scripts/misc/paths.txt'
 fileout = '/scratch/david/master_project/scripts/subscripts/paths.py'
@@ -22,7 +31,7 @@ filedata = f.read()
 f.close()
 
 for o in objects:
-    newdata = filedata.replace("OBJECT",o.split('.lst')[0])
+    newdata = filedata.replace("OBJECT",o)
 
     f = open(fileout,'w')
     f.write(newdata)
@@ -33,5 +42,6 @@ for o in objects:
         print 'NEW DATA SERIES:', o
         print '====================='*2
         os.system('python main_pipeline.py')
-    except:
+    except Exception, e:
+        print str(e)
         continue
