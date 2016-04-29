@@ -2,6 +2,7 @@
 # Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
 
 def execute(command):
+
     import subprocess
 
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
