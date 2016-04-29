@@ -5,7 +5,7 @@ subscripts = os.getcwd() + '/subscripts/'
 
 data = '/scratch/david/master_project/OBJECT/'
 data_info = data + 'info/'
-database = data_info + 'database.csv'
+database = data_info + 'database_OBJECT.csv'
 
 logs = data_info + 'log_scripts/'
 terminal_output = True
