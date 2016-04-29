@@ -2,10 +2,10 @@
 # Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
 
 
-def calculate_hi(low_e=2.0,
-                 high_e=13.0,
-                 soft=(2.0,6.0),
-                 hard=(6.0,13.0)):
+def calculate_hi(low_e=3.0,
+                 high_e=16.0,
+                 soft=(6.4,9.7),
+                 hard=(9.7,16.)):
     '''
     Function to calculate hardness & intensity values.
 
@@ -148,18 +148,22 @@ def calculate_hi(low_e=2.0,
         ratio_err = float(txt[3])
 
         d['spectra'].append(sp)
-        d['flux'].append(flux)
-        d['flux_err'].append(flux_err)
-        d['hardness'].append(ratio)
-        d['hardness_err'].append(ratio_err)
+        d['flux_i3t16_s6p4t9p7_h9p7t16'].append(flux)
+        d['flux_err_i3t16_s6p4t9p7_h9p7t16'].append(flux_err)
+        d['hardness_i3t16_s6p4t9p7_h9p7t16'].append(ratio)
+        d['hardness_err_i3t16_s6p4t9p7_h9p7t16'].append(ratio_err)
 
         # Clear xspec spectrum
         xspec.AllData.clear()
-        os.system('rm ' + rsp + '&')
+        #os.system('rm ' + rsp + '&')
 
     # Update database and save
     df = pd.DataFrame(d)
-    db = database.merge(db,df,['flux','flux_err','hardness','hardness_err'])
+    cols = ['flux_i3t16_s6p4t9p7_h9p7t16',
+            'flux_err_i3t16_s6p4t9p7_h9p7t16',
+            'hardness_i3t16_s6p4t9p7_h9p7t16',
+            'hardness_err_i3t16_s6p4t9p7_h9p7t16']
+    db = database.merge(db,df,cols)
     print 'Number of unique elements in database'
     print '======================='
     print db.apply(pd.Series.nunique)
