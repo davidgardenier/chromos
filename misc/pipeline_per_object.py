@@ -33,6 +33,6 @@ for arg in sys.argv[1:]:
         print '====================='*2
         print 'NEW DATA SERIES:', arg
         print '====================='*2
-        os.system('python main_pipeline.py')
+        os.system('nice -n 19 python main_pipeline.py')
     except:
         continue

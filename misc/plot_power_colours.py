@@ -7,7 +7,7 @@ import pandas as pd
 
 
 def path(o):
-    return '/scratch/david/master_project/' + o + '/info/database.csv'
+    return '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
 
 
 def findbestres(res):
@@ -57,26 +57,25 @@ def plot_allpcs():
     import numpy as np
     import itertools
 
-    objects = [#('4u_1705_m44', 'a'), #Must be rerun
-              ('xte_J1808_369', 'a'),
-              ('cir_x1', 'z'),
-              ('cyg_x2', 'z'),
-              #('EXO_0748_676', 'a'),
-              ('HJ1900d1_2455', 'a'),
-              ('sco_x1', 'z'),
-              ('v4634_sgr', 'a'),
-              ('4U_1728_34', 'a'),
-              ('4U_0614p09', 'a'),
-              ('4U_1702m43', 'a'),
-              ('J1701_462', 'z'),
-              ('aquila_X1', 'a'),
-              ('4U_1636_m53', 'a'),
-              ('cyg_x2', 'z'),
-              ('gx_5m1', 'z'),
-              ('gx_340p0', 'z'),
-              ('sco_x1', 'z'),
-              ('gx_17p2', 'z'),
-              ('gx_349p2', 'z')]
+    objects = [('4u_1705_m44', 'e'),
+              ('xte_J1808_369', 'e'),
+              ('cir_x1', 'f'),
+              #('cyg_x2', 'e'),
+              ('EXO_0748_676', 'e'),
+              ('HJ1900d1_2455', 'f'),
+              ('sco_x1', 'f'),
+              ('v4634_sgr', 'x'),
+              ('4U_1728_34', 'f'),
+              ('4U_0614p09', 'e'),
+              ('4U_1702m43', 'x'),
+              ('J1701_462', 'e'),
+              ('aquila_X1', 'e'),
+              ('4U_1636_m53', 'e'),
+              ('gx_339_d4', 'x'),
+              ('gx_5m1', 'x'),
+              ('gx_340p0', 'x'),
+              ('gx_17p2', 'x'),
+              ('gx_349p2', 'x')]
 
     # Set up plot details
     plt.figure(figsize=(10,10))
@@ -86,6 +85,7 @@ def plot_allpcs():
 
     for i, o in enumerate(objects):
         o = o[0]
+        print o
         p = path(o)
         db = pd.read_csv(p)
         db = findbestdata(db)
@@ -109,7 +109,7 @@ def plot_allpcs():
         plt.legend(loc='best', numpoints=1)
 
         # In case you want to save each figure individually
-        plt.savefig('/scratch/david/master_project/plots/pc_' + o + '.png', transparent=True)
+        plt.savefig('/scratch/david/master_project/plots/pc/transparent/' + o + '.png', transparent=True)
         plt.gcf().clear()
         #plt.clf()
 

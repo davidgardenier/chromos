@@ -7,7 +7,7 @@ import pandas as pd
 from math import atan2, degrees, pi, log10, sqrt
 
 def path(o):
-    return '/scratch/david/master_project/' + o + '/info/database.csv'
+    return '/scratch/david/master_project/' + o + '/info/database_' + o +'.csv'
 
 
 def findbestres(res):
@@ -101,10 +101,10 @@ def plot_allhues():
     import itertools
 
     #Name, inclination ('e'dge if <45, 'f'ace if >45)
-    objects = [#('4u_1705_m44', 'a'), #Must be rerun
+    objects = [('4u_1705_m44', 'a'), #Must be rerun
               ('xte_J1808_369', 'a'),
               ('cir_x1', 'z'),
-              ('cyg_x2', 'z'),
+              #('cyg_x2', 'z'),
               #('EXO_0748_676', 'a'),
               ('HJ1900d1_2455', 'a'),
               ('sco_x1', 'z'),
@@ -115,7 +115,6 @@ def plot_allhues():
               ('J1701_462', 'z'),
               ('aquila_X1', 'a'),
               ('4U_1636_m53', 'a'),
-              ('cyg_x2', 'z'),
               ('gx_5m1', 'z'),
               ('gx_340p0', 'z'),
               ('sco_x1', 'z'),
@@ -155,9 +154,9 @@ def plot_allhues():
         hardness = []
         hardness_err = []
         for obsid, group in bestdata.groupby('obsids'):
-            df = db[db.obsids==obsid].dropna(subset=['flux'])
-            hardness.append(df.hardness.values[0])
-            hardness_err.append(df.hardness_err.values[0])
+            df = db[db.obsids==obsid].dropna(subset=['flux_i3t16_s6p4t9p7_h9p7t16'])
+            hardness.append(df.hardness_i3t16_s6p4t9p7_h9p7t16.values[0])
+            hardness_err.append(df.hardness_err_i3t16_s6p4t9p7_h9p7t16.values[0])
 
         # Plot details
         x = hues
@@ -175,10 +174,10 @@ def plot_allhues():
 
         plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', c=colour,marker=marker.next(), label=o, linewidth=2)
 
-        plt.axis([0, 360, 0, 1.5])
+        plt.axis([0, 360, 0, 2])
         plt.xlabel('Hue')
         #plt.xscale('log', nonposx='clip')
-        plt.ylabel('Hardness (6-13 keV)/(2-6 keV)')
+        plt.ylabel('Hardness (9.7-16 keV)/(6.4-9.7 keV)')
         #plt.yscale('log', nonposy='clip')
         plt.title('Blue is atoll, red is Z-source')
         plt.legend(loc='best', numpoints=1)

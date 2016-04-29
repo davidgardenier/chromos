@@ -57,30 +57,31 @@ def plot_allpcs():
     import numpy as np
     import itertools
 
-    #Name, inclination ('e'dge if <45, 'f'ace if >45)
-    objects = [('4u_1705_m44', 'a'),
-              ('xte_J1808_369', 'a'),
-              ('cir_x1', 'z'),
-              #('EXO_0748_676', 'a'),
-              ('HJ1900d1_2455', 'a'),
-              ('v4634_sgr', 'a'),
-              ('4U_1728_34', 'a'),
-              ('4U_0614p09', 'a'),
-              ('4U_1702m43', 'a'),
-              ('J1701_462', 'z'),
-              ('aquila_X1', 'a'),
-              ('4U_1636_m53', 'a'),
+    #From Marieke's thesis
+    objects = [#('4u_1705_m44', 'a'),
+              ('xte_J1808_369', '401'),
+             # ('cir_x1', 'z'),
+              ('EXO_0748_676', '552.5'),
+              ('HJ1900d1_2455', '377.3'),
+              #('v4634_sgr', 'a'),
+              ('4U_1728_34', '364'),
+              ('4U_0614p09', '414.7'),
+             # ('4U_1702m43', 'a'),
+              #('J1701_462', 'z'),
+              ('aquila_X1', '550'),
+              ('4U_1636_m53', '581.9')]
               #('cyg_x2', 'z'),
-              ('gx_5m1', 'z'),
-              ('gx_340p0', 'z'),
-              ('sco_x1', 'z'),
-              ('gx_17p2', 'z'),
-              ('gx_349p2', 'z')]
+              #('gx_5m1', 'z'),
+              #('gx_340p0', 'z'),
+              #('sco_x1', 'z'),
+              #('gx_17p2', 'z'),
+              #('gx_349p2', 'z')]
 
+    objects = sorted(objects, key=lambda x: x[1])
     # Set up plot details
     plt.figure(figsize=(10,10))
-    #colormap = plt.cm.Paired
-    #plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, len(objects))])
+    colormap = plt.cm.jet
+    plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, len(objects))])
     marker = itertools.cycle(('^', '+', '.', 'o', '*'))
 
     for details in objects:
@@ -96,15 +97,7 @@ def plot_allpcs():
         xerror = db.pc1_err.values
         yerror = db.pc2_err.values
 
-        # One big plot
-        if incl == 'a':
-            colour = 'b'
-        elif incl == 'z':
-            colour = 'r'
-        else:
-            colour = 'k'
-
-        plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', c=colour, marker=marker.next(), label=o, linewidth=2)
+        plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', marker=marker.next(), label=o+' ' +incl, linewidth=2)
         # Subplots
         #plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', linewidth=2)
 
@@ -113,7 +106,7 @@ def plot_allpcs():
         plt.xscale('log', nonposx='clip')
         plt.ylabel('PC2 (B/D = [0.031-0.25]/[2.0-16.0])')
         plt.yscale('log', nonposy='clip')
-        plt.title('Blue is atoll, red is Z-source')
+        plt.title('Sorted by spin frequency')
         plt.legend(loc='best', numpoints=1)
 
         # In case you want to save each figure individually

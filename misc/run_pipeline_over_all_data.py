@@ -1,14 +1,14 @@
 # Quick script to run pipeline over multiple objects
 import os
 import glob
+import subprocess
+import os
 
 objects = ['4u_1705_m44',
           'xte_J1808_369',
           'cir_x1',
-          'cyg_x2',
           'EXO_0748_676',
           'HJ1900d1_2455',
-          'sco_x1',
           'v4634_sgr',
           '4U_1728_34',
           '4U_0614p09',
@@ -41,7 +41,11 @@ for o in objects:
         print '====================='*2
         print 'NEW DATA SERIES:', o
         print '====================='*2
-        os.system('python main_pipeline.py')
+        command = ['nice -n 19 python main_pipeline.py']
+
+        p = subprocess.Popen(' '.join(command), stdout=subprocess.PIPE, shell=True)
+        p.wait()
+        p.stdout.read()
     except Exception, e:
         print str(e)
         continue

@@ -101,29 +101,23 @@ def plot_allhues():
     import itertools
 
     #Name, inclination ('e'dge if <45, 'f'ace if >45)
-    objects = [('4u_1705_m44', 'e'),
-              ('xte_J1808_369', 'e'),
-              ('cir_x1', 'f'),
-              #('cyg_x2', 'e'),
-              ('EXO_0748_676', 'e'),
-              ('HJ1900d1_2455', 'f'),
-              ('sco_x1', 'f'),
-              ('v4634_sgr', 'x'),
-              ('4U_1728_34', 'f'),
-              ('4U_0614p09', 'e'),
-              ('4U_1702m43', 'x'),
-              ('J1701_462', 'e'),
-              ('aquila_X1', 'e'),
-              ('4U_1636_m53', 'e'),
-              ('gx_339_d4', 'x'),
-              ('gx_5m1', 'x'),
-              ('gx_340p0', 'x'),
-              ('gx_17p2', 'x'),
-              ('gx_349p2', 'x')]
+    objects = [#('4u_1705_m44', 'a'),
+              ('xte_J1808_369', '401'),
+             # ('cir_x1', 'z'),
+              ('EXO_0748_676', '552.5'),
+              ('HJ1900d1_2455', '377.3'),
+              #('v4634_sgr', 'a'),
+              ('4U_1728_34', '364'),
+              ('4U_0614p09', '414.7'),
+             # ('4U_1702m43', 'a'),
+              #('J1701_462', 'z'),
+              ('aquila_X1', '550'),
+              ('4U_1636_m53', '581.9')]
 
+    objects = sorted(objects, key=lambda x: x[1])
     # Set up plot details
     plt.figure(figsize=(10,10))
-    colormap = plt.cm.Paired
+    colormap = plt.cm.jet
     colours = [colormap(i) for i in np.linspace(0.1, 0.9, len(objects))]
     marker = itertools.cycle(('^', '+', '.', 'o', '*'))
 
@@ -172,7 +166,7 @@ def plot_allhues():
         # else:
         #     colour='k'
 
-        plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', c=colours[w],marker=marker.next(), label=o, linewidth=2)
+        plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', c=colours[w],marker=marker.next(), label=o + ' ' +incl, linewidth=2)
         # If plotting per inclination
         # plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', c=colour,marker=marker.next(), label=o, linewidth=2)
 
@@ -181,7 +175,7 @@ def plot_allhues():
         #plt.xscale('log', nonposx='clip')
         plt.ylabel('Hardness (9.7-16 keV)/(6.4-9.7 keV)')
         #plt.yscale('log', nonposy='clip')
-        plt.title('Blue is edge, red is face-on')
+        #plt.title('Blue is edge, red is face-on')
         plt.legend(loc='best', numpoints=1)
 
         # In case you want to save each figure individually

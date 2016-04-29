@@ -164,8 +164,9 @@ class Plots:
 
         ax4 = self.fig.add_subplot(self.gs[0,-2:-1])
         ax4.set_xlabel('Energy (keV)')
+        ax4.set_xscale('log', nonposx='clip')
         ax4.set_ylabel('Energy*Flux (keV*Photons/cm^2/s)')
-        ax4.set_xlim(2,13)
+        ax4.set_xlim(3,19)
         #ax4.set_ylim(0,0.8)
         ax4.step(energy,energyflux,where='mid', lw=2)
 
@@ -175,21 +176,22 @@ class Plots:
 
         # Plot details
         ax5 = self.fig.add_subplot(self.gs[0,-1])
-        ax5.set_ylabel('Hardness (6-13 keV)/(2-6 keV)')
+        ax5.set_ylabel('Hardness (9.7-16 keV)/(6.4-9.7 keV)')
+        ax5.set_ylim(0,2.0)
         ax5.set_xlabel('Intensity (Photons*ergs/cm^2/s)')
-        ax5.set_xlim(0,0.5e-8)
-        ax5.set_ylim(0,1.5)
+        ax3.set_xscale('log', nonposx='clip')
+        ax5.set_xlim(1e-12,1e-6)
         # Plot general scatter
         allhi = pd.read_csv('/scratch/david/master_project/' + self.obj +'/info/hi.csv')
-        ax5.scatter(allhi.flux,allhi.hardness, marker='.', edgecolors='none')
+        ax5.scatter(allhi.flux_i3t16_s6p4t9p7_h9p7t16,allhi.hardness_i3t16_s6p4t9p7_h9p7t16, marker='.', edgecolors='none')
 
         # Check if hardness intensity value available
-        sdf = self.db.dropna(subset=['flux'])
+        sdf = self.db.dropna(subset=['flux_i3t16_s6p4t9p7_h9p7t16'])
         if len(sdf) < 1:
             return
         # Plot position for this obsid on hid
-        ax5.scatter(sdf.flux,
-                    sdf.hardness,
+        ax5.scatter(sdf.flux_i3t16_s6p4t9p7_h9p7t16,
+                    sdf.hardness_i3t16_s6p4t9p7_h9p7t16,
                     c='r',
                     marker='^',
                     lw=0,
@@ -226,8 +228,8 @@ def plot_per_obsid(db, obj):
     c = ['obsids','pc1','pc1_err','pc2','pc2_err']
     df.to_csv('/scratch/david/master_project/' + obj + '/info/power_colours.csv', cols = c)
     # Then a file with all the fluxes
-    df = db.dropna(subset=['flux'])
-    c = ['obsids','flux','flux_err','hardness','hardness_err']
+    df = db.dropna(subset=['flux_i3t16_s6p4t9p7_h9p7t16'])
+    c = ['obsids','flux_i3t16_s6p4t9p7_h9p7t16','flux_err_i3t16_s6p4t9p7_h9p7t16','hardness_i3t16_s6p4t9p7_h9p7t16','hardness_err_i3t16_s6p4t9p7_h9p7t16']
     df.to_csv('/scratch/david/master_project/' + obj + '/info/hi.csv', cols = c)
 
     # Create folder to place plots
@@ -253,29 +255,35 @@ def plot_per_obsid(db, obj):
 
 if __name__=='__main__':
 
-    objects = ['4u_1705_m44',
-               'xte_J1808_369',
-               'cir_x1',
-               'cyg_x2',
-               'EXO_0748_676',
-               'HJ1900d1_2455',
-               'sco_x1',
-               '4U_1728_34',
-               'J1701_462',
-               'aquila_X1',
-               '4U_1636_m53',
-               'gx_339_d4']
+    objects = [('4u_1705_m44', 'e'),
+              ('xte_J1808_369', 'e'),
+              ('cir_x1', 'f'),
+              #('cyg_x2', 'e'),
+              ('EXO_0748_676', 'e'),
+              ('HJ1900d1_2455', 'f'),
+              ('sco_x1', 'f'),
+              ('v4634_sgr', 'x'),
+              ('4U_1728_34', 'f'),
+              ('4U_0614p09', 'e'),
+              ('4U_1702m43', 'x'),
+              ('J1701_462', 'e'),
+              ('aquila_X1', 'e'),
+              ('4U_1636_m53', 'e'),
+              ('gx_339_d4', 'x'),
+              ('gx_5m1', 'x'),
+              ('gx_340p0', 'x'),
+              ('gx_17p2', 'x'),
+              ('gx_349p2', 'x')]
 
-    obj = raw_input('Object name: ')
-    objects = [obj]
+    objects = [o[0] for o in objects]
+    #obj = raw_input('Object name: ')
+    #objects = [obj]
     import pandas as pd
     import os
 
     for o in objects:
         print o, '\n======================'
-        p = '/scratch/david/master_project/' + o + '/info/database.csv'
+        p = '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
         db = pd.read_csv(p)
-
-
 
         plot_per_obsid(db, o)

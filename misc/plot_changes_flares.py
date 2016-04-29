@@ -3,7 +3,7 @@ import glob
 import pandas as pd
 
 def path(o):
-    return '/scratch/david/master_project/' + o + '/info/database.csv'
+    return '/scratch/david/master_project/' + o + '/info/database_'+o+'_2.csv'
 
 def plot_dif_pcs():
     import matplotlib.pyplot as plt
@@ -11,20 +11,23 @@ def plot_dif_pcs():
     import itertools
 
     objects = ['4u_1705_m44',
-               'xte_J1808_369',
-               'cir_x1',
-               'cyg_x2',
-               'EXO_0748_676',
-               'HJ1900d1_2455',
-               'sco_x1',
-               'v4634_sgr',
-               '4U_1728_34',
-               '4U_0614p09',
-               '4U_1702m43',
-               'J1701_462',
-               'aquila_X1',
-               '4U_1636_m53',
-               'gx_339_d4']
+              'xte_J1808_369',
+              'cir_x1',
+              'EXO_0748_676',
+              'HJ1900d1_2455',
+              'v4634_sgr',
+              '4U_1728_34',
+              '4U_0614p09',
+              '4U_1702m43',
+              'J1701_462',
+              'aquila_X1',
+              '4U_1636_m53',
+              #'cyg_x2',
+              'gx_5m1',
+              'gx_340p0',
+              'sco_x1',
+              'gx_17p2',
+              'gx_349p2']
 
     # Set up plot details
     plt.figure(figsize=(10,10))
@@ -40,7 +43,7 @@ def plot_dif_pcs():
             db = db.dropna(subset=['pc1','pc1_wf'])
         else:
             continue
-        print o
+        print o, db.pc1.values
 
         x = db.pc1.values
         y = db.pc1.values / db.pc1_wf.values

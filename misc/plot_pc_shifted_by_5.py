@@ -47,7 +47,7 @@ def findbestdataperobsid(df):
 
 def findbestdata(db):
     # Apply constraint to the data
-    db = db[(db.pc1.notnull() & db.lt3sigma==True)]
+    db = db[(db.pc1_shiftedby5.notnull() & db.lt3sigma_shiftedby5==True)]
     db = db.groupby('obsids').apply(findbestdataperobsid)
     return db
 
@@ -57,71 +57,63 @@ def plot_allpcs():
     import numpy as np
     import itertools
 
-    #Name, inclination ('e'dge if <45, 'f'ace if >45)
-    objects = [('4u_1705_m44', 'a'),
-              ('xte_J1808_369', 'a'),
-              ('cir_x1', 'z'),
-              #('EXO_0748_676', 'a'),
-              ('HJ1900d1_2455', 'a'),
-              ('v4634_sgr', 'a'),
-              ('4U_1728_34', 'a'),
-              ('4U_0614p09', 'a'),
-              ('4U_1702m43', 'a'),
-              ('J1701_462', 'z'),
-              ('aquila_X1', 'a'),
-              ('4U_1636_m53', 'a'),
-              #('cyg_x2', 'z'),
-              ('gx_5m1', 'z'),
-              ('gx_340p0', 'z'),
-              ('sco_x1', 'z'),
-              ('gx_17p2', 'z'),
-              ('gx_349p2', 'z')]
+    objects = [('4u_1705_m44', 'e'),
+              ('xte_J1808_369', 'e'),
+              ('cir_x1', 'f'),
+              #('cyg_x2', 'e'),
+              ('EXO_0748_676', 'e'),
+              ('HJ1900d1_2455', 'f'),
+              ('sco_x1', 'f'),
+              ('v4634_sgr', 'x'),
+              ('4U_1728_34', 'f'),
+              ('4U_0614p09', 'e'),
+              ('4U_1702m43', 'x'),
+              ('J1701_462', 'e'),
+              ('aquila_X1', 'e'),
+              ('4U_1636_m53', 'e')]
+              #('gx_339_d4', 'x'),
+              #('gx_5m1', 'x'),
+              #('gx_340p0', 'x'),
+              #('gx_17p2', 'x'),
+              #('gx_349p2', 'x')]
 
     # Set up plot details
     plt.figure(figsize=(10,10))
-    #colormap = plt.cm.Paired
-    #plt.gca().set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, len(objects))])
+    colormap = plt.cm.Paired
+    colours = [colormap(i) for i in np.linspace(0.1, 0.9, len(objects))]
     marker = itertools.cycle(('^', '+', '.', 'o', '*'))
 
-    for details in objects:
-        o = details[0]
-        incl = details[1]
-
+    for i, o in enumerate(objects):
+        o = o[0]
+        print o
         p = path(o)
         db = pd.read_csv(p)
         db = findbestdata(db)
 
-        x = db.pc1.values
-        y = db.pc2.values
-        xerror = db.pc1_err.values
-        yerror = db.pc2_err.values
+        x = db.pc1_shiftedby5.values
+        y = db.pc2_shiftedby5.values
+        xerror = db.pc1_err_shiftedby5.values
+        yerror = db.pc2_err_shiftedby5.values
 
         # One big plot
-        if incl == 'a':
-            colour = 'b'
-        elif incl == 'z':
-            colour = 'r'
-        else:
-            colour = 'k'
-
-        plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', c=colour, marker=marker.next(), label=o, linewidth=2)
+        plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', marker=marker.next(), label=o, linewidth=2, color=colours[i])
         # Subplots
         #plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', linewidth=2)
 
         plt.axis([0.01, 1000, 0.01, 100])
-        plt.xlabel('PC1 (C/A = [0.25-2.0]/[0.0039-0.031])')
+        plt.xlabel('PC1 (C/A = [1.25-10.0]/[0.0195-0.155])')
         plt.xscale('log', nonposx='clip')
-        plt.ylabel('PC2 (B/D = [0.031-0.25]/[2.0-16.0])')
+        plt.ylabel('PC2 (B/D = [0.155-1.25]/[10.0-80.0])')
         plt.yscale('log', nonposy='clip')
-        plt.title('Blue is atoll, red is Z-source')
+        plt.title('Power Colours')
         plt.legend(loc='best', numpoints=1)
 
         # In case you want to save each figure individually
-        #plt.savefig('/scratch/david/master_project/plots/pc_' + o + '.png')
-        #plt.gcf().clear()
+        plt.savefig('/scratch/david/master_project/plots/pc/shifted_by_5/' + o + '.png')
+        plt.gcf().clear()
         #plt.clf()
 
-    plt.show()
+    #plt.show()
 
 if __name__=='__main__':
     plot_allpcs()
