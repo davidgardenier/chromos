@@ -94,6 +94,7 @@ def extract_lc_and_sp():
     import pandas as pd
     import glob
     import shutil
+    import random
     from collections import defaultdict
     from math import isnan
     import paths
@@ -120,16 +121,8 @@ def extract_lc_and_sp():
         # Set parameters
         obsid = df.obsids.values[0]
         gti = df.gti.values[0]
-
-        # You get problems if the file name is longer than 80 characters (incl@)
         times_pcu = df.times_pcu.values[0]
-        filenametoolong = False
-        if len(times_pcu) > 79:
-            filenametoolong = True
-            newname = paths.data + 'times_pcu.tmp'
-            shutil.copy(times_pcu, newname)
-            times_pcu = newname
-
+        
         # Adapt vaules depending on goodxenon
         mode = df.modes.values[0]
         if mode[:2] == 'gx':
@@ -148,6 +141,16 @@ def extract_lc_and_sp():
             if isnan(times_pcu):
                 print obsid, mode, res, 'ERROR: No pcu times, as no filter file'
                 continue
+
+        # You get problems if the file name is longer than 80 characters (incl@)
+        filenametoolong = False
+        if len(times_pcu) > 79:
+            filenametoolong = True
+            # Add random number to avoid overwriting files when runnning
+            # multiple pipelines
+            newname = paths.data + 'times_pcu_' + str(random.random()*1e6)[:5] + '.tmp'
+            shutil.copy(times_pcu, newname)
+            times_pcu = newname
 
         # Check whether layering is needed
         layer = False
