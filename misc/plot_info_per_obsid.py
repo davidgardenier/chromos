@@ -179,7 +179,7 @@ class Plots:
         ax5.set_ylabel('Hardness (9.7-16 keV)/(6.4-9.7 keV)')
         ax5.set_ylim(0,2.0)
         ax5.set_xlabel('Intensity (Photons*ergs/cm^2/s)')
-        ax3.set_xscale('log', nonposx='clip')
+        ax5.set_xscale('log', nonposx='clip')
         ax5.set_xlim(1e-12,1e-6)
         # Plot general scatter
         allhi = pd.read_csv('/scratch/david/master_project/' + self.obj +'/info/hi.csv')
@@ -258,7 +258,7 @@ if __name__=='__main__':
     objects = [('4u_1705_m44', 'e'),
               ('xte_J1808_369', 'e'),
               ('cir_x1', 'f'),
-              #('cyg_x2', 'e'),
+              ('cyg_x2', 'e'),
               ('EXO_0748_676', 'e'),
               ('HJ1900d1_2455', 'f'),
               ('sco_x1', 'f'),
@@ -276,8 +276,8 @@ if __name__=='__main__':
               ('gx_349p2', 'x')]
 
     objects = [o[0] for o in objects]
-    #obj = raw_input('Object name: ')
-    #objects = [obj]
+    obj = raw_input('Object name: ')
+    objects = [obj]
     import pandas as pd
     import os
 

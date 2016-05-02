@@ -57,48 +57,52 @@ def plot_allpcs():
     import numpy as np
     import itertools
 
-    objects = ['4u_1705_m44',
-                '4U_0614p09',
-                '4U_1636_m53',
-                '4U_1702m43',
-                '4U_1728_34',
-                'aquila_X1',
-                'cir_x1',
-                'cyg_x2',
-                'EXO_0748_676',
-                'gx_3p1',
-                'gx_5m1',
-                'gx_17p2',
-                'gx_339_d4',
-                'gx_340p0',
-                'gx_349p2',
-                'HJ1900d1_2455',
-                'IGR_J00291p5934',
-                'IGR_J17498m2921',
-                'IGR_J17511m3057',
-                'J1701_462',
-                'KS_1731m260',
-                'sco_x1',
-                'sgr_x1',
-                'sgr_x2',
-                'S_J1756d9m2508',
-                'v4634_sgr',
-                'XB_1254_m690',
-                'xte_J0929m314',
-                'xte_J1751m305',
-                'xte_J1807m294',
-                'xte_J1808_369',
-                'xte_J1814m338',
-                'xte_J2123_m058']
+    #Name, type_objination ('e'dge if <45, 'f'ace if >45)
+    objects = [('4u_1705_m44', 'x'),
+                ('4U_0614p09', 'x'),
+                ('4U_1636_m53', 'x'),
+                ('4U_1702m43', 'x'),
+                ('4U_1728_34', 'x'),
+                ('aquila_X1', 'x'),
+                ('cir_x1', 'x'),
+                ('cyg_x2', 'x'),
+                #('EXO_0748_676', 'x'),
+                ('gx_3p1', 'x'),
+                ('gx_5m1', 'x'),
+                ('gx_17p2', 'x'),
+                ('gx_339_d4', 'x'),
+                ('gx_340p0', 'x'),
+                ('gx_349p2', 'x'),
+                ('HJ1900d1_2455', 'm'),
+                ('IGR_J00291p5934', 'a'),
+                ('IGR_J17498m2921', 'a'),
+                ('IGR_J17511m3057', 'a'),
+                ('J1701_462', 'x'),
+                ('KS_1731m260', 'x'),
+                ('sco_x1', 'x'),
+                ('sgr_x1', 'x'),
+                ('sgr_x2', 'x'),
+                ('S_J1756d9m2508', 'a'),
+                ('v4634_sgr', 'x'),
+                ('XB_1254_m690', 'x'),
+                ('xte_J0929m314', 'a'),
+                ('xte_J1751m305', 'a'),
+                ('xte_J1807m294', 'a'),
+                ('xte_J1808_369', 'x'),
+                ('xte_J1814m338', 'a')]
+                #('xte_J2123_m058', 'x')]
 
     # Set up plot details
     plt.figure(figsize=(10,10))
     colormap = plt.cm.Paired
-    colours = [colormap(i) for i in np.linspace(0.1, 0.9, len(objects))]
+    colours = [colormap(i) for i in np.linspace(0.1, 0.9, 10)]
     marker = itertools.cycle(('^', '+', '.', 'o', '*'))
 
-    for i, o in enumerate(objects):
-        print o
+    ases = 0
+    for details in objects:
+        o = details[0]
+        type_obj = details[1]
+
         p = path(o)
         db = pd.read_csv(p)
         db = findbestdata(db)
@@ -109,7 +113,17 @@ def plot_allpcs():
         yerror = db.pc2_err.values
 
         # One big plot
-        plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', marker=marker.next(), label=o, linewidth=2, color=colours[i])
+        if type_obj == 'a':
+            colour = colours[ases]
+            lbl = o
+            ases += 1
+            zorders = 10
+        else:
+            colour = 'darkgrey'
+            lbl = None
+            zorders = 1
+
+        plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', c=colour,marker=marker.next(), label=lbl, linewidth=2, zorder=zorders)
         # Subplots
         #plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', linewidth=2)
 
@@ -118,15 +132,15 @@ def plot_allpcs():
         plt.xscale('log', nonposx='clip')
         plt.ylabel('PC2 (B/D = [0.031-0.25]/[2.0-16.0])')
         plt.yscale('log', nonposy='clip')
-        plt.title('Power Colours')
+        plt.title('Blue is atoll, red is Z-source')
         plt.legend(loc='best', numpoints=1)
 
         # In case you want to save each figure individually
-        plt.savefig('/scratch/david/master_project/plots/pc/per_object/' + o + '.png', transparent=True)
-        plt.gcf().clear()
+        #plt.savefig('/scratch/david/master_project/plots/pc_' + o + '.png')
+        #plt.gcf().clear()
         #plt.clf()
 
-    #plt.show()
+    plt.show()
 
 if __name__=='__main__':
     plot_allpcs()
