@@ -154,6 +154,9 @@ def get_channel_range(mode, cer, path_event):
 
     # Find whether the absolute channels are in the relative channel range
     low_ind = [(i, c.index(low_ch)) for i, c in enumerate(chs) if low_ch in c]
+    # If wanting mutually exclusive energies (so energy bands don't overlap)
+    # then use the following line (only works for event and binned mode files)
+    # low_ind = [(i+1, c.index(low_ch)+1) for i, c in enumerate(chs) if low_ch in c]
     high_ind = [(i, c.index(high_ch)) for i, c in enumerate(chs) if high_ch in c]
 
     # If not, return Nan
