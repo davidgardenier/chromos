@@ -47,7 +47,7 @@ def findbestdataperobsid(df):
 
 def findbestdata(db):
     # Apply constraint to the data
-    db = db[(db.pc1.notnull())]
+    db = db[(db.pc1.notnull() & db.lt3sigma==True)]
     db = db.groupby('obsids').apply(findbestdataperobsid)
     return db
 

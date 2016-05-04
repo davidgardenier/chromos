@@ -45,10 +45,15 @@ def findbestdataperobsid(df):
                 return df.iloc[0]
 
 
-def findbestdata(db):
+def findbestdata(db, o):
     # Apply constraint to the data
-    db = db[(db.pc1.notnull() & db.lt3sigma==True)]
-    db = db.groupby('obsids').apply(findbestdataperobsid)
+    if o != 'IGR_J17480m2446':
+        db = db[(db.pc1.notnull() & db.lt3sigma==True)]
+        db = db.groupby('obsids').apply(findbestdataperobsid)
+    else:
+        db = db[(db.pc1.notnull() & db.lt3sigma==True) & ((db['times'].str.contains("2010-10")) | (db['times'].str.contains("2010-11")))]
+        db = db.groupby('obsids').apply(findbestdataperobsid)
+
     return db
 
 
@@ -112,7 +117,8 @@ def plot_allhues():
              # ('4U_1702m43', 'a'),
               #('J1701_462', 'z'),
               ('aquila_X1', '550'),
-              ('4U_1636_m53', '581.9')]
+              ('4U_1636_m53', '581.9'),
+              ('IGR_J17480m2446', '11')]
 
     objects = sorted(objects, key=lambda x: x[1])
     # Set up plot details
@@ -129,7 +135,7 @@ def plot_allhues():
         db = pd.read_csv(p)
 
         # Determine pc values
-        bestdata = findbestdata(db)
+        bestdata = findbestdata(db, o)
 
         # Calculate hues
         hues = []

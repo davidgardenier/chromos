@@ -119,7 +119,8 @@ def plot_allhues():
               ('gx_5m1', 'x'),
               ('gx_340p0', 'x'),
               ('gx_17p2', 'x'),
-              ('gx_349p2', 'x')]
+              ('gx_349p2', 'x'),
+              ('XB_1254_m690', 'x')]
 
     # Set up plot details
     plt.figure(figsize=(10,10))
