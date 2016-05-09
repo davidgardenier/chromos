@@ -94,7 +94,7 @@ def plot_allpcs():
             ('xte_J1814m338', 'XTE J1814-338')]
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
 
-    bhs = [('gx_339_d4', 'GX 339-4'), ('xte_J1550m564', 'XTE J1550-564'), ('H1743m322','H1743-322')]
+    exo = [('EXO_0748_676', 'EXO 0748-676')]
 
     # Set up plot details
     g = graph.graphxy(height=7,
@@ -130,7 +130,7 @@ def plot_allpcs():
     g.plot(graph.data.values(x=x_ns, y=y_ns, title='Neutron Stars'), nsstyle)
 
     #plot Black Holes
-    for i, o in enumerate(bhs):
+    for i, o in enumerate(exo):
         print o[-1]
         name = o[-1]
         o = o[0]
@@ -146,7 +146,7 @@ def plot_allpcs():
         g.plot(graph.data.values(x=x, y=y, dx=xerror, dy=yerror, title=name), errstyle)
         #g.plot(graph.data.values(x=x, y=y, title=name), scatterstyle)
 
-    g.writePDFfile('/scratch/david/master_project/plots/publication/pc/ns_bh')
+    g.writePDFfile('/scratch/david/master_project/plots/publication/pc/ns_exo')
 
 if __name__=='__main__':
     plot_allpcs()
