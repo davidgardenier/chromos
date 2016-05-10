@@ -4,8 +4,9 @@
 import os
 import glob
 import pandas as pd
+from math import atan2, degrees, pi, log10, sqrt, radians
 import matplotlib.pyplot as plt
-import math
+from collections import defaultdict
 from pyx import *
 
 def path(o):
@@ -53,6 +54,47 @@ def findbestdata(db):
     db = db.groupby('obsids').apply(findbestdataperobsid)
     return db
 
+def cal_hue(x,y,xerr,yerr):
+    '''
+    Function to calculate the hue on basis of power colour-ratio values.
+
+    Assuming:
+     - errors symmetric along either axis
+     - errors uncorrelated with each other
+     - errors given relative to a value
+
+    Returns:
+     - [tuple] hue, hue_error
+    '''
+    # Central point
+    x0 = 4.51920
+    y0 = 0.453724
+
+    x = float(x)
+    y = float(y)
+
+    # Angles are defined in log-space
+    dx = log10(x) - log10(x0)
+    dy = log10(y) - log10(y0)
+
+    # Calculate angle
+    rads = atan2(dy,dx)
+    rads %= 2*pi
+    # Add 135 degrees as the hue angle is defined
+    # from the line extending in north-west direction
+    degs = -(rads*(180/pi)) + 135
+    # Fixing things with minus degrees
+    if degs < 0:
+        degs = (180 - abs(degs)) + 180
+
+    # Calculate errors with error propagation
+    above = (yerr*x*log10(x/x0))**2+(xerr*y*log10(y/y0))**2
+    below = (x*y*(log10(x/x0)**2 + log10(y/y0)**2))**2
+    radserr = sqrt(above/float(below))
+    radserr %= 2*pi
+    degserr = radserr*180/pi
+
+    return degs, degserr
 
 def plot_allpcs():
     import numpy as np
@@ -95,54 +137,78 @@ def plot_allpcs():
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
 
     # Set up plot details
-    g = graph.graphxy(height=9,
-                      width=9,
+    g = graph.graphxy(height=7,
+                      width=7,
                       x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
-                      y=graph.axis.log(min=0.01, max=100, title=r"PC2"),
-                      key=graph.key.key(pos=None,hpos=1.0,vpos=0.5,hinside=0, dist=0.05, textattrs=[text.size.small]))
-    errstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow]),
+                      y=graph.axis.log(min=0.01, max=100, title=r"PC2"))
+    errstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.08, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
-    scatterstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow])]
+    scatterstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.1, symbolattrs=[color.gradient.Rainbow])]
 
-    objects = sorted(objects, key=lambda x: x[1])
+    allhues = []
     for i, o in enumerate(objects):
         print o[-1]
         name = o[-1]
         o = o[0]
         p = path(o)
         db = pd.read_csv(p)
-        db = findbestdata(db)
+        # Determine pc values
+        bestdata = findbestdata(db)
 
-        x = db.pc1.values
-        y = db.pc2.values
-        xerror = db.pc1_err.values
-        yerror = db.pc2_err.values
+        # Calculate hues
+        for i in range(len(bestdata.pc1.values)):
+            # Determine input parameters
+            obsid = bestdata.obsids.values[i]
+            pc1 = bestdata.pc1.values[i]
+            pc2 = bestdata.pc2.values[i]
+            pc1err = bestdata.pc1_err.values[i]
+            pc2err = bestdata.pc2_err.values[i]
+            hue, hue_err = cal_hue(pc1,pc2,pc1err,pc2err)
+            allhues.append((name, obsid, pc1, pc2, pc1err, pc2err, hue, hue_err))
 
-        # One big plot
-        # plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', marker=marker.next(), label=o, linewidth=2, color=colours[i])
+    # Split into bins
+    bins = [i for i in range(0,380,20)]
+    binnedhues = defaultdict(list)
+    for i, e in enumerate(allhues):
 
-        #g.plot(graph.data.values(x=x, y=y, dx=xerror, dy=yerror, title=name), errstyle)
-        g.plot(graph.data.values(x=x, y=y, title=name), scatterstyle)
+        for j, b in enumerate(bins):
+            if e[-2] < b:
+                binnedhues[str(bins[j-1]) + '_' + str(b)].append(e)
+                break
 
-    g.writePDFfile('/scratch/david/master_project/plots/publication/pc/all_ns')
-        # Subplots
-        #plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', linewidth=2)
+    #Order the bins
+    startofbins = []
+    for k in binnedhues.keys():
+        startofbins.append(int(k.split('_')[0]))
+    sortedkeys = [x for (y,x) in sorted(zip(startofbins,binnedhues.keys()))]
 
-        # plt.axis([0.01, 1000, 0.01, 100])
-        # plt.xlabel('PC1 (C/A = [0.25-2.0]/[0.0039-0.031])')
-        # plt.xscale('log', nonposx='clip')
-        # plt.ylabel('PC2 (B/D = [0.031-0.25]/[2.0-16.0])')
-        # plt.yscale('log', nonposy='clip')
-        # plt.title('Power Colours')
-        # plt.legend(loc='best', numpoints=1)
-        #
-        # # In case you want to save each figure individually
-        # fig.tight_layout(pad=0.1)
-        # plt.savefig('/scratch/david/master_project/plots/publication/pc/individual/' + o + '.pdf', transparent=True)
-        # plt.gcf().clear()
-        #plt.clf()
+    # Plot the bins
+    for k in sortedkeys:
+        pertype = zip(*binnedhues[k])
+        g.plot(graph.data.values(x=pertype[2], y=pertype[3]), scatterstyle)
 
-    #plt.show()
+        # # If wanting to print a list of objects & obsids per angle
+        # print k
+        # print '--------------'
+        # for e in binnedhues[k]:
+        #     print e[0], e[1], e[-2]
+        # print '=============='
+
+    # Overplot bin details
+    for b in [0,20,40,60,80,100,120,140,160]:
+        # Add 135 degrees as the hue angle is defined
+        # from the line extending in north-west direction
+        degs = b + 135
+        # Fixing things with minus degrees
+        if degs < 0:
+            degs = (180 - abs(degs)) + 180
+        degs = radians(degs)
+        func = 'y(x)=exp(tan('+str(degs)+')*(log(x)-log(4.51920))+log(0.453724))'
+        linesty = graph.style.line(lineattrs=[attr.changelist([style.linestyle.dashed])])
+        g.plot(graph.data.function(func), styles=[linesty])
+
+    g.writePDFfile('/scratch/david/master_project/plots/publication/pc/hue_bins')
+
 
 if __name__=='__main__':
     plot_allpcs()

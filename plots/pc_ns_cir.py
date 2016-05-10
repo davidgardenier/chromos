@@ -66,7 +66,6 @@ def plot_allpcs():
             ('aquila_X1', 'Aql X-1'),
             #('cir_x1', 'Cir X-1'), #strange behaviour
             ('cyg_x2', 'Cyg X-2'),
-            #('EXO_0748_676', 'EXO 0748-676'), #Strange behaviour
             ('gx_3p1', 'GX 3+1'),
             ('gx_5m1', 'GX 5-1'), #Only 5 points
             ('gx_17p2', 'GX 17+2'), #Only has 4 points
@@ -94,18 +93,43 @@ def plot_allpcs():
             ('xte_J1814m338', 'XTE J1814-338')]
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
 
+    cir = [('cir_x1', 'Cir X-1')]
+
     # Set up plot details
-    g = graph.graphxy(height=9,
-                      width=9,
+    g = graph.graphxy(height=7,
+                      width=7,
                       x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
                       y=graph.axis.log(min=0.01, max=100, title=r"PC2"),
-                      key=graph.key.key(pos=None,hpos=1.0,vpos=0.5,hinside=0, dist=0.05, textattrs=[text.size.small]))
-    errstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow]),
+                      key=graph.key.key(pos='tr', dist=0.2))
+    errstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.08, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
-    scatterstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow])]
+    scatterstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.1, symbolattrs=[color.gradient.Rainbow])]
 
-    objects = sorted(objects, key=lambda x: x[1])
+    x_ns = []
+    y_ns = []
+    xerror_ns = []
+    yerror_ns = []
+
     for i, o in enumerate(objects):
+        print o[-1]
+        name = o[-1]
+        o = o[0]
+        p = path(o)
+        db = pd.read_csv(p)
+        db = findbestdata(db)
+
+        x_ns.extend(db.pc1.values)
+        y_ns.extend(db.pc2.values)
+        xerror_ns.extend(db.pc1_err.values)
+        yerror_ns.extend(db.pc2_err.values)
+
+    # Plot Neutron Stars
+    grey= color.cmyk(0,0,0,0.5)
+    nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[grey])]
+    g.plot(graph.data.values(x=x_ns, y=y_ns, title='Neutron Stars'), nsstyle)
+
+    #plot Black Holes
+    for i, o in enumerate(cir):
         print o[-1]
         name = o[-1]
         o = o[0]
@@ -118,31 +142,10 @@ def plot_allpcs():
         xerror = db.pc1_err.values
         yerror = db.pc2_err.values
 
-        # One big plot
-        # plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', marker=marker.next(), label=o, linewidth=2, color=colours[i])
+        g.plot(graph.data.values(x=x, y=y, dx=xerror, dy=yerror, title=name), errstyle)
+        #g.plot(graph.data.values(x=x, y=y, title=name), scatterstyle)
 
-        #g.plot(graph.data.values(x=x, y=y, dx=xerror, dy=yerror, title=name), errstyle)
-        g.plot(graph.data.values(x=x, y=y, title=name), scatterstyle)
-
-    g.writePDFfile('/scratch/david/master_project/plots/publication/pc/all_ns')
-        # Subplots
-        #plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt='o', linewidth=2)
-
-        # plt.axis([0.01, 1000, 0.01, 100])
-        # plt.xlabel('PC1 (C/A = [0.25-2.0]/[0.0039-0.031])')
-        # plt.xscale('log', nonposx='clip')
-        # plt.ylabel('PC2 (B/D = [0.031-0.25]/[2.0-16.0])')
-        # plt.yscale('log', nonposy='clip')
-        # plt.title('Power Colours')
-        # plt.legend(loc='best', numpoints=1)
-        #
-        # # In case you want to save each figure individually
-        # fig.tight_layout(pad=0.1)
-        # plt.savefig('/scratch/david/master_project/plots/publication/pc/individual/' + o + '.pdf', transparent=True)
-        # plt.gcf().clear()
-        #plt.clf()
-
-    #plt.show()
+    g.writePDFfile('/scratch/david/master_project/plots/publication/pc/ns_cir')
 
 if __name__=='__main__':
     plot_allpcs()
