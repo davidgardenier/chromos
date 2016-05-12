@@ -4,6 +4,7 @@
 import os
 import glob
 import pandas as pd
+from math import atan2, degrees, pi, log10, sqrt
 import matplotlib.pyplot as plt
 import math
 from pyx import *
@@ -53,6 +54,48 @@ def findbestdata(db):
     db = db.groupby('obsids').apply(findbestdataperobsid)
     return db
 
+def cal_hue(x,y,xerr,yerr):
+    '''
+    Function to calculate the hue on basis of power colour-ratio values.
+
+    Assuming:
+     - errors symmetric along either axis
+     - errors uncorrelated with each other
+     - errors given relative to a value
+
+    Returns:
+     - [tuple] hue, hue_error
+    '''
+    # Central point
+    x0 = 4.51920
+    y0 = 0.453724
+
+    x = float(x)
+    y = float(y)
+
+    # Angles are defined in log-space
+    dx = log10(x) - log10(x0)
+    dy = log10(y) - log10(y0)
+
+    # Calculate angle
+    rads = atan2(dy,dx)
+    rads %= 2*pi
+    # Add 135 degrees as the hue angle is defined
+    # from the line extending in north-west direction
+    degs = -(rads*(180/pi)) + 135
+    # Fixing things with minus degrees
+    if degs < 0:
+        degs = (180 - abs(degs)) + 180
+
+    # Calculate errors with error propagation
+    above = (yerr*x*log10(x/x0))**2+(xerr*y*log10(y/y0))**2
+    below = (x*y*(log10(x/x0)**2 + log10(y/y0)**2))**2
+    radserr = sqrt(above/float(below))
+    radserr %= 2*pi
+    degserr = radserr*180/pi
+
+    return degs, degserr
+
 
 def plot_allpcs():
     import numpy as np
@@ -94,30 +137,55 @@ def plot_allpcs():
             ('xte_J1814m338', 'XTE J1814-338')]
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
 
-    # Set up plot details
+    for w, details in enumerate(objects):
 
-    for i, o in enumerate(objects):
-        print o[-1]
-        name = o[-1]
-        o = o[0]
-        p = path(o)
-        db = pd.read_csv(p)
-        db = findbestdata(db)
-
-        x = db.pc1.values
-        y = db.pc2.values
-        xerror = db.pc1_err.values
-        yerror = db.pc2_err.values
-
-        #colour = color.cmyk(0,0.87,0.68,0.32)
-        colour = color.rgb.red
+        # Set up plot details
         g = graph.graphxy(height=6,
                           width=6,
-                          x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
-                          y=graph.axis.log(min=0.01, max=100, title=r"PC2"))
-        g.plot(graph.data.values(x=x, y=y, dx=xerror, dy=yerror), [graph.style.symbol(symbolattrs=[colour],size=0.1), graph.style.errorbar(errorbarattrs=[colour])])
-        g.text(5.7,5.4, name, [text.halign.boxright])
-        outputfile = '/scratch/david/master_project/plots/publication/pc/individual/' + o
+                          x=graph.axis.lin(min=0, max=360, title=r"Hue ($^{\circ}$)"),
+                          y=graph.axis.lin(min=0.5, max=1.75, title=r"Hardness (9.7-16 keV)/(6.4-9.7 keV)"))
+        errstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow]),
+                   graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
+        scatterstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow])]
+
+        o = details[0]
+        name = details[1]
+        print o
+        p = path(o)
+        db = pd.read_csv(p)
+
+        # Determine pc values
+        bestdata = findbestdata(db)
+        # Calculate hues
+        hues = []
+        hues_err = []
+        for i in range(len(bestdata.pc1.values)):
+            # Determine input parameters
+            pc1 = bestdata.pc1.values[i]
+            pc2 = bestdata.pc2.values[i]
+            pc1err = bestdata.pc1_err.values[i]
+            pc2err = bestdata.pc2_err.values[i]
+            hue, hue_err = cal_hue(pc1,pc2,pc1err,pc2err)
+            hues.append(hue)
+            hues_err.append(hue_err)
+
+        # Determine hardness values
+        hardness = []
+        hardness_err = []
+        for obsid, group in bestdata.groupby('obsids'):
+            df = db[db.obsids==obsid].dropna(subset=['flux_i3t16_s6p4t9p7_h9p7t16'])
+            hardness.append(df.hardness_i3t16_s6p4t9p7_h9p7t16.values[0])
+            hardness_err.append(df.hardness_err_i3t16_s6p4t9p7_h9p7t16.values[0])
+
+        # Plot details
+        x = hues
+        y = hardness
+        xerror = hues_err
+        yerror = hardness_err
+        g.plot(graph.data.values(x=x, y=y, dx=xerror, dy=yerror, title=name), errstyle)
+        xtext, ytext = g.pos(345, 1.7)
+        g.text(xtext,ytext, name, [text.halign.boxright, text.valign.top])
+        outputfile = '/scratch/david/master_project/plots/publication/hh/individual/' + o
         g.writePDFfile(outputfile)
         os.system('convert -density 300 '+outputfile+'.pdf -quality 90 '+outputfile+'.png')
         # Subplots

@@ -4,6 +4,7 @@
 import os
 import glob
 import pandas as pd
+from math import atan2, degrees, pi, log10, sqrt
 import matplotlib.pyplot as plt
 import math
 from pyx import *
@@ -54,6 +55,48 @@ def findbestdata(db):
     db = db.groupby('obsids').apply(findbestdataperobsid)
     return db
 
+def cal_hue(x,y,xerr,yerr):
+    '''
+    Function to calculate the hue on basis of power colour-ratio values.
+
+    Assuming:
+     - errors symmetric along either axis
+     - errors uncorrelated with each other
+     - errors given relative to a value
+
+    Returns:
+     - [tuple] hue, hue_error
+    '''
+    # Central point
+    x0 = 4.51920
+    y0 = 0.453724
+
+    x = float(x)
+    y = float(y)
+
+    # Angles are defined in log-space
+    dx = log10(x) - log10(x0)
+    dy = log10(y) - log10(y0)
+
+    # Calculate angle
+    rads = atan2(dy,dx)
+    rads %= 2*pi
+    # Add 135 degrees as the hue angle is defined
+    # from the line extending in north-west direction
+    degs = -(rads*(180/pi)) + 135
+    # Fixing things with minus degrees
+    if degs < 0:
+        degs = (180 - abs(degs)) + 180
+
+    # Calculate errors with error propagation
+    above = (yerr*x*log10(x/x0))**2+(xerr*y*log10(y/y0))**2
+    below = (x*y*(log10(x/x0)**2 + log10(y/y0)**2))**2
+    radserr = sqrt(above/float(below))
+    radserr %= 2*pi
+    degserr = radserr*180/pi
+
+    return degs, degserr
+
 
 ns = [('4u_1705_m44', '4U 1705-44'),
         ('4U_0614p09', '4U 0614+09'),
@@ -100,12 +143,33 @@ for i, o in enumerate(ns):
     o = o[0]
     p = path(o)
     db = pd.read_csv(p)
-    db = findbestdata(db)
+    # Determine pc values
+    bestdata = findbestdata(db)
+    # Calculate hues
+    hues = []
+    hues_err = []
+    for i in range(len(bestdata.pc1.values)):
+        # Determine input parameters
+        pc1 = bestdata.pc1.values[i]
+        pc2 = bestdata.pc2.values[i]
+        pc1err = bestdata.pc1_err.values[i]
+        pc2err = bestdata.pc2_err.values[i]
+        hue, hue_err = cal_hue(pc1,pc2,pc1err,pc2err)
+        hues.append(hue)
+        hues_err.append(hue_err)
 
-    x_ns.extend(db.pc1.values)
-    y_ns.extend(db.pc2.values)
-    xerror_ns.extend(db.pc1_err.values)
-    yerror_ns.extend(db.pc2_err.values)
+    # Determine hardness values
+    hardness = []
+    hardness_err = []
+    for obsid, group in bestdata.groupby('obsids'):
+        df = db[db.obsids==obsid].dropna(subset=['flux_i3t16_s6p4t9p7_h9p7t16'])
+        hardness.append(df.hardness_i3t16_s6p4t9p7_h9p7t16.values[0])
+        hardness_err.append(df.hardness_err_i3t16_s6p4t9p7_h9p7t16.values[0])
+
+    x_ns.extend(hues)
+    y_ns.extend(hardness)
+    xerror_ns.extend(hues_err)
+    yerror_ns.extend(hardness_err)
 
 
 names = {'4u_1705_m44':'4U 1705-44',
@@ -148,11 +212,11 @@ names = {'4u_1705_m44':'4U 1705-44',
 
 class empty:
 
-	def __init__(self):
-		pass
-	def labels(self, ticks):
-		for tick in ticks:
-			tick.label=""
+    def __init__(self):
+        pass
+    def labels(self, ticks):
+        for tick in ticks:
+            tick.label=""
 
 def plotpcpane(objects, nr):
 
@@ -174,64 +238,82 @@ def plotpcpane(objects, nr):
     objcts = [objects[j-1] for j in order]
 
     print str(nr), '\n=========================='
-    for i in range(len(objcts)):
-        obj = objcts[i]
+    for z in range(len(objcts)):
+        obj = objcts[z]
         print names[obj]
 
         p = path(obj)
         db = pd.read_csv(p)
-        db = findbestdata(db)
+        # Determine pc values
+        bestdata = findbestdata(db)
+        # Calculate hues
+        hues = []
+        hues_err = []
+        for i in range(len(bestdata.pc1.values)):
+            # Determine input parameters
+            pc1 = bestdata.pc1.values[i]
+            pc2 = bestdata.pc2.values[i]
+            pc1err = bestdata.pc1_err.values[i]
+            pc2err = bestdata.pc2_err.values[i]
+            hue, hue_err = cal_hue(pc1,pc2,pc1err,pc2err)
+            hues.append(hue)
+            hues_err.append(hue_err)
 
-        x = db.pc1.values
-        y = db.pc2.values
-        xerror = db.pc1_err.values
-        yerror = db.pc2_err.values
+        # Determine hardness values
+        hardness = []
+        hardness_err = []
+        for obsid, group in bestdata.groupby('obsids'):
+            df = db[db.obsids==obsid].dropna(subset=['flux_i3t16_s6p4t9p7_h9p7t16'])
+            hardness.append(df.hardness_i3t16_s6p4t9p7_h9p7t16.values[0])
+            hardness_err.append(df.hardness_err_i3t16_s6p4t9p7_h9p7t16.values[0])
 
+        # Plot details
+        x = hues
+        y = hardness
+        xerror = hues_err
+        yerror = hardness_err
         values = graph.data.values(x=x, y=y, dx=xerror, dy=yerror)
 
         myticks = []
 
-    	if yposition[i]!=0.0:
+        if yposition[z]!=0.0:
             xtitle = ""
             xtexter=empty()
-    	else:
-            xtitle = "PC1"
+        else:
+            xtitle = "Hue ($^{\circ}$)"
             xtexter=graph.axis.texter.mixed()
-    	if xposition[i]!=0.0:
+        if xposition[z]!=0.0:
             ytitle = ""
             ytexter=empty()
-    	else:
-            ytitle="PC2"
+        else:
+            ytitle="Hardness"
             ytexter=graph.axis.texter.mixed()
-        if len(objects) == 8 and yposition[i]==6.0 and xposition[i]==12:
-            xtitle = "PC1"
+        if len(objects) == 8 and yposition[z]==6.0 and xposition[z]==12:
+            xtitle = "Hue ($^{\circ}$)"
             xtexter=graph.axis.texter.mixed()
-            myticks = [graph.axis.tick.tick(0.01, label=" ", labelattrs=[text.mathmode]),
-                       graph.axis.tick.tick(1.0, label="1", labelattrs=[text.mathmode]),
-                       graph.axis.tick.tick(10, label="10", labelattrs=[text.mathmode]),
-                       graph.axis.tick.tick(100, label="100", labelattrs=[text.mathmode])]
+            myticks = [graph.axis.tick.tick(0, label=" ", labelattrs=[text.mathmode])]
 
-    	g=c.insert(graph.graphxy(width=6.0,
+        g=c.insert(graph.graphxy(width=6.0,
                                  height=6.0,
-                                 xpos=xposition[i],
-                                 ypos=yposition[i],
-	                             x=graph.axis.log(min=0.01,max=400,title=xtitle,texter=xtexter,manualticks=myticks),
-	                             y=graph.axis.log(min=0.01,max=30,title=ytitle,texter=ytexter)))
+                                 xpos=xposition[z],
+                                 ypos=yposition[z],
+                                 x=graph.axis.lin(min=0, max=360,title=xtitle,texter=xtexter,manualticks=myticks),
+                                 y=graph.axis.lin(min=0.5, max=1.9,title=ytitle,texter=ytexter)))
 
         # Plot Neutron Stars
         grey= color.cmyk(0,0,0,0.5)
         nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[grey])]
-        g.plot(graph.data.values(x=x_ns, y=y_ns, title='Neutron Stars'), nsstyle)
+        g.plot(graph.data.values(x=x_ns, y=y_ns), nsstyle)
 
-    	g.plot(values,[graph.style.symbol(symbolattrs=[color.rgb.red],size=0.1), graph.style.errorbar(errorbarattrs=[color.rgb.red])])
-        xtext, ytext = g.pos(200, 16)
+        g.plot(values,[graph.style.symbol(symbolattrs=[color.rgb.red],size=0.1), graph.style.errorbar(errorbarattrs=[color.rgb.red])])
+        xtext, ytext = g.pos(345, 1.85)
         g.text(xtext,ytext, names[obj], [text.halign.boxright, text.valign.top])
 
     # title = huerange.replace('_', '$^{\circ}$-') + '$^{\circ}$'
     # c.text(6.0,yposition[-1]+6.5,title,
     #        [text.halign.center, text.valign.bottom, text.size.Large])
 
-    outputfile = '/scratch/david/master_project/plots/publication/pc/pane_%i' %nr
+    outputfile = '/scratch/david/master_project/plots/publication/hh/pane_%i' %nr
     c.writePDFfile(outputfile)
     os.system('convert -density 300 '+outputfile+'.pdf -quality 90 '+outputfile+'.png')
 

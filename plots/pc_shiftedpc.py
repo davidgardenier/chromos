@@ -54,6 +54,11 @@ def findbestdata(db):
     db = db.groupby('obsids').apply(findbestdataperobsid)
     return db
 
+def findbestdatashifted(db):
+    # Apply constraint to the data
+    db = db[(db.pc1_shiftedby5.notnull() & db.lt3sigma_shiftedby5==True)]
+    db = db.groupby('obsids').apply(findbestdataperobsid)
+    return db
 
 ns = [('4u_1705_m44', '4U 1705-44'),
         ('4U_0614p09', '4U 0614+09'),
@@ -107,6 +112,39 @@ for i, o in enumerate(ns):
     xerror_ns.extend(db.pc1_err.values)
     yerror_ns.extend(db.pc2_err.values)
 
+shiftobjs = [('4u_1705_m44', 'e'),
+          ('xte_J1808_369', 'e'),
+          ('cir_x1', 'f'),
+          #('cyg_x2', 'e'),
+          ('EXO_0748_676', 'e'),
+          ('HJ1900d1_2455', 'f'),
+          ('sco_x1', 'f'),
+          ('v4634_sgr', 'x'),
+          ('4U_1728_34', 'f'),
+          ('4U_0614p09', 'e'),
+          ('4U_1702m43', 'x'),
+          ('J1701_462', 'e'),
+          ('aquila_X1', 'e'),
+          ('4U_1636_m53', 'e')]
+
+x_shiftedns = []
+y_shiftedns = []
+xerror_shiftedns = []
+yerror_shiftedns = []
+
+for i, o in enumerate(ns):
+    o = o[0]
+    p = path(o)
+    db = pd.read_csv(p)
+    try:
+        db = findbestdatashifted(db)
+    except:
+        print 'FAILED: %s' %o
+        continue
+    x_shiftedns.extend(db.pc1_shiftedby5.values)
+    y_shiftedns.extend(db.pc2_shiftedby5.values)
+    xerror_shiftedns.extend(db.pc1_err_shiftedby5.values)
+    yerror_shiftedns.extend(db.pc2_err_shiftedby5.values)
 
 names = {'4u_1705_m44':'4U 1705-44',
         '4U_0614p09':'4U 0614+09',
@@ -154,43 +192,28 @@ class empty:
 		for tick in ticks:
 			tick.label=""
 
-def plotpcpane(objects, nr):
+def plotpcpane():
 
     # Set up plot details
     c=canvas.canvas()
 
-    if len(objects) == 12:
-        xposition=[0.0,6.0,12.0, 0.0,6.0,12.0, 0.0,6.0,12.0,   0.0,6.0,12.0]
-        yposition=[0.0,0.0,0.0,  6.0,6.0,6.0,  12.0,12.0,12.0, 18.0,18.0,18.0]
-        order = [10,11,12,7,8,9,4,5,6,1,2,3]
-    if len(objects) == 8:
-        xposition=[0.0,6.0, 0.0,6.0,12.0, 0.0,6.0,12.0]
-        yposition=[0.0,0.0, 6.0,6.0,6.0,  12.0,12.0,12.0]
-        order = [7,8,4,5,6,1,2,3]
-    if len(objects) == 3:
-        xposition=[0.0,6.0,12.0]
-        yposition=[0.0,0.0,0.0]
-        order = [1,2,3]
-    objcts = [objects[j-1] for j in order]
+    xposition=[0.0,6.0]
+    yposition=[0.0,0.0]
 
-    print str(nr), '\n=========================='
-    for i in range(len(objcts)):
-        obj = objcts[i]
-        print names[obj]
+    for i in range(len(xposition)):
 
-        p = path(obj)
-        db = pd.read_csv(p)
-        db = findbestdata(db)
-
-        x = db.pc1.values
-        y = db.pc2.values
-        xerror = db.pc1_err.values
-        yerror = db.pc2_err.values
-
-        values = graph.data.values(x=x, y=y, dx=xerror, dy=yerror)
+        # p = path(obj)
+        # db = pd.read_csv(p)
+        # db = findbestdata(db)
+        #
+        # x = db.pc1.values
+        # y = db.pc2.values
+        # xerror = db.pc1_err.values
+        # yerror = db.pc2_err.values
+        #
+        # values = graph.data.values(x=x, y=y, dx=xerror, dy=yerror)
 
         myticks = []
-
     	if yposition[i]!=0.0:
             xtitle = ""
             xtexter=empty()
@@ -203,13 +226,6 @@ def plotpcpane(objects, nr):
     	else:
             ytitle="PC2"
             ytexter=graph.axis.texter.mixed()
-        if len(objects) == 8 and yposition[i]==6.0 and xposition[i]==12:
-            xtitle = "PC1"
-            xtexter=graph.axis.texter.mixed()
-            myticks = [graph.axis.tick.tick(0.01, label=" ", labelattrs=[text.mathmode]),
-                       graph.axis.tick.tick(1.0, label="1", labelattrs=[text.mathmode]),
-                       graph.axis.tick.tick(10, label="10", labelattrs=[text.mathmode]),
-                       graph.axis.tick.tick(100, label="100", labelattrs=[text.mathmode])]
 
     	g=c.insert(graph.graphxy(width=6.0,
                                  height=6.0,
@@ -220,65 +236,24 @@ def plotpcpane(objects, nr):
 
         # Plot Neutron Stars
         grey= color.cmyk(0,0,0,0.5)
-        nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[grey])]
-        g.plot(graph.data.values(x=x_ns, y=y_ns, title='Neutron Stars'), nsstyle)
-
-    	g.plot(values,[graph.style.symbol(symbolattrs=[color.rgb.red],size=0.1), graph.style.errorbar(errorbarattrs=[color.rgb.red])])
-        xtext, ytext = g.pos(200, 16)
-        g.text(xtext,ytext, names[obj], [text.halign.boxright, text.valign.top])
-
+        nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[color.rgb.red])]
+        if i==0:
+            g.plot(graph.data.values(x=x_ns, y=y_ns, title='Neutron Stars'), nsstyle)
+            xtext, ytext = g.pos(200, 16)
+            g.text(xtext,ytext, 'Normal PCs', [text.halign.boxright, text.valign.top])
+        nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[color.rgb.blue])]
+        if i==1:
+            g.plot(graph.data.values(x=x_shiftedns, y=y_shiftedns, title='Neutron Stars'), nsstyle)
+            xtext, ytext = g.pos(200, 16)
+            g.text(xtext,ytext, 'Shifted PCs', [text.halign.boxright, text.valign.top])
     # title = huerange.replace('_', '$^{\circ}$-') + '$^{\circ}$'
     # c.text(6.0,yposition[-1]+6.5,title,
     #        [text.halign.center, text.valign.bottom, text.size.Large])
 
-    outputfile = '/scratch/david/master_project/plots/publication/pc/pane_%i' %nr
+    outputfile = '/scratch/david/master_project/plots/publication/pc/shiftedpc'
     c.writePDFfile(outputfile)
-    os.system('convert -density 300 '+outputfile+'.pdf -quality 90 '+outputfile+'.png')
+    # os.system('convert -density 300 '+outputfile+'.pdf -quality 90 '+outputfile+'.png')
 
 
 if __name__=='__main__':
-
-    nr = 1
-    pane = ['4U_0614p09',
-            '4U_1636_m53',
-            '4U_1702m43',
-            '4u_1705_m44',
-            '4U_1728_34',
-            'aquila_X1',
-            'cir_x1',
-            'cyg_x2',
-            'EXO_0748_676',
-            'gx_17p2',
-            'gx_3p1',
-            'gx_340p0']
-    plotpcpane(pane, nr)
-
-    nr = 2
-    pane = ['gx_349p2',
-            'gx_5m1',
-            'HJ1900d1_2455',
-            'IGR_J00291p5934',
-            'IGR_J17480m2446',
-            'IGR_J17498m2921',
-            'KS_1731m260',
-            'S_J1756d9m2508',
-            'sco_x1',
-            'sgr_x1',
-            'sgr_x2',
-            'v4634_sgr']
-    plotpcpane(pane, nr)
-
-    nr = 3
-    pane = ['XB_1254_m690',
-            'xte_J0929m314',
-            'xte_J1550m564',
-            'J1701_462',
-            'xte_J1751m305',
-            'xte_J1807m294',
-            'xte_J1808_369',
-            'xte_J1814m338']
-    plotpcpane(pane, nr)
-
-    nr = 4
-    pane = ['gx_339_d4','H1743m322','xte_J1550m564']
-    plotpcpane(pane, nr)
+    plotpcpane()
