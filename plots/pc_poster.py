@@ -4,9 +4,8 @@
 import os
 import glob
 import pandas as pd
-from math import atan2, degrees, pi, log10, sqrt, radians
 import matplotlib.pyplot as plt
-from collections import defaultdict
+import math
 from pyx import *
 
 def path(o):
@@ -54,47 +53,6 @@ def findbestdata(db):
     db = db.groupby('obsids').apply(findbestdataperobsid)
     return db
 
-def cal_hue(x,y,xerr,yerr):
-    '''
-    Function to calculate the hue on basis of power colour-ratio values.
-
-    Assuming:
-     - errors symmetric along either axis
-     - errors uncorrelated with each other
-     - errors given relative to a value
-
-    Returns:
-     - [tuple] hue, hue_error
-    '''
-    # Central point
-    x0 = 4.51920
-    y0 = 0.453724
-
-    x = float(x)
-    y = float(y)
-
-    # Angles are defined in log-space
-    dx = log10(x) - log10(x0)
-    dy = log10(y) - log10(y0)
-
-    # Calculate angle
-    rads = atan2(dy,dx)
-    rads %= 2*pi
-    # Add 135 degrees as the hue angle is defined
-    # from the line extending in north-west direction
-    degs = -(rads*(180/pi)) + 135
-    # Fixing things with minus degrees
-    if degs < 0:
-        degs = (180 - abs(degs)) + 180
-
-    # Calculate errors with error propagation
-    above = (yerr*x*log10(x/x0))**2+(xerr*y*log10(y/y0))**2
-    below = (x*y*(log10(x/x0)**2 + log10(y/y0)**2))**2
-    radserr = sqrt(above/float(below))
-    radserr %= 2*pi
-    degserr = radserr*180/pi
-
-    return degs, degserr
 
 def plot_allpcs():
     import numpy as np
@@ -136,80 +94,65 @@ def plot_allpcs():
             ('xte_J1814m338', 'XTE J1814-338')]
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
 
+    bhs = [('gx_339_d4', 'GX 339-4'), ('xte_J1550m564', 'XTE J1550-564'), ('H1743m322','H1743-322')]
+
     # Set up plot details
     g = graph.graphxy(height=7,
                       width=7,
                       x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
-                      y=graph.axis.log(min=0.01, max=100, title=r"PC2"))
+                      y=graph.axis.log(min=0.01, max=100, title=r"PC2"),
+                      key=graph.key.key(pos='tr', dist=0.2))
     errstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.08, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
     scatterstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.1, symbolattrs=[color.gradient.Rainbow])]
 
-    allhues = []
+    x_ns = []
+    y_ns = []
+    xerror_ns = []
+    yerror_ns = []
+
     for i, o in enumerate(objects):
         print o[-1]
         name = o[-1]
         o = o[0]
         p = path(o)
         db = pd.read_csv(p)
-        # Determine pc values
-        bestdata = findbestdata(db)
+        db = findbestdata(db)
 
-        # Calculate hues
-        for i in range(len(bestdata.pc1.values)):
-            # Determine input parameters
-            obsid = bestdata.obsids.values[i]
-            mode = bestdata.modes.values[i]
-            pc1 = bestdata.pc1.values[i]
-            pc2 = bestdata.pc2.values[i]
-            pc1err = bestdata.pc1_err.values[i]
-            pc2err = bestdata.pc2_err.values[i]
-            hue, hue_err = cal_hue(pc1,pc2,pc1err,pc2err)
-            allhues.append((o, obsid, pc1, pc2, pc1err, pc2err, mode, hue, hue_err))
+        x_ns.extend(db.pc1.values)
+        y_ns.extend(db.pc2.values)
+        xerror_ns.extend(db.pc1_err.values)
+        yerror_ns.extend(db.pc2_err.values)
 
-    # Split into bins
-    bins = [i for i in range(0,380,20)]
-    binnedhues = defaultdict(list)
-    for i, e in enumerate(allhues):
+    # Plot Neutron Stars
+    grey= color.cmyk(0,0,0,0.5)
+    nsstyle = [graph.style.symbol(size=0.2, symbolattrs=[style.linewidth.Thick,color.rgb.blue])]
+    g.plot(graph.data.values(x=x_ns, y=y_ns, title='Neutron Stars'), nsstyle)
 
-        for j, b in enumerate(bins):
-            if e[-2] < b:
-                binnedhues[str(bins[j-1]) + '_' + str(b)].append(e)
-                break
+    #plot Black Holes
+    x_bh = []
+    y_bh = []
+    xerror_bh = []
+    yerror_bh = []
 
-    #Order the bins
-    startofbins = []
-    for k in binnedhues.keys():
-        startofbins.append(int(k.split('_')[0]))
-    sortedkeys = [x for (y,x) in sorted(zip(startofbins,binnedhues.keys()))]
+    for i, o in enumerate(bhs):
+        print o[-1]
+        name = o[-1]
+        o = o[0]
+        p = path(o)
+        db = pd.read_csv(p)
+        db = findbestdata(db)
 
-    # Plot the bins
-    for k in sortedkeys:
-        pertype = zip(*binnedhues[k])
-        g.plot(graph.data.values(x=pertype[2], y=pertype[3]), scatterstyle)
+        x_bh.extend(db.pc1.values)
+        y_bh.extend(db.pc2.values)
+        xerror_bh.extend(db.pc1_err.values)
+        yerror_bh.extend(db.pc2_err.values)
 
-        #If wanting to print a list of objects & obsids per angle
-        print k
-        print '--------------'
-        for e in binnedhues[k]:
-            print "('%s','%s','%s')" %(e[0], e[1], e[-3])
-        print '=============='
+    grey= color.cmyk(0,0,0,0.5)
+    bhstyle = [graph.style.symbol(graph.style.symbol.circle, size=0.1, symbolattrs=[style.linewidth.Thick,grey])]
+    g.plot(graph.data.values(x=x_bh, y=y_bh, title='Black Holes'), bhstyle)
 
-    # Overplot bin details
-    for b in [0,20,40,60,80,100,120,140,160]:
-        # Add 135 degrees as the hue angle is defined
-        # from the line extending in north-west direction
-        degs = b + 135
-        # Fixing things with minus degrees
-        if degs < 0:
-            degs = (180 - abs(degs)) + 180
-        degs = radians(degs)
-        func = 'y(x)=exp(tan('+str(degs)+')*(log(x)-log(4.51920))+log(0.453724))'
-        linesty = graph.style.line(lineattrs=[attr.changelist([style.linestyle.dashed])])
-        g.plot(graph.data.function(func), styles=[linesty])
-
-    g.writePDFfile('/scratch/david/master_project/plots/publication/pc/hue_bins')
-
+    g.writePDFfile('/scratch/david/master_project/plots/publication/poster/pc')
 
 if __name__=='__main__':
     plot_allpcs()
