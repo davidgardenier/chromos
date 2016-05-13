@@ -87,7 +87,7 @@ ns = [('4u_1705_m44', '4U 1705-44'),
         #('xte_J1550m564', 'XTE J1550-564'), #BH system
         ('xte_J1751m305', 'XTE J1751-305'),
         ('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
-        ('xte_J1808_369', 'XTE J1808-369'),
+        ('xte_J1808_369', 'SAX J1808.4-3648'),
         ('xte_J1814m338', 'XTE J1814-338')]
 
 x_ns = []
@@ -141,7 +141,7 @@ names = {'4u_1705_m44':'4U 1705-44',
         'xte_J1550m564':'XTE J1550-564', #BH system
         'xte_J1751m305':'XTE J1751-305',
         'xte_J1807m294':'XTE J1807-294', #Only 4 points
-        'xte_J1808_369':'XTE J1808-369',
+        'xte_J1808_369':'SAX J1808.4-3648',
         'xte_J1814m338':'XTE J1814-338',
         'xte_J2123_m058':'XTE J2123-058'} # No pc points
 
@@ -158,15 +158,14 @@ def plotpcpane(objects, nr):
 
     # Set up plot details
     c=canvas.canvas()
-
     if len(objects) == 12:
         xposition=[0.0,6.0,12.0, 0.0,6.0,12.0, 0.0,6.0,12.0,   0.0,6.0,12.0]
         yposition=[0.0,0.0,0.0,  6.0,6.0,6.0,  12.0,12.0,12.0, 18.0,18.0,18.0]
         order = [10,11,12,7,8,9,4,5,6,1,2,3]
-    if len(objects) == 8:
-        xposition=[0.0,6.0, 0.0,6.0,12.0, 0.0,6.0,12.0]
-        yposition=[0.0,0.0, 6.0,6.0,6.0,  12.0,12.0,12.0]
-        order = [7,8,4,5,6,1,2,3]
+    if len(objects) == 7:
+        xposition=[0.0, 0.0,6.0,12.0, 0.0,6.0,12.0]
+        yposition=[0.0, 6.0,6.0,6.0,  12.0,12.0,12.0]
+        order = [7,4,5,6,1,2,3]
     if len(objects) == 3:
         xposition=[0.0,6.0,12.0]
         yposition=[0.0,0.0,0.0]
@@ -203,13 +202,16 @@ def plotpcpane(objects, nr):
     	else:
             ytitle="PC2"
             ytexter=graph.axis.texter.mixed()
-        if len(objects) == 8 and yposition[i]==6.0 and xposition[i]==12:
+        if len(objects) == 7 and yposition[i]==6.0 and xposition[i]==6:
             xtitle = "PC1"
             xtexter=graph.axis.texter.mixed()
             myticks = [graph.axis.tick.tick(0.01, label=" ", labelattrs=[text.mathmode]),
                        graph.axis.tick.tick(1.0, label="1", labelattrs=[text.mathmode]),
                        graph.axis.tick.tick(10, label="10", labelattrs=[text.mathmode]),
                        graph.axis.tick.tick(100, label="100", labelattrs=[text.mathmode])]
+        if len(objects) == 7 and yposition[i]==6.0 and xposition[i]==12:
+            xtitle = "PC1"
+            xtexter=graph.axis.texter.mixed()
 
     	g=c.insert(graph.graphxy(width=6.0,
                                  height=6.0,
@@ -261,21 +263,20 @@ if __name__=='__main__':
             'IGR_J17480m2446',
             'IGR_J17498m2921',
             'KS_1731m260',
+            'xte_J1808_369',
             'S_J1756d9m2508',
             'sco_x1',
             'sgr_x1',
-            'sgr_x2',
-            'v4634_sgr']
+            'sgr_x2']
     plotpcpane(pane, nr)
 
     nr = 3
-    pane = ['XB_1254_m690',
+    pane = ['v4634_sgr',
+            'XB_1254_m690',
             'xte_J0929m314',
-            'xte_J1550m564',
             'J1701_462',
             'xte_J1751m305',
             'xte_J1807m294',
-            'xte_J1808_369',
             'xte_J1814m338']
     plotpcpane(pane, nr)
 

@@ -58,8 +58,8 @@ def plot_allpcs():
     import numpy as np
     import itertools
 
-    scos=[('gx_17p2', 'GX 17+2'), #Only has 4 points,
-          ('sco_x1', 'Sco X-1'),
+    scos=[('sco_x1', 'Sco X-1'),
+          ('gx_17p2', 'GX 17+2'), #Only has 4 points
           ('gx_349p2', 'GX 349+2')] #Only 3 points
 
     cygs = [('cyg_x2', 'Cyg X-2'),
@@ -71,17 +71,19 @@ def plot_allpcs():
                       width=7,
                       x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
                       y=graph.axis.log(min=0.01, max=100, title=r"PC2"),
-                      key=graph.key.key(pos='tr', dist=0.2))
-    errstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.15, symbolattrs=[color.gradient.Rainbow]),
-               graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
-    scatterstyle= [graph.style.symbol(size=0.15, symbolattrs=[color.gradient.Rainbow])]
+                      key=graph.key.key(pos='tr', dist=0.1))
 
-    x_scos = []
-    y_scos = []
-    xerror_scos = []
-    yerror_scos = []
+    #scos = sorted(scos, key=lambda x: x[1])
+    #cygs = sorted(cygs, key=lambda x: x[1])
 
+    scatterstyle= [graph.style.symbol(graph.style.symbol.changecross, size=0.15, symbolattrs=[color.rgb.red])]
     for i, o in enumerate(scos):
+
+        x_scos = []
+        y_scos = []
+        xerror_scos = []
+        yerror_scos = []
+
         print o[-1]
         name = o[-1]
         o = o[0]
@@ -95,15 +97,19 @@ def plot_allpcs():
         yerror_scos.extend(db.pc2_err.values)
 
     # Plot Atolls
-    g.plot(graph.data.values(x=x_scos, y=y_scos, title='Sco-like Z sources'), scatterstyle)
+        g.plot(graph.data.values(x=x_scos, y=y_scos, title=name), scatterstyle)
     #g.plot(graph.data.values(x=x_scos, y=y_scos, dx=xerror_scos, dy=yerror_scos, title='Sco-like Z sources'), errstyle)
     #plot Black Holes
-    x_cygs = []
-    y_cygs = []
-    xerror_cygs = []
-    yerror_cygs = []
+
+
+    scatterstyle= [graph.style.symbol(graph.style.symbol.changetriangle, size=0.15, symbolattrs=[color.rgb.blue])]
 
     for i, o in enumerate(cygs):
+        x_cygs = []
+        y_cygs = []
+        xerror_cygs = []
+        yerror_cygs = []
+
         print o[-1]
         name = o[-1]
         o = o[0]
@@ -117,7 +123,7 @@ def plot_allpcs():
         yerror_cygs.extend(db.pc2_err.values)
 
     # Plot Z
-    g.plot(graph.data.values(x=x_cygs, y=y_cygs, title='Cyg-like Z sources'), scatterstyle)
+        g.plot(graph.data.values(x=x_cygs, y=y_cygs, title=name), scatterstyle)
     #g.plot(graph.data.values(x=x_cygs, y=y_cygs, dx=xerror_cygs, dy=yerror_cygs, title='Cyg-like Z sources'), errstyle)
 
     g.writePDFfile('/scratch/david/master_project/plots/publication/pc/sco_cyg')

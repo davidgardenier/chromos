@@ -96,6 +96,73 @@ def cal_hue(x,y,xerr,yerr):
 
     return degs, degserr
 
+ns = [ #('EXO_0748_676', 'EXO 0748-676'), #Strange behaviour
+        ('gx_3p1', 'GX 3+1'),
+        #('gx_339_d4', 'GX 339-4'), #BH
+        ('IGR_J00291p5934', 'IGR J00291+5934'),
+        ('IGR_J17480m2446', 'IGR J17480-2446'),
+        #('IGR_J17498m2921', 'IGR J17498-2921'), #Only 1 point
+        #('IGR_J17511m3057', 'IGR J17511-3057'), #Same as XTE J1751
+        ('J1701_462', 'XTE J1701-462'),
+        ('KS_1731m260', 'KS 1731-260'),
+        ('S_J1756d9m2508', 'SWIFT J1756.9-2508'),
+        ('v4634_sgr', 'V4634 Sgr'),
+        ('XB_1254_m690', 'XB 1254-690'),
+        ('xte_J0929m314', 'XTE J0929-314'),
+        #('xte_J1550m564', 'XTE J1550-564'), #BH system
+        ('xte_J1751m305', 'XTE J1751-305'),
+        ('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
+        ('xte_J1808_369', 'SAX J1808.4-3648'),
+        ('xte_J1814m338', 'XTE J1814-338')]
+
+x_ns = []
+y_ns = []
+xerror_ns = []
+yerror_ns = []
+
+for i, o in enumerate(ns):
+    name = o[-1]
+    o = o[0]
+    p = path(o)
+    db = pd.read_csv(p)
+    # Determine pc values
+    bestdata = findbestdata(db)
+    # Calculate hues
+    hues = []
+    hues_err = []
+    for i in range(len(bestdata.pc1.values)):
+        # Determine input parameters
+        pc1 = bestdata.pc1.values[i]
+        pc2 = bestdata.pc2.values[i]
+        pc1err = bestdata.pc1_err.values[i]
+        pc2err = bestdata.pc2_err.values[i]
+        hue, hue_err = cal_hue(pc1,pc2,pc1err,pc2err)
+        hues.append(hue)
+        hues_err.append(hue_err)
+
+    # Determine hardness values
+    hardness = []
+    hardness_err = []
+    for obsid, group in bestdata.groupby('obsids'):
+        df = db[db.obsids==obsid].dropna(subset=['flux_i3t16_s6p4t9p7_h9p7t16'])
+        hardness.append(df.hardness_i3t16_s6p4t9p7_h9p7t16.values[0])
+        hardness_err.append(df.hardness_err_i3t16_s6p4t9p7_h9p7t16.values[0])
+
+    # Plot details
+    index_to_del = []
+    for ih, h in enumerate(hues_err):
+        if h > 30:
+            index_to_del.append(ih)
+    hues = [i for j, i in enumerate(hues) if j not in index_to_del]
+    hues_err = [i for j, i in enumerate(hues_err) if j not in index_to_del]
+    hardness = [i for j, i in enumerate(hardness) if j not in index_to_del]
+    hardness_err = [i for j, i in enumerate(hardness_err) if j not in index_to_del]
+
+    x_ns.extend(hues)
+    y_ns.extend(hardness)
+    xerror_ns.extend(hues_err)
+    yerror_ns.extend(hardness_err)
+
 def plot_allpcs():
     import numpy as np
     import itertools
@@ -152,6 +219,16 @@ def plot_allpcs():
             hardness.append(df.hardness_i3t16_s6p4t9p7_h9p7t16.values[0])
             hardness_err.append(df.hardness_err_i3t16_s6p4t9p7_h9p7t16.values[0])
 
+        # Plot details
+        index_to_del = []
+        for ih, h in enumerate(hues_err):
+            if h > 30:
+                index_to_del.append(ih)
+        hues = [i for j, i in enumerate(hues) if j not in index_to_del]
+        hues_err = [i for j, i in enumerate(hues_err) if j not in index_to_del]
+        hardness = [i for j, i in enumerate(hardness) if j not in index_to_del]
+        hardness_err = [i for j, i in enumerate(hardness_err) if j not in index_to_del]
+
         x_atolls.extend(hues)
         y_atolls.extend(hardness)
         xerror_atolls.extend(hues_err)
@@ -190,6 +267,16 @@ def plot_allpcs():
             hardness.append(df.hardness_i3t16_s6p4t9p7_h9p7t16.values[0])
             hardness_err.append(df.hardness_err_i3t16_s6p4t9p7_h9p7t16.values[0])
 
+        # Plot details
+        index_to_del = []
+        for ih, h in enumerate(hues_err):
+            if h > 30:
+                index_to_del.append(ih)
+        hues = [i for j, i in enumerate(hues) if j not in index_to_del]
+        hues_err = [i for j, i in enumerate(hues_err) if j not in index_to_del]
+        hardness = [i for j, i in enumerate(hardness) if j not in index_to_del]
+        hardness_err = [i for j, i in enumerate(hardness_err) if j not in index_to_del]
+
         x_zs.extend(hues)
         y_zs.extend(hardness)
         xerror_zs.extend(hues_err)
@@ -199,11 +286,16 @@ def plot_allpcs():
     g = graph.graphxy(height=9,
                       width=9,
                       x=graph.axis.lin(min=0, max=360, title=r"Hue ($^{\circ}$)"),
-                      y=graph.axis.lin(min=0.5, max=1.75, title=r"Hardness (9.7-16 keV)/(6.4-9.7 keV)"),
-                      key=graph.key.key(pos='tr', dist=0.1, hdist=0.1, vdist=0.1, keyattrs=[deco.filled([color.rgb.white])]))
-    errstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow]),
+                      y=graph.axis.lin(min=0.5, max=1.75, title=r"Hardness"),
+                      key=graph.key.key(pos='tr', dist=0.12, hdist=0.1, vdist=0.1, keyattrs=[deco.filled([color.rgb.white])]))
+    errstyle= [graph.style.symbol(graph.style.symbol.changeplus,size=0.1, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
-    scatterstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow])]
+    scatterstyle= [graph.style.symbol(graph.style.symbol.changeplus, size=0.1, symbolattrs=[color.gradient.Rainbow])]
+
+    # Plot Neutron Stars
+    grey= color.cmyk(0,0,0,0.5)
+    nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[grey])]
+    g.plot(graph.data.values(x=x_ns, y=y_ns, title='Neutron Stars'), nsstyle)
 
     g.plot(graph.data.values(x=x_atolls, y=y_atolls, dx=xerror_atolls, dy=yerror_atolls, title='Atoll sources'), errstyle)
     g.plot(graph.data.values(x=x_zs, y=y_zs, dx=xerror_zs, dy=yerror_zs, title='Z sources'), errstyle)

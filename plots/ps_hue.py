@@ -43,7 +43,7 @@ ns={'4u_1705_m44':'4U 1705-44',
         'xte_J1550m564':'XTE J1550-564', #BH system
         'xte_J1751m305':'XTE J1751-305',
         'xte_J1807m294':'XTE J1807-294', #Only 4 points
-        'xte_J1808_369':'XTE J1808-369',
+        'xte_J1808_369':'SAX J1808.4-3648',
         'xte_J1814m338':'XTE J1814-338',
         'xte_J2123_m058':'XTE J2123-058'} # No pc points
 
@@ -69,9 +69,29 @@ def getdata(obj,obsid,mode):
     ps_squared = inverted_data[4]
     num_seg = inverted_data[5][0]
 
-    bin_means, bin_edges, binnumber = binned_statistic(freq, freq*ps, bins=np.logspace(-3,2, num=50))
+    freqps_err = []
+    for i in range(len(freq)):
+        err = math.fabs(freq[i]*ps[i])*math.sqrt((freq_error[i]/float(freq[i]))**2 + (ps_error[i]/float(ps[i]))**2 + 2*(freq_error[i]*ps_error[i])/float(freq[i]*ps[i]))
+        freqps_err.append(err)
 
-    return bin_means, bin_edges
+    bin_means, bin_edges, binnumber = binned_statistic(freq, freq*ps, bins=np.logspace(-3,2, num=50))
+    counts, bin_edges, binnumber = binned_statistic(freq, freq*ps, statistic='count', bins=np.logspace(-3,2, num=50))
+
+    bin_errs = []
+    old_count = 0
+    for c in counts:
+        if c==0:
+            bin_errs.append(0)
+            continue
+        c = int(c)
+        indexes = [i for i in range(old_count,old_count+c)]
+        bin_err = 1/float(c)*math.sqrt(sum([e**2 for i, e in enumerate(freqps_err) if i in indexes]))
+        bin_errs.append(bin_err)
+        old_count = c
+
+    bin_centres = np.logspace(-2.95,2.05, num=50)
+
+    return bin_means, bin_edges, bin_centres, bin_errs
 
 class empty:
 
@@ -108,7 +128,7 @@ def plotpsperhue(huerange,plotinfo):
 
         print ns[obj]
 
-        binmeans, binedges = getdata(obj,obsid,mode)
+        binmeans, binedges, bincentres, binerrs = getdata(obj,obsid,mode)
         nbinmeans = []
         for b in binmeans:
             if b < 1e-6 or math.isnan(b): #y axis limit
@@ -139,6 +159,9 @@ def plotpsperhue(huerange,plotinfo):
 	                             y=graph.axis.log(min=1e-6,max=1,title=ytitle,texter=ytexter)))
 
     	g.plot(values,[graph.style.histogram(lineattrs=[color.gradient.Rainbow, style.linewidth.Thick,],autohistogrampointpos=0,fromvalue=1e-6,steps=1)])
+        errstyle= [graph.style.symbol(size=0.0, symbolattrs=[color.gradient.Rainbow]),
+                   graph.style.errorbar(size=0.0,errorbarattrs=[color.rgb.red])]
+        g.plot(graph.data.values(x=bincentres[:-1], y=nbinmeans, dy=binerrs), errstyle)
         xtext, ytext = g.pos(45, 0.5)
         g.text(xtext,ytext, ns[obj], [text.halign.boxright, text.valign.top])
 

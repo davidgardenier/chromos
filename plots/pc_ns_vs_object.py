@@ -94,7 +94,7 @@ def plot_allpcs():
             ('xte_J1814m338', 'XTE J1814-338')]
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
 
-    bhs = [('gx_339_d4', 'GX 339-4'), ('xte_J1550m564', 'XTE J1550-564'), ('H1743m322','H1743-322')]
+    exo = [('J1701_462', 'XTE J1701-462')]
 
     # Set up plot details
     g = graph.graphxy(height=7,
@@ -102,6 +102,9 @@ def plot_allpcs():
                       x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
                       y=graph.axis.log(min=0.01, max=100, title=r"PC2"),
                       key=graph.key.key(pos='tr', dist=0.2))
+    errstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.08, symbolattrs=[color.gradient.Rainbow]),
+               graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
+    scatterstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.1, symbolattrs=[color.gradient.Rainbow])]
 
     x_ns = []
     y_ns = []
@@ -123,16 +126,11 @@ def plot_allpcs():
 
     # Plot Neutron Stars
     grey= color.cmyk(0,0,0,0.5)
-    nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[style.linewidth.Thick,color.rgb.red])]
+    nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[grey])]
     g.plot(graph.data.values(x=x_ns, y=y_ns, title='Neutron Stars'), nsstyle)
 
     #plot Black Holes
-    x_bh = []
-    y_bh = []
-    xerror_bh = []
-    yerror_bh = []
-
-    for i, o in enumerate(bhs):
+    for i, o in enumerate(exo):
         print o[-1]
         name = o[-1]
         o = o[0]
@@ -140,16 +138,15 @@ def plot_allpcs():
         db = pd.read_csv(p)
         db = findbestdata(db)
 
-        x_bh.extend(db.pc1.values)
-        y_bh.extend(db.pc2.values)
-        xerror_bh.extend(db.pc1_err.values)
-        yerror_bh.extend(db.pc2_err.values)
+        x = db.pc1.values
+        y = db.pc2.values
+        xerror = db.pc1_err.values
+        yerror = db.pc2_err.values
 
-    grey= color.cmyk(0,0,0,0.5)
-    bhstyle = [graph.style.symbol(graph.style.symbol.circle, size=0.05, symbolattrs=[style.linewidth.Thick,color.rgb.black])]
-    g.plot(graph.data.values(x=x_bh, y=y_bh, title='Black Holes'), bhstyle)
+        g.plot(graph.data.values(x=x, y=y, dx=xerror, dy=yerror, title=name), errstyle)
+        #g.plot(graph.data.values(x=x, y=y, title=name), scatterstyle)
 
-    g.writePDFfile('/scratch/david/master_project/plots/publication/poster/pc')
+    g.writePDFfile('/scratch/david/master_project/plots/publication/pc/ns_j1701')
 
 if __name__=='__main__':
     plot_allpcs()

@@ -120,8 +120,8 @@ def plot_allpcs():
         xerror_edge.extend(db.pc1_err.values)
         yerror_edge.extend(db.pc2_err.values)
 
-    g.plot(graph.data.values(x=x_face, y=y_face, title='Face On'), scatterstyle)
-    g.plot(graph.data.values(x=x_edge, y=y_edge, title='Edge On'), scatterstyle)
+    g.plot(graph.data.values(x=x_face, y=y_face, title='Low Incl.'), scatterstyle)
+    g.plot(graph.data.values(x=x_edge, y=y_edge, title='High Incl.'), scatterstyle)
     g.writePDFfile('/scratch/david/master_project/plots/publication/pc/inclination')
 
 if __name__=='__main__':

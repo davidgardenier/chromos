@@ -91,7 +91,7 @@ def plot_allpcs():
             'xte_J1550m564':'XTE J1550-564', #BH system
             'xte_J1751m305':'XTE J1751-305',
             'xte_J1807m294':'XTE J1807-294', #Only 4 points
-            'xte_J1808_369':'XTE J1808-369',
+            'xte_J1808_369':'SAX J1808.4-3648',
             'xte_J1814m338':'XTE J1814-338',
             'xte_J2123_m058':'XTE J2123-058'} # No pc points
 
@@ -118,7 +118,7 @@ def plot_allpcs():
                       width=7,
                       x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
                       y=graph.axis.log(min=0.01, max=100, title=r"PC2"),
-                      key=graph.key.key(pos='tr', dist=0.1, textattrs=[text.size.small]))
+                      key=graph.key.key(pos='tr', dist=0.05, textattrs=[text.size.small]))
     errstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.08, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
     scatterstyle= [graph.style.symbol( size=0.1, symbolattrs=[color.gradient.Rainbow])]

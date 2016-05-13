@@ -4,8 +4,8 @@
 import os
 import glob
 import pandas as pd
-from math import atan2, degrees, pi, log10, sqrt
 import matplotlib.pyplot as plt
+from math import atan2, degrees, pi, log10, sqrt
 import math
 from pyx import *
 
@@ -96,63 +96,39 @@ def cal_hue(x,y,xerr,yerr):
 
     return degs, degserr
 
+
 def plot_allpcs():
     import numpy as np
     import itertools
 
-    objects=[('4u_1705_m44', '4U 1705-44'),
-            ('4U_0614p09', '4U 0614+09'),
-            ('4U_1636_m53', '4U 1636-53'),
-            ('4U_1702m43', '4U 1702-43'),
-            ('4U_1728_34', '4U 1728-34'),
-            ('aquila_X1', 'Aql X-1'),
-            #('cir_x1', 'Cir X-1'), #strange behaviour
-            ('cyg_x2', 'Cyg X-2'),
-            #('EXO_0748_676', 'EXO 0748-676'), #Strange behaviour
-            ('gx_3p1', 'GX 3+1'),
-            ('gx_5m1', 'GX 5-1'), #Only 5 points
-            ('gx_17p2', 'GX 17+2'), #Only has 4 points
-            #('gx_339_d4', 'GX 339-4'), #BH system
-            ('gx_340p0', 'GX 340+0'), #Only 5 points
-            #('gx_349p2', 'GX 349+2'), #Only 3 points
-            ('HJ1900d1_2455', 'HETE J1900.1-2455'),
-            ('IGR_J00291p5934', 'IGR J00291+5934'),
-            ('IGR_J17480m2446', 'IGR J17480-2446'),
-            #('IGR_J17498m2921', 'IGR J17498-2921'), #Only 1 point
-            #('IGR_J17511m3057', 'IGR J17511-3057'), #Same as XTE J1751
-            ('J1701_462', 'XTE J1701-462'),
-            ('KS_1731m260', 'KS 1731-260'),
-            ('sco_x1', 'Sco X-1'),
-            ('sgr_x1', 'Sgr X-1'),
-            ('sgr_x2', 'Sgr X-2'),
-            ('S_J1756d9m2508', 'SWIFT J1756.9-2508'),
-            ('v4634_sgr', 'V4634 Sgr'),
-            ('XB_1254_m690', 'XB 1254-690'),
-            ('xte_J0929m314', 'XTE J0929-314'),
-            #('xte_J1550m564', 'XTE J1550-564'), #BH system
-            ('xte_J1751m305', 'XTE J1751-305'),
-            ('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
-            ('xte_J1808_369', 'SAX J1808.4-3648'),
-            ('xte_J1814m338', 'XTE J1814-338')]
-            #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
+    objects = [('4u_1705_m44', 'e'),
+              ('xte_J1808_369', 'e'),
+              ('cir_x1', 'f'),
+              ('cyg_x2', 'e'),
+              ('EXO_0748_676', 'e'),
+              ('HJ1900d1_2455', 'f'),
+              ('sco_x1', 'f'),
+              ('4U_1728_34', 'f'),
+              ('4U_0614p09', 'e'),
+              ('J1701_462', 'e'),
+              ('aquila_X1', 'e'),
+              ('4U_1636_m53', 'e')]
 
-    # Set up plot details
-    g = graph.graphxy(height=9,
-                      width=9,
-                      x=graph.axis.lin(min=0, max=360, title=r"Hue ($^{\circ}$)"),
-                      y=graph.axis.lin(min=0.5, max=1.75, title=r"Hardness"),
-                      key=graph.key.key(pos=None,hpos=1.0,vpos=0.5,hinside=0, dist=0.05, textattrs=[text.size.small]))
-    errstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow]),
-               graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
-    scatterstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow])]
 
-    for w, details in enumerate(objects):
-        o = details[0]
-        name = details[1]
-        print o
+    objects = sorted(objects, key=lambda x: x[1])
+    face = [e for e in objects if e[-1]=='f']
+    edge = [e for e in objects if e[-1]=='e']
+
+    x_face = []
+    y_face = []
+    xerror_face = []
+    yerror_face = []
+
+    for i, o in enumerate(face):
+        name = o[-1]
+        o = o[0]
         p = path(o)
         db = pd.read_csv(p)
-
         # Determine pc values
         bestdata = findbestdata(db)
         # Calculate hues
@@ -186,15 +162,73 @@ def plot_allpcs():
         hardness = [i for j, i in enumerate(hardness) if j not in index_to_del]
         hardness_err = [i for j, i in enumerate(hardness_err) if j not in index_to_del]
 
-        x = hues
-        y = hardness
-        xerror = hues_err
-        yerror = hardness_err
-        g.plot(graph.data.values(x=x, y=y, dx=xerror, dy=yerror, title=name), errstyle)
-        #g.plot(graph.data.values(x=x, y=y, title=name), scatterstyle)
+        x_face.extend(hues)
+        y_face.extend(hardness)
+        xerror_face.extend(hues_err)
+        yerror_face.extend(hardness_err)
 
-    g.writePDFfile('/scratch/david/master_project/plots/publication/hh/all_ns')
+    x_edge = []
+    y_edge = []
+    xerror_edge = []
+    yerror_edge = []
 
+    for i, o in enumerate(edge):
+        name = o[-1]
+        o = o[0]
+        p = path(o)
+        db = pd.read_csv(p)
+        # Determine pc values
+        bestdata = findbestdata(db)
+        # Calculate hues
+        hues = []
+        hues_err = []
+        for i in range(len(bestdata.pc1.values)):
+            # Determine input parameters
+            pc1 = bestdata.pc1.values[i]
+            pc2 = bestdata.pc2.values[i]
+            pc1err = bestdata.pc1_err.values[i]
+            pc2err = bestdata.pc2_err.values[i]
+            hue, hue_err = cal_hue(pc1,pc2,pc1err,pc2err)
+            hues.append(hue)
+            hues_err.append(hue_err)
+
+        # Determine hardness values
+        hardness = []
+        hardness_err = []
+        for obsid, group in bestdata.groupby('obsids'):
+            df = db[db.obsids==obsid].dropna(subset=['flux_i3t16_s6p4t9p7_h9p7t16'])
+            hardness.append(df.hardness_i3t16_s6p4t9p7_h9p7t16.values[0])
+            hardness_err.append(df.hardness_err_i3t16_s6p4t9p7_h9p7t16.values[0])
+
+        # Plot details
+        index_to_del = []
+        for ih, h in enumerate(hues_err):
+            if h > 30:
+                index_to_del.append(ih)
+        hues = [i for j, i in enumerate(hues) if j not in index_to_del]
+        hues_err = [i for j, i in enumerate(hues_err) if j not in index_to_del]
+        hardness = [i for j, i in enumerate(hardness) if j not in index_to_del]
+        hardness_err = [i for j, i in enumerate(hardness_err) if j not in index_to_del]
+
+        x_edge.extend(hues)
+        y_edge.extend(hardness)
+        xerror_edge.extend(hues_err)
+        yerror_edge.extend(hardness_err)
+
+    # Set up plot details
+    g = graph.graphxy(height=9,
+                      width=9,
+                      x=graph.axis.lin(min=0, max=360, title=r"Hue ($^{\circ}$)"),
+                      y=graph.axis.lin(min=0.5, max=1.75, title=r"Hardness"),
+                      key=graph.key.key(pos=None,hpos=0.02, vpos=0.4, dist=0.12, hdist=0.1, vdist=0.1, keyattrs=[deco.filled([color.rgb.white])]))
+    errstyle= [graph.style.symbol(graph.style.symbol.changeplus,size=0.1, symbolattrs=[color.gradient.Rainbow]),
+               graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
+    scatterstyle= [graph.style.symbol(graph.style.symbol.changeplus, size=0.1, symbolattrs=[color.gradient.Rainbow])]
+
+
+    g.plot(graph.data.values(x=x_face, y=y_face, dx=xerror_face, dy=yerror_face, title='Low Incl.'), errstyle)
+    g.plot(graph.data.values(x=x_edge, y=y_edge, dx=xerror_edge, dy=yerror_edge, title='High Incl.'), errstyle)
+    g.writePDFfile('/scratch/david/master_project/plots/publication/hh/inclination')
 
 if __name__=='__main__':
     plot_allpcs()

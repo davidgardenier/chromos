@@ -40,8 +40,8 @@ rate, t, dt, n_bins, error = read_light_curve('/scratch/david/master_project/aqu
 # rate = rate[0::10]
 t = t - t[0]
 # Set up plot details
-g = graph.graphxy(width=8,
-                  x2=graph.axis.lin(min=0,max=1024,title="Time (s)",density=1),
+g = graph.graphxy(width=5,
+                  x=graph.axis.lin(min=0,max=1024,title="Time (s)",density=1),
                   y=graph.axis.lin(min=0.01, max=6000, title="Rate (s$^{-1}$)"))
 
 g.plot(graph.data.values(x=t,y=rate),[graph.style.line([style.linewidth.Thin, color.rgb.red])])

@@ -133,7 +133,7 @@ def plot_allpcs():
             ('xte_J1550m564', 'XTE J1550-564'),
             ('xte_J1751m305', 'XTE J1751-305'),
             ('xte_J1807m294', 'XTE J1807-294'),
-            ('xte_J1808_369', 'XTE J1808-369'),
+            ('xte_J1808_369', 'SAX J1808.4-3648'),
             ('xte_J1814m338', 'XTE J1814-338')]
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
 
@@ -143,7 +143,7 @@ def plot_allpcs():
         g = graph.graphxy(height=6,
                           width=6,
                           x=graph.axis.lin(min=0, max=360, title=r"Hue ($^{\circ}$)"),
-                          y=graph.axis.lin(min=0.5, max=1.75, title=r"Hardness (9.7-16 keV)/(6.4-9.7 keV)"))
+                          y=graph.axis.lin(min=0.5, max=1.75, title=r"Hardness"))
         errstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow]),
                    graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
         scatterstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow])]
@@ -178,6 +178,15 @@ def plot_allpcs():
             hardness_err.append(df.hardness_err_i3t16_s6p4t9p7_h9p7t16.values[0])
 
         # Plot details
+        index_to_del = []
+        for ih, h in enumerate(hues_err):
+            if h > 30:
+                index_to_del.append(ih)
+        hues = [i for j, i in enumerate(hues) if j not in index_to_del]
+        hues_err = [i for j, i in enumerate(hues_err) if j not in index_to_del]
+        hardness = [i for j, i in enumerate(hardness) if j not in index_to_del]
+        hardness_err = [i for j, i in enumerate(hardness_err) if j not in index_to_del]
+        
         x = hues
         y = hardness
         xerror = hues_err

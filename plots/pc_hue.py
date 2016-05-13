@@ -132,7 +132,7 @@ def plot_allpcs():
             #('xte_J1550m564', 'XTE J1550-564'), #BH system
             ('xte_J1751m305', 'XTE J1751-305'),
             ('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
-            ('xte_J1808_369', 'XTE J1808-369'),
+            ('xte_J1808_369', 'SAX J1808.4-3648'),
             ('xte_J1814m338', 'XTE J1814-338')]
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
 
@@ -143,7 +143,7 @@ def plot_allpcs():
                       y=graph.axis.log(min=0.01, max=100, title=r"PC2"))
     errstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.08, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
-    scatterstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.1, symbolattrs=[color.gradient.Rainbow])]
+    scatterstyle= [graph.style.symbol(graph.style.symbol.cross, size=0.1, symbolattrs=[color.gradient.Rainbow])]
 
     allhues = []
     for i, o in enumerate(objects):
@@ -207,6 +207,47 @@ def plot_allpcs():
         func = 'y(x)=exp(tan('+str(degs)+')*(log(x)-log(4.51920))+log(0.453724))'
         linesty = graph.style.line(lineattrs=[attr.changelist([style.linestyle.dashed])])
         g.plot(graph.data.function(func), styles=[linesty])
+
+
+        xtext, ytext = g.pos(345, 17)
+        g.text(g.width-0.1,ytext, '100$^{\circ}$', [text.halign.boxright])
+        xtext, ytext = g.pos(345, 1.8)
+        g.text(g.width-0.1,ytext, '120$^{\circ}$', [text.halign.boxright])
+        xtext, ytext = g.pos(345, 0.35)
+        g.text(g.width-0.1,ytext, '140$^{\circ}$', [text.halign.boxright])
+        xtext, ytext = g.pos(345, 0.07)
+        g.text(g.width-0.1,ytext, '160$^{\circ}$', [text.halign.boxright])
+
+        xtext, ytext = g.pos(190, 20)
+        g.text(xtext,0.1, '180$^{\circ}$', [text.halign.boxleft])
+        xtext, ytext = g.pos(28, 1.9)
+        g.text(xtext,0.1, '$200^{\circ}$', [text.halign.boxleft])
+        xtext, ytext = g.pos(6.5, 0.35)
+        g.text(xtext,0.1, '220$^{\circ}$', [text.halign.boxleft])
+        xtext, ytext = g.pos(1.9, 0.06)
+        g.text(xtext,0.1, '240$^{\circ}$', [text.halign.boxleft])
+        xtext, ytext = g.pos(0.45, 0.08)
+        g.text(xtext,0.1, '260$^{\circ}$', [text.halign.boxleft])
+        xtext, ytext = g.pos(0.04, 0.08)
+        g.text(xtext,0.1, '280$^{\circ}$', [text.halign.boxleft])
+
+        xtext, ytext = g.pos(345, 0.09)
+        g.text(0.1,ytext, '300$^{\circ}$', [text.halign.boxleft, text.valign.top])
+        xtext, ytext = g.pos(345, 0.65)
+        g.text(0.1,ytext, '320$^{\circ}$', [text.halign.boxleft, text.valign.top])
+        xtext, ytext = g.pos(345, 4)
+        g.text(0.1,ytext, '340$^{\circ}$', [text.halign.boxleft, text.valign.top])
+
+        xtext, ytext = g.pos(0.022, 20)
+        g.text(xtext,g.height-0.1, '0$^{\circ}$', [text.halign.boxright, text.valign.top])
+        xtext, ytext = g.pos(0.37, 1.9)
+        g.text(xtext,g.height-0.1, '$20^{\circ}$', [text.halign.boxright, text.valign.top])
+        xtext, ytext = g.pos(2.6, 0.35)
+        g.text(xtext,g.height-0.1, '40$^{\circ}$', [text.halign.boxright, text.valign.top])
+        xtext, ytext = g.pos(18, 0.06)
+        g.text(xtext,g.height-0.1, '60$^{\circ}$', [text.halign.boxright, text.valign.top])
+        xtext, ytext = g.pos(150, 0.08)
+        g.text(xtext,g.height-0.1, '80$^{\circ}$', [text.halign.boxright, text.valign.top])
 
     g.writePDFfile('/scratch/david/master_project/plots/publication/pc/hue_bins')
 

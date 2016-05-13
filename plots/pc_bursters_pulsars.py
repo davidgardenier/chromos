@@ -112,58 +112,19 @@ for i, o in enumerate(ns):
     xerror_ns.extend(db.pc1_err.values)
     yerror_ns.extend(db.pc2_err.values)
 
-bhs = [('gx_339_d4', 'GX 339-4'), ('H1743m322','H1743-322'), ('xte_J1550m564', 'XTE J1550-564')]
+bursters = [('4U_0614p09',414.7),
+            ('4U_1636_m53',581.9),
+            ('4U_1702m43',330),
+            ('4U_1728_34',364),
+            ('aquila_X1',550.3),
+            ('EXO_0748_676',552.5),
+            ('KS_1731m260',524)]
 
-x_bh = []
-y_bh = []
-xerror_bh = []
-yerror_bh = []
-
-for i, o in enumerate(bhs):
-    name = o[-1]
-    o = o[0]
-    p = path(o)
-    db = pd.read_csv(p)
-    db = findbestdata(db)
-
-    x_bh.extend(db.pc1.values)
-    y_bh.extend(db.pc2.values)
-    xerror_bh.extend(db.pc1_err.values)
-    yerror_bh.extend(db.pc2_err.values)
-
-shiftobjs = [('4u_1705_m44', 'e'),
-          ('xte_J1808_369', 'e'),
-          ('cir_x1', 'f'),
-          #('cyg_x2', 'e'),
-          ('EXO_0748_676', 'e'),
-          ('HJ1900d1_2455', 'f'),
-          ('sco_x1', 'f'),
-          ('v4634_sgr', 'x'),
-          ('4U_1728_34', 'f'),
-          ('4U_0614p09', 'e'),
-          ('4U_1702m43', 'x'),
-          ('J1701_462', 'e'),
-          ('aquila_X1', 'e'),
-          ('4U_1636_m53', 'e')]
-
-x_shiftedns = []
-y_shiftedns = []
-xerror_shiftedns = []
-yerror_shiftedns = []
-
-for i, o in enumerate(ns):
-    o = o[0]
-    p = path(o)
-    db = pd.read_csv(p)
-    try:
-        db = findbestdatashifted(db)
-    except:
-        print 'FAILED: %s' %o
-        continue
-    x_shiftedns.extend(db.pc1_shiftedby5.values)
-    y_shiftedns.extend(db.pc2_shiftedby5.values)
-    xerror_shiftedns.extend(db.pc1_err_shiftedby5.values)
-    yerror_shiftedns.extend(db.pc2_err_shiftedby5.values)
+pulsars = [('HJ1900d1_2455',377.3),
+            ('IGR_J17480m2446',11),
+            ('xte_J1751m305',244.8),
+            ('xte_J1807m294',190.6),
+            ('xte_J1808_369',401)]
 
 names = {'4u_1705_m44':'4U 1705-44',
         '4U_0614p09':'4U 0614+09',
@@ -221,16 +182,11 @@ def plotpcpane():
 
     for i in range(len(xposition)):
 
-        # p = path(obj)
-        # db = pd.read_csv(p)
-        # db = findbestdata(db)
-        #
-        # x = db.pc1.values
-        # y = db.pc2.values
-        # xerror = db.pc1_err.values
-        # yerror = db.pc2_err.values
-        #
-        # values = graph.data.values(x=x, y=y, dx=xerror, dy=yerror)
+        if i == 0:
+            objs = bursters
+        if i == 1:
+            objs = pulsars
+        objs = sorted(objs, key=lambda x: x[1])
 
         myticks = []
     	if yposition[i]!=0.0:
@@ -250,29 +206,41 @@ def plotpcpane():
                                  height=6.0,
                                  xpos=xposition[i],
                                  ypos=yposition[i],
-	                             x=graph.axis.log(min=0.01,max=400,title=xtitle,texter=xtexter,manualticks=myticks),
-	                             y=graph.axis.log(min=0.01,max=30,title=ytitle,texter=ytexter)))
+	                             x=graph.axis.log(min=0.01,max=600,title=xtitle,texter=xtexter,manualticks=myticks),
+	                             y=graph.axis.log(min=0.01,max=60,title=ytitle,texter=ytexter),
+                                 key=graph.key.key(pos='tr', dist=0.1, textattrs=[text.size.tiny])))
+        scatterstyle= [graph.style.symbol( size=0.1, symbolattrs=[color.gradient.Rainbow])]
 
         # Plot Neutron Stars
         grey= color.cmyk(0,0,0,0.5)
-        nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[color.rgb.red])]
-        bhstyle = [graph.style.symbol(size=0.1, symbolattrs=[grey])]
-        if i==0:
-            g.plot(graph.data.values(x=x_bh, y=y_bh, title='Black Holes'), bhstyle)
-            g.plot(graph.data.values(x=x_ns, y=y_ns, title='Neutron Stars'), nsstyle)
-            xtext, ytext = g.pos(200, 16)
-            g.text(xtext,ytext, 'Normal PCs', [text.halign.boxright, text.valign.top])
-        nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[color.rgb.blue])]
-        if i==1:
-            g.plot(graph.data.values(x=x_bh, y=y_bh, title='Black Holes'), bhstyle)
-            g.plot(graph.data.values(x=x_shiftedns, y=y_shiftedns, title='Neutron Stars'), nsstyle)
-            xtext, ytext = g.pos(200, 16)
-            g.text(xtext,ytext, 'Shifted PCs', [text.halign.boxright, text.valign.top])
-    # title = huerange.replace('_', '$^{\circ}$-') + '$^{\circ}$'
+        nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[grey])]
+        g.plot(graph.data.values(x=x_ns, y=y_ns, title='NSs'), nsstyle)
+
+        for o in objs:
+
+            xs = []
+            ys = []
+            xerrors = []
+            yerrors = []
+
+            print o[0]
+            name = str(o[-1])
+            o = o[0]
+            p = path(o)
+            db = pd.read_csv(p)
+            db = findbestdata(db)
+
+            xs.extend(db.pc1.values)
+            ys.extend(db.pc2.values)
+            xerrors.extend(db.pc1_err.values)
+            yerrors.extend(db.pc2_err.values)
+
+            g.plot(graph.data.values(x=xs, y=ys, dx=xerrors, dy=yerrors, title=name + ' Hz'), scatterstyle)
+    # title = huerange.replace('_', '$^[\circ]$-') + '$^[\circ]$'
     # c.text(6.0,yposition[-1]+6.5,title,
     #        [text.halign.center, text.valign.bottom, text.size.Large])
 
-    outputfile = '/scratch/david/master_project/plots/publication/pc/shiftedpc'
+    outputfile = '/scratch/david/master_project/plots/publication/pc/bursters_pulsars'
     c.writePDFfile(outputfile)
     # os.system('convert -density 300 '+outputfile+'.pdf -quality 90 '+outputfile+'.png')
 
