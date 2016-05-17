@@ -21,6 +21,7 @@ def calculate_hi(low_e=3.0,
 
     purpose = 'Calculating hardness & intensity values'
     print len(purpose)*'=' + '\n' + purpose + '\n' + len(purpose)*'='
+    print 'Soft:', soft, 'Hard:', hard, '\n' + len(purpose)*'-'
 
     import os
     import pandas as pd
