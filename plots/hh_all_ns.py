@@ -146,6 +146,7 @@ def plot_allpcs():
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
     scatterstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow])]
 
+    objects = sorted(objects, key=lambda x: x[1])
     for w, details in enumerate(objects):
         o = details[0]
         name = details[1]

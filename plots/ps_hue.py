@@ -95,11 +95,11 @@ def getdata(obj,obsid,mode):
 
 class empty:
 
-	def __init__(self):
-		pass
-	def labels(self, ticks):
-		for tick in ticks:
-			tick.label=""
+    def __init__(self):
+        pass
+    def labels(self, ticks):
+        for tick in ticks:
+            tick.label=""
 
 def plotpsperhue(huerange,plotinfo):
     # Objects should be in the order top-left, top-right, bottom-left, bottom-right
@@ -115,7 +115,7 @@ def plotpsperhue(huerange,plotinfo):
 
     if len(plotinfo) == 4:
         xposition=[0.0,6.0,0.0,6.0]
-        yposition=[0.0,0.0,6.0,6.0]
+        yposition=[0.0,0.0,4.5,4.5]
     if len(plotinfo) == 2:
         xposition=[0.0,6.0]
         yposition=[0.0,0.0]
@@ -138,35 +138,42 @@ def plotpsperhue(huerange,plotinfo):
 
         values = graph.data.values(x=binedges[:-1], y=nbinmeans)
 
-    	if yposition[i]!=0.0:
+
+        myticks = []
+        if yposition[i]!=0.0:
             xtitle = " "
             xtexter=empty()
-    	else:
+        else:
             xtitle = "Frequency (Hz)"
             xtexter=graph.axis.texter.mixed()
-    	if xposition[i]!=0.0:
+        if xposition[i]!=0.0:
             ytitle = ""
             ytexter=empty()
-    	else:
+        else:
             ytitle="Power $\cdot$ Frequency"
             ytexter=graph.axis.texter.mixed()
+            # myticks = [graph.axis.tick.tick(10e-6, label="10$^-6$", labelattrs=[text.mathmode]),
+            #            graph.axis.tick.tick(10e-4, label="10$^-4$", labelattrs=[text.mathmode]),
+            #            graph.axis.tick.tick(10e-2, label="10$^-2$", labelattrs=[text.mathmode])]
+                       #graph.axis.tick.tick(0.8, label=" ", labelattrs=[text.mathmode])]
+            #graph.axis.texter.mixed()
 
-    	g=c.insert(graph.graphxy(width=6.0,
-                                 height=6.0,
+        g=c.insert(graph.graphxy(width=6.0,
+                                 height=4.5,
                                  xpos=xposition[i],
                                  ypos=yposition[i],
-	                             x=graph.axis.log(min=1e-2,max=60,title=xtitle,texter=xtexter),
-	                             y=graph.axis.log(min=1e-6,max=1,title=ytitle,texter=ytexter)))
+                                 x=graph.axis.log(min=1e-2,max=60,title=xtitle,texter=xtexter),
+                                 y=graph.axis.log(min=1e-6,max=0.8,title=ytitle,texter=ytexter)))
 
-    	g.plot(values,[graph.style.histogram(lineattrs=[color.gradient.Rainbow, style.linewidth.Thick,],autohistogrampointpos=0,fromvalue=1e-6,steps=1)])
+        g.plot(values,[graph.style.histogram(lineattrs=[color.gradient.Rainbow, style.linewidth.Thick,],autohistogrampointpos=0,fromvalue=1e-6,steps=1)])
         errstyle= [graph.style.symbol(size=0.0, symbolattrs=[color.gradient.Rainbow]),
                    graph.style.errorbar(size=0.0,errorbarattrs=[color.rgb.red])]
         g.plot(graph.data.values(x=bincentres[:-1], y=nbinmeans, dy=binerrs), errstyle)
-        xtext, ytext = g.pos(45, 0.5)
+        xtext, ytext = g.pos(40, 0.4)
         g.text(xtext,ytext, ns[obj], [text.halign.boxright, text.valign.top])
 
     title = huerange.replace('_', '$^{\circ}$-') + '$^{\circ}$'
-    c.text(6.0,yposition[-1]+6.5,title,
+    c.text(6.0,yposition[-1]+4.5+0.3,title,
            [text.halign.center, text.valign.bottom, text.size.Large])
 
     outputfile = '/scratch/david/master_project/plots/publication/ps/%s' %huerange

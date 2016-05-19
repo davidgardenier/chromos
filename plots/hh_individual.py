@@ -143,7 +143,7 @@ def plot_allpcs():
         g = graph.graphxy(height=6,
                           width=6,
                           x=graph.axis.lin(min=0, max=360, title=r"Hue ($^{\circ}$)"),
-                          y=graph.axis.lin(min=0.5, max=1.75, title=r"Hardness"))
+                          y=graph.axis.lin(min=0.5, max=1.8, title=r"Hardness"))
         errstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow]),
                    graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
         scatterstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow])]
@@ -186,7 +186,7 @@ def plot_allpcs():
         hues_err = [i for j, i in enumerate(hues_err) if j not in index_to_del]
         hardness = [i for j, i in enumerate(hardness) if j not in index_to_del]
         hardness_err = [i for j, i in enumerate(hardness_err) if j not in index_to_del]
-        
+
         x = hues
         y = hardness
         xerror = hues_err

@@ -111,12 +111,12 @@ def plot_allpcs():
 
         #colour = color.cmyk(0,0.87,0.68,0.32)
         colour = color.rgb.red
-        g = graph.graphxy(height=6,
+        g = graph.graphxy(height=4,
                           width=6,
-                          x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
-                          y=graph.axis.log(min=0.01, max=100, title=r"PC2"))
-        g.plot(graph.data.values(x=x, y=y, dx=xerror, dy=yerror), [graph.style.symbol(symbolattrs=[colour],size=0.1), graph.style.errorbar(errorbarattrs=[colour])])
-        g.text(5.7,5.4, name, [text.halign.boxright])
+                          x=graph.axis.log(min=0.03, max=250, title=r"PC1"),
+                          y=graph.axis.log(min=0.01, max=20, title=r"PC2"))
+        g.plot(graph.data.values(x=x, y=y, dx=xerror, dy=yerror), [graph.style.symbol(symbolattrs=[colour],size=0.1), graph.style.errorbar(size=0,errorbarattrs=[colour])])
+        #g.text(5.7,3.5, name, [text.halign.boxright])
         outputfile = '/scratch/david/master_project/plots/publication/pc/individual/' + o
         g.writePDFfile(outputfile)
         os.system('convert -density 300 '+outputfile+'.pdf -quality 90 '+outputfile+'.png')
