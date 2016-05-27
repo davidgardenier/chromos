@@ -55,7 +55,7 @@ class Plots:
             if pd.notnull(self.df.flare_times):
                 nflares = self.df.flare_times.split(',')
                 for nf in nflares:
-                    flare = [f for f in self.df.flare_times.split('-')]
+                    flare = [float(f.strip("'")) for f in nf.split('-')]
                     ax1.axvspan(flare[0], flare[1], alpha=0.5, color='red')
 
         # Plot a shaded area whether pcu changes have been detected
@@ -225,11 +225,11 @@ def plot_per_obsid(db, obj):
 
     # First get a file with the best contrained power colours
     df = findbestdata(db)
-    c = ['obsids','pc1','pc1_err','pc2','pc2_err']
+    c = ['pc1','pc1_err','pc2','pc2_err']
     df.to_csv('/scratch/david/master_project/' + obj + '/info/power_colours.csv', cols = c)
     # Then a file with all the fluxes
     df = db.dropna(subset=['flux_i3t16_s6p4t9p7_h9p7t16'])
-    c = ['obsids','flux_i3t16_s6p4t9p7_h9p7t16','flux_err_i3t16_s6p4t9p7_h9p7t16','hardness_i3t16_s6p4t9p7_h9p7t16','hardness_err_i3t16_s6p4t9p7_h9p7t16']
+    c = ['flux_i3t16_s6p4t9p7_h9p7t16','flux_err_i3t16_s6p4t9p7_h9p7t16','hardness_i3t16_s6p4t9p7_h9p7t16','hardness_err_i3t16_s6p4t9p7_h9p7t16']
     df.to_csv('/scratch/david/master_project/' + obj + '/info/hi.csv', cols = c)
 
     # Create folder to place plots
@@ -255,29 +255,9 @@ def plot_per_obsid(db, obj):
 
 if __name__=='__main__':
 
-    objects = [('4u_1705_m44', 'e'),
-              ('xte_J1808_369', 'e'),
-              ('cir_x1', 'f'),
-              ('cyg_x2', 'e'),
-              ('EXO_0748_676', 'e'),
-              ('HJ1900d1_2455', 'f'),
-              ('sco_x1', 'f'),
-              ('v4634_sgr', 'x'),
-              ('4U_1728_34', 'f'),
-              ('4U_0614p09', 'e'),
-              ('4U_1702m43', 'x'),
-              ('J1701_462', 'e'),
-              ('aquila_X1', 'e'),
-              ('4U_1636_m53', 'e'),
-              ('gx_339_d4', 'x'),
-              ('gx_5m1', 'x'),
-              ('gx_340p0', 'x'),
-              ('gx_17p2', 'x'),
-              ('gx_349p2', 'x')]
-
-    objects = [o[0] for o in objects]
-    obj = raw_input('Object name: ')
-    objects = [obj]
+    objects = ['gx_339_d4']
+    #obj = raw_input('Object name: ')
+   # objects = [obj]
     import pandas as pd
     import os
 
