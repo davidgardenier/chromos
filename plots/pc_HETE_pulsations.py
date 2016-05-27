@@ -25,7 +25,7 @@ def findbestres(res):
         tails.append(unit)
 
     # Sort by unit, then by value
-    unitorder = ['ms','us','s']
+    unitorder = ['us','ms','s']
     for u in unitorder:
         if u in tails:
             indices = [i for i, x in enumerate(tails) if x==u]
