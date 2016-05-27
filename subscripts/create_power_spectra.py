@@ -160,8 +160,11 @@ def create_power_spectra():
 
         # Check whether x-ray flare was present
         path_bkg = group.rebinned_bkg.values[0]
+        flare = False
         if 'lc_no_flare' in group:
             if pd.notnull(group.lc_no_flare.values[0]):
+                flare = True
+                former_lc = path_lc
                 path_lc = group.lc_no_flare.values[0]
                 path_bkg = group.bkg_no_flare.values[0]
 
@@ -192,8 +195,14 @@ def create_power_spectra():
                             repr(num_seg) + '\n')
                     f.write(line)
 
-            d['bkg_corrected_lc'].append(path_lc)
-            d['power_spectra'].append(path_ps)
+            if not flare:
+                d['bkg_corrected_lc'].append(path_lc)
+                d['lc_no_flare'].append(float('NaN'))
+                d['power_spectra'].append(path_ps)
+            else:
+                d['bkg_corrected_lc'].append(former_lc)
+                d['lc_no_flare'].append(path_lc)
+                d['power_spectra'].append(path_ps)
 
     # Update database and save
     df = pd.DataFrame(d)

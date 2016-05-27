@@ -53,6 +53,9 @@ def energy_to_channel(epoch, table, energy):
             if channel == '0-4':
                 channel = table[1].split()[0]
 
+            if channel.startswith(','):
+                channel = channel[1:]
+        
             # Return the channel
             return channel
 
@@ -114,13 +117,24 @@ def get_channel_range(mode, cer, path_event):
     # Get the list in which you want search for channels
     if mode == 'event':
         tevtb2 = fits.open(path)[1].header['TEVTB2']
+        print tevtb2
         if 'C' not in tevtb2:
-            print 'ERROR: No channel information in this file'
-            return float('NaN')
-        # Cut out the channels
-        rel_channels = tevtb2.split(',C')[1][1:].split(']')[0].replace('~','-')
+            try:
+                # I think this fixes VLE (Very Long Event) data files hidden as event files.
+                # Not entirely sure about the rel_channels (usually they're given in the 
+                # header as 5-255, but presumably that doesn't mean it's all one bin?)
+                tddes2 = fits.open(path)[1].header['TDDES2']
+                rel_channels = tddes2.split('& C')[1][1:].split(']')[0].replace('~','-')
+                rel_channels = ','.join([str(e) for e in range(int(rel_channels.split('-')[0]), int(rel_channels.split('-')[1])+1)])
+            except:
+                print 'ERROR: No channel information in this file'
+                return float('NaN')
+        else:
+            # Cut out the channels
+            rel_channels = tevtb2.split(',C')[1][1:].split(']')[0].replace('~','-')
     elif mode == 'binned':
         tddes2 = fits.open(path)[1].header['TDDES2']
+        print tddes2
         rel_channels = tddes2.split('& C')[1][1:].split(']')[0].replace('~','-')
         if ',' not in rel_channels:
             return float('NaN')
@@ -179,6 +193,10 @@ def get_channel_range(mode, cer, path_event):
     # See Gleissner T., Wilms J., Pottschimdt K. etc. 2004
     if channels.startswith('0'):
         channels = channels[4:] #Assuming channels doesn't do 0-19,etc
+        
+    if channels.startswith(','):
+        channels = channels[1:]
+        
     return channels
 
 
