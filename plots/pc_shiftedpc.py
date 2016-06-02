@@ -255,14 +255,14 @@ def plotpcpane():
 
         # Plot Neutron Stars
         grey= color.cmyk(0,0,0,0.5)
-        nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[color.rgb.red])]
-        bhstyle = [graph.style.symbol(size=0.1, symbolattrs=[grey])]
+        nsstyle = [graph.style.symbol(symbol=graph.style._circlesymbol, size=0.035, symbolattrs=[deco.filled, color.rgb.red])]
+        bhstyle = [graph.style.symbol(size=0.08, symbolattrs=[grey])]
         if i==0:
             g.plot(graph.data.values(x=x_bh, y=y_bh, title='Black Holes'), bhstyle)
             g.plot(graph.data.values(x=x_ns, y=y_ns, title='Neutron Stars'), nsstyle)
             xtext, ytext = g.pos(200, 16)
             g.text(xtext,ytext, 'Normal PCs', [text.halign.boxright, text.valign.top])
-        nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[color.rgb.blue])]
+        nsstyle = [graph.style.symbol(symbol=graph.style._circlesymbol, size=0.035, symbolattrs=[deco.filled, color.rgb.blue])]
         if i==1:
             g.plot(graph.data.values(x=x_bh, y=y_bh, title='Black Holes'), bhstyle)
             g.plot(graph.data.values(x=x_shiftedns, y=y_shiftedns, title='Neutron Stars'), nsstyle)

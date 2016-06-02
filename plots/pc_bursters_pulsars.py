@@ -186,7 +186,7 @@ def plotpcpane():
             objs = bursters
         if i == 1:
             objs = pulsars
-        objs = sorted(objs, key=lambda x: x[1])
+        objs = sorted(objs, reverse=True, key=lambda x: x[1])
 
         myticks = []
     	if yposition[i]!=0.0:
@@ -209,11 +209,11 @@ def plotpcpane():
 	                             x=graph.axis.log(min=0.01,max=600,title=xtitle,texter=xtexter,manualticks=myticks),
 	                             y=graph.axis.log(min=0.01,max=60,title=ytitle,texter=ytexter),
                                  key=graph.key.key(pos='tr', dist=0.1, textattrs=[text.size.tiny])))
-        scatterstyle= [graph.style.symbol( size=0.1, symbolattrs=[color.gradient.Rainbow])]
+        scatterstyle= [graph.style.symbol(symbol=graph.style._circlesymbol, size=0.05, symbolattrs=[deco.filled, color.gradient.Rainbow])]
 
         # Plot Neutron Stars
         grey= color.cmyk(0,0,0,0.5)
-        nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[grey])]
+        nsstyle = [graph.style.symbol(size=0.05, symbolattrs=[grey])]
         g.plot(graph.data.values(x=x_ns, y=y_ns, title='NSs'), nsstyle)
 
         for o in objs:

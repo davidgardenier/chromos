@@ -216,10 +216,10 @@ def plot_allpcs():
         yerror_edge.extend(hardness_err)
 
     # Set up plot details
-    g = graph.graphxy(height=9,
-                      width=9,
+    g = graph.graphxy(height=7,
+                      width=7,
                       x=graph.axis.lin(min=0, max=360, title=r"Hue ($^{\circ}$)"),
-                      y=graph.axis.lin(min=0.5, max=1.75, title=r"Hardness"),
+                      y=graph.axis.lin(min=0.4, max=1.75, title=r"Hardness"),
                       key=graph.key.key(pos=None,hpos=0.02, vpos=0.4, dist=0.12, hdist=0.1, vdist=0.1, keyattrs=[deco.filled([color.rgb.white])]))
     errstyle= [graph.style.symbol(graph.style.symbol.changeplus,size=0.1, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]

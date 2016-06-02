@@ -140,7 +140,7 @@ def plot_allpcs():
     g = graph.graphxy(height=9,
                       width=9,
                       x=graph.axis.lin(min=0, max=360, title=r"Hue ($^{\circ}$)"),
-                      y=graph.axis.lin(min=0.5, max=1.75, title=r"Hardness"),
+                      y=graph.axis.lin(min=0.4, max=1.75, title=r"Hardness"),
                       key=graph.key.key(pos=None,hpos=1.0,vpos=0.5,hinside=0, dist=0.05, textattrs=[text.size.small]))
     errstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
