@@ -255,7 +255,7 @@ def plot_per_obsid(db, obj):
 
 if __name__=='__main__':
 
-    objects = ['gx_339_d4']
+    objects = ['aquila_X1']
     #obj = raw_input('Object name: ')
    # objects = [obj]
     import pandas as pd
