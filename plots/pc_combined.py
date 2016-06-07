@@ -64,7 +64,6 @@ ns = [('4u_1705_m44', '4U 1705-44'),
         #('cir_x1', 'Cir X-1'), #strange behaviour
         ('cyg_x2', 'Cyg X-2'),
         #('EXO_0748_676', 'EXO 0748-676'), #Strange behaviour
-        ('gx_3p1', 'GX 3+1'),
         ('gx_5m1', 'GX 5-1'), #Only 5 points
         ('gx_17p2', 'GX 17+2'), #Only has 4 points
         #('gx_339_d4', 'GX 339-4'), #BH system
@@ -116,13 +115,12 @@ names = {'4u_1705_m44':'4U 1705-44',
         'aquila_X1':'Aql X-1',
         'cir_x1':'Cir X-1', #strange behaviour
         'cyg_x2':'Cyg X-2',
-        'EXO_0748_676':'EXO 0748-676', #Strange behaviour
-        'gx_3p1':'GX 3+1',
         'gx_5m1':'GX 5-1', #Only 5 points
         'gx_17p2':'GX 17+2', #Only has 4 points
         'gx_339_d4':'GX 339-4', #BH system
         'gx_340p0':'GX 340+0', #Only 5 points
         'gx_349p2':'GX 349+2', #Only 3 points
+        'EXO_0748_676': 'EXO 0748-676',
         'HJ1900d1_2455':'HETE J1900.1-2455',
         'H1743m322':'H1743-322',
         'IGR_J00291p5934':'IGR J00291+5934',
@@ -162,10 +160,10 @@ def plotpcpane(objects, nr):
         xposition=[0.0,6.0,12.0, 0.0,6.0,12.0, 0.0,6.0,12.0,   0.0,6.0,12.0]
         yposition=[0.0,0.0,0.0,  6.0,6.0,6.0,  12.0,12.0,12.0, 18.0,18.0,18.0]
         order = [10,11,12,7,8,9,4,5,6,1,2,3]
-    if len(objects) == 7:
-        xposition=[0.0, 0.0,6.0,12.0, 0.0,6.0,12.0]
-        yposition=[0.0, 6.0,6.0,6.0,  12.0,12.0,12.0]
-        order = [7,4,5,6,1,2,3]
+    if len(objects) == 6:
+        xposition=[0.0,6.0,12.0, 0.0,6.0,12.0]
+        yposition=[0.0,0.0,0.0,  6.0,6.0,6.0]
+        order = [4,5,6,1,2,3]
     if len(objects) == 3:
         xposition=[0.0,6.0,12.0]
         yposition=[0.0,0.0,0.0]
@@ -251,13 +249,12 @@ if __name__=='__main__':
             'cyg_x2',
             'EXO_0748_676',
             'gx_17p2',
-            'gx_3p1',
-            'gx_340p0']
+            'gx_340p0',
+            'gx_349p2']
     plotpcpane(pane, nr)
 
     nr = 2
-    pane = ['gx_349p2',
-            'gx_5m1',
+    pane = ['gx_5m1',
             'HJ1900d1_2455',
             'IGR_J00291p5934',
             'IGR_J17480m2446',
@@ -267,12 +264,12 @@ if __name__=='__main__':
             'S_J1756d9m2508',
             'sco_x1',
             'sgr_x1',
-            'sgr_x2']
+            'sgr_x2',
+            'v4634_sgr']
     plotpcpane(pane, nr)
 
     nr = 3
-    pane = ['v4634_sgr',
-            'XB_1254_m690',
+    pane = ['XB_1254_m690',
             'xte_J0929m314',
             'J1701_462',
             'xte_J1751m305',

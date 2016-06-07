@@ -97,7 +97,7 @@ def cal_hue(x,y,xerr,yerr):
     return degs, degserr
 
 ns = [ #('EXO_0748_676', 'EXO 0748-676'), #Strange behaviour
-        ('gx_3p1', 'GX 3+1'),
+        ('sgr_x1', 'Sgr X-1'),
         #('gx_339_d4', 'GX 339-4'), #BH
         ('IGR_J00291p5934', 'IGR J00291+5934'),
         ('IGR_J17480m2446', 'IGR J17480-2446'),

@@ -105,7 +105,6 @@ ns = [('4u_1705_m44', '4U 1705-44'),
         #('cir_x1', 'Cir X-1'), #strange behaviour
         ('cyg_x2', 'Cyg X-2'),
         #('EXO_0748_676', 'EXO 0748-676'), #Strange behaviour
-        ('gx_3p1', 'GX 3+1'),
         ('gx_5m1', 'GX 5-1'), #Only 5 points
         ('gx_17p2', 'GX 17+2'), #Only has 4 points
         #('gx_339_d4', 'GX 339-4'), #BH system
