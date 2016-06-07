@@ -15,6 +15,11 @@ def power_spectrum(path_lc, path_bkg):
         print 'ERROR: Lightcurve does not exist'
         return
 
+    # Check whether there are any counts
+    if sum(rate) < 10:
+        print 'ERROR: Lightcurve has zero count rate'
+        return
+
     # Determine the number of bins
     try:
         n_bins = int(n_bins[0])
