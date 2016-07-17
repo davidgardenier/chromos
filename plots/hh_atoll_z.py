@@ -103,10 +103,10 @@ ns = [ #('EXO_0748_676', 'EXO 0748-676'), #Strange behaviour
         #('IGR_J17498m2921', 'IGR J17498-2921'), #Only 1 point
         #('IGR_J17511m3057', 'IGR J17511-3057'), #Same as XTE J1751
         ('J1701_462', 'XTE J1701-462'),
-        ('KS_1731m260', 'KS 1731-260'),
+        #('KS_1731m260', 'KS 1731-260'),
         ('S_J1756d9m2508', 'SWIFT J1756.9-2508'),
-        ('v4634_sgr', 'V4634 Sgr'),
-        ('XB_1254_m690', 'XB 1254-690'),
+        #('v4634_sgr', 'V4634 Sgr'),
+        #('XB_1254_m690', 'XB 1254-690'),
         ('xte_J0929m314', 'XTE J0929-314'),
         #('xte_J1550m564', 'XTE J1550-564'), #BH system
         ('xte_J1751m305', 'XTE J1751-305'),
@@ -172,9 +172,12 @@ def plot_allpcs():
             ('4U_1702m43', '4U 1702-43'),
             ('4U_1728_34', '4U 1728-34'),
             ('aquila_X1', 'Aql X-1'),
-            ('HJ1900d1_2455', 'HETE J1900.1-2455'),
+            #('HJ1900d1_2455', 'HETE J1900.1-2455'),
+            ('KS_1731m260', 'KS 1731-260'),
             ('sgr_x1', 'Sgr X-1'),
-            ('sgr_x2', 'Sgr X-2') #Common Patterns in the Evolution between the Luminous Neutron Star Low-Mass X-ray Binary Subclasses
+            #('sgr_x2', 'Sgr X-2') #Common Patterns in the Evolution between the Luminous Neutron Star Low-Mass X-ray Binary Subclasses
+            ('v4634_sgr', 'V4634 Sgr'),
+            ('XB_1254_m690', 'XB 1254-690')
             ]
 
     zs = [('cyg_x2', 'Cyg X-2'),
@@ -183,7 +186,9 @@ def plot_allpcs():
           ('gx_340p0', 'GX 340+0'), #Only 5 points
           ('gx_349p2', 'GX 349+2'), #Only 3 points
           #('J1701_462', 'XTE J1701-462'), #Transitions between states
-          ('sco_x1', 'Sco X-1')]
+          ('sco_x1', 'Sco X-1'),
+          ('sgr_x2', 'Sgr X-2')]
+
 
     x_atolls = []
     y_atolls = []

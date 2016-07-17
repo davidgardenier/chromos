@@ -48,7 +48,7 @@ class Plots:
         ax1.set_xlabel('Time (s)')
         ax1.set_ylabel('Rate (s^-1)')
         ax1.set_xlim(t[0],t[-1])
-        ax1.set_ylim(0,15000)
+        ax1.set_ylim(0,20000)
 
         # Plot a shaded area around detected xray flares
         if 'flare_times' in self.df:
@@ -126,7 +126,7 @@ class Plots:
         # Plot details
         ax3 = self.fig.add_subplot(self.gs[1,-1:])
         ax3.set_xlim([0.01, 1000])
-        ax3.set_ylim([0.01, 15])
+        ax3.set_ylim([0.01, 100])
         ax3.set_xscale('log', nonposx='clip')
         ax3.set_yscale('log', nonposy='clip')
         ax3.set_xlabel('PC1 (C/A [0.25-2.0]/[0.0039-0.031])')
@@ -255,7 +255,7 @@ def plot_per_obsid(db, obj):
 
 if __name__=='__main__':
 
-    objects = ['aquila_X1']
+    objects = ['sco_x1']
     #obj = raw_input('Object name: ')
    # objects = [obj]
     import pandas as pd

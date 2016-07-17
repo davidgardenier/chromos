@@ -6,13 +6,59 @@ import glob
 import pandas as pd
 import matplotlib.pyplot as plt
 import math
-import numpy as np
 from pyx import *
 
 
 def path(o):
     return '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
 
+
+def findbestres(res):
+    '''Find the smallest resolution from a list of resolutions'''
+
+    # Split resolutions into values and units
+    heads = []
+    tails = []
+    for s in res:
+        unit = s.strip('0123456789')
+        num = s[:-len(unit)]
+        heads.append(num)
+        tails.append(unit)
+
+    # Sort by unit, then by value
+    unitorder = ['us','ms','s']
+    for u in unitorder:
+        if u in tails:
+            indices = [i for i, x in enumerate(tails) if x==u]
+            sameunits = [heads[i] for i in indices]
+            sortvalues = sorted(sameunits)
+            return sortvalues[0]+u
+
+
+def findbestdataperobsid(df):
+    '''Select the data with best mode and resolution'''
+    ordering = ['gx1','event','binned','std2']
+    for mode in ordering:
+        if mode in df.modes.values:
+            df = df[df.modes==mode]
+            if df.shape[0] > 1:
+                bestres = findbestres(df.resolutions.values)
+                return df[df.resolutions==bestres].iloc[0]
+            else:
+                return df.iloc[0]
+
+
+def findbestdata(db):
+    # Apply constraint to the data
+    db = db[(db.pc1.notnull() & db.lt3sigma==True)]
+    db = db.groupby('obsids').apply(findbestdataperobsid)
+    return db
+
+def findbestdatashifted(db):
+    # Apply constraint to the data
+    db = db[(db.pc1_shiftedby5.notnull() & db.lt3sigma_shiftedby5==True)]
+    db = db.groupby('obsids').apply(findbestdataperobsid)
+    return db
 
 ns = [('4u_1705_m44', '4U 1705-44'),
         ('4U_0614p09', '4U 0614+09'),
@@ -50,37 +96,35 @@ ns = [('4u_1705_m44', '4U 1705-44'),
 
 x_ns = []
 y_ns = []
+xerror_ns = []
+yerror_ns = []
 
 for i, o in enumerate(ns):
     name = o[-1]
     o = o[0]
     p = path(o)
     db = pd.read_csv(p)
-    db = db[np.isfinite(db['flux_i3t16_s6p4t9p7_h9p7t16'])]
-    x = db.flux_i3t16_s6p4t9p7_h9p7t16.values
-    y = db.hardness_i3t16_s6p4t9p7_h9p7t16.values
-    x_ns.extend(x)
-    y_ns.extend(y)
+    db = findbestdata(db)
+
+    x_ns.extend(db.pc1.values)
+    y_ns.extend(db.pc2.values)
+    xerror_ns.extend(db.pc1_err.values)
+    yerror_ns.extend(db.pc2_err.values)
 
 bursters = [('4U_0614p09',414.7),
             ('4U_1636_m53',581.9),
             ('4U_1702m43',330),
             ('4U_1728_34',364),
             ('aquila_X1',550.3),
-            ('EXO_0748_676',552.5),#? Strange behaviour
-            ('KS_1731m260',524),
-            ('S_J1756d9m2508', 182),
-            ('xte_J0929m314', 185),
-            ('xte_J1751m305', 435)]
-            
+            ('EXO_0748_676',552.5),
+            ('KS_1731m260',524)]
+
 pulsars = [('HJ1900d1_2455',377.3),
             ('IGR_J17480m2446',11),
-            #('IGR_J17498m2921', 401),
             ('xte_J1751m305',244.8),
             ('xte_J1807m294',190.6),
-            ('xte_J1814m338', 314),
             ('xte_J1808_369',401)]
-            
+
 names = {'4u_1705_m44':'4U 1705-44',
         '4U_0614p09':'4U 0614+09',
         '4U_1636_m53':'4U 1636-53',
@@ -131,72 +175,68 @@ def plotpcpane():
     # Set up plot details
     c=canvas.canvas()
 
-    xposition=[0.0,6.0]
-    yposition=[0.0,0.0]
+    xposition=[0.0]
+    yposition=[0.0]
 
     for i in range(len(xposition)):
 
         if i == 0:
-            objs = bursters
-        if i == 1:
             objs = pulsars
-        objs = sorted(objs, key=lambda x: x[1])
+        objs = sorted(objs, reverse=True, key=lambda x: x[1])
 
-        myticks = [graph.axis.tick.tick(1e-12, label=" ", labelattrs=[text.mathmode]),
-                   graph.axis.tick.tick(1e-10, label=" ", labelattrs=[text.mathmode]),
-                   graph.axis.tick.tick(1e-8, label=" ", labelattrs=[text.mathmode]),
-                   graph.axis.tick.tick(1e-6, label=" ", labelattrs=[text.mathmode])]
-
+        myticks = []
     	if yposition[i]!=0.0:
             xtitle = ""
             xtexter=empty()
     	else:
-            xtitle = "Intensity (photons$\ $ergs$\ $cm$^{-2}$ s$^{-1}$)"
+            xtitle = "PC1"
             xtexter=graph.axis.texter.mixed()
     	if xposition[i]!=0.0:
             ytitle = ""
             ytexter=empty()
     	else:
-            ytitle="Hardness"
+            ytitle="PC2"
             ytexter=graph.axis.texter.mixed()
 
     	g=c.insert(graph.graphxy(width=6.0,
                                  height=6.0,
                                  xpos=xposition[i],
                                  ypos=yposition[i],
-	                             x=graph.axis.log(min=1e-12,max=1e-6,title=xtitle,texter=xtexter,manualticks=myticks),
-	                             y=graph.axis.lin(min=0.0,max=2.75,title=ytitle,texter=ytexter),
-                                 key=graph.key.key(pos='tr', dist=0.1, textattrs=[text.size.tiny])))
-
-        scatterstyle= [graph.style.symbol( size=0.1, symbolattrs=[color.gradient.Rainbow])]
+	                             x=graph.axis.log(min=0.01,max=600,title=xtitle,texter=xtexter,manualticks=myticks),
+	                             y=graph.axis.log(min=0.01,max=60,title=ytitle,texter=ytexter),
+                                 key=graph.key.key(pos=None,hpos=1.0,vpos=0.5,hinside=0,dist=0.2, textattrs=[text.size.small])))
+        scatterstyle= [graph.style.symbol(symbol=graph.style._circlesymbol, size=0.08, symbolattrs=[deco.filled, color.gradient.Rainbow])]
 
         # Plot Neutron Stars
         grey= color.cmyk(0,0,0,0.5)
-        nsstyle = [graph.style.symbol(size=0.1, symbolattrs=[grey])]
-        g.plot(graph.data.values(x=x_ns, y=y_ns, title='NSs'), nsstyle)
+        nsstyle = [graph.style.symbol(size=0.05, symbolattrs=[grey])]
+        g.plot(graph.data.values(x=x_ns, y=y_ns, title='Neutron Stars'), nsstyle)
 
         for o in objs:
 
             xs = []
             ys = []
+            xerrors = []
+            yerrors = []
 
             print o[0]
             name = str(o[-1])
             o = o[0]
             p = path(o)
             db = pd.read_csv(p)
-            db = db[np.isfinite(db['flux_i2t20_s2t6_h9t20'])]
-            x = db.flux_i2t20_s2t6_h9t20.values
-            y = db.hardness_i2t20_s2t6_h9t20.values
-            xs.extend(x)
-            ys.extend(y)
+            db = findbestdata(db)
 
-            g.plot(graph.data.values(x=xs, y=ys, title=name + ' Hz'), scatterstyle)
+            xs.extend(db.pc1.values)
+            ys.extend(db.pc2.values)
+            xerrors.extend(db.pc1_err.values)
+            yerrors.extend(db.pc2_err.values)
+
+            g.plot(graph.data.values(x=xs, y=ys, dx=xerrors, dy=yerrors, title=name + ' Hz'), scatterstyle)
     # title = huerange.replace('_', '$^[\circ]$-') + '$^[\circ]$'
     # c.text(6.0,yposition[-1]+6.5,title,
     #        [text.halign.center, text.valign.bottom, text.size.Large])
 
-    outputfile = '/scratch/david/master_project/plots/publication/hi/bursters_pulsars'
+    outputfile = '/scratch/david/master_project/plots/publication/presentation/pc_pulsars'
     c.writePDFfile(outputfile)
     # os.system('convert -density 300 '+outputfile+'.pdf -quality 90 '+outputfile+'.png')
 

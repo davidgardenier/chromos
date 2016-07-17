@@ -1,11 +1,11 @@
 import os
 
-selection = 'xte_J1550m564'
+selection = '4U_1728_34'
 subscripts = os.getcwd() + '/subscripts/'
 
-data = '/scratch/david/master_project/xte_J1550m564/'
+data = '/scratch/david/master_project/4U_1728_34/'
 data_info = data + 'info/'
-database = data_info + 'database_xte_J1550m564.csv'
+database = data_info + 'database_4U_1728_34.csv'
 
 logs = data_info + 'log_scripts/'
 terminal_output = True
