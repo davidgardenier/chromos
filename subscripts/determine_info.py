@@ -77,6 +77,19 @@ def determine_info():
                     d['resolutions'].append('16s')
                     d['modes'].append('std2')
 
+        if 'Standard1b' in mode:
+            with open(a) as s:
+                for i, line in enumerate(s):
+                    obsid = line.split('/')[0]
+                    path = os.getcwd() + '/P' + obsid.split('-')[0] + '/' + line.split(' ')[0].split('.')[0]
+                    time = line.split(' ')[2]
+
+                    d['obsids'].append(obsid)
+                    d['paths_data'].append(path)
+                    d['times'].append(time)
+                    d['resolutions'].append('125ms')
+                    d['modes'].append('std1')
+
         if 'GoodXenon1' in mode:
             with open(a) as g:
                 for line in g:

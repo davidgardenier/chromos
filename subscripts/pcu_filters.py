@@ -89,12 +89,15 @@ def pcu_filters():
             text = t_range.replace(',','\n').replace('-',' ')
             f.write(text + '\n')
 
+        # Note that I'm only saving the maximum pcu number
+        nupcu = max(num_pcu_on[1:])
+        d['npcu'].append(nupcu)
         d['obsids'].append(obsid)
         d['times_obsid'].append(str(tstart+timezero) + '-' + str(time[-1]))
         d['times_pcu'].append(filename)
 
     # Add starting times of each obsid to database
     df = pd.DataFrame(d)
-    db = database.merge(db,df,['times_obsid', 'times_pcu'])
+    db = database.merge(db,df,['times_obsid', 'times_pcu', 'npcu'])
     database.save(db)
     logs.stop_logging()

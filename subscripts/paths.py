@@ -1,11 +1,11 @@
 import os
 
-selection = '4U_1728_34'
+selection = 'test'
 subscripts = os.getcwd() + '/subscripts/'
 
-data = '/scratch/david/master_project/4U_1728_34/'
+data = '/scratch/david/master_project/test/'
 data_info = data + 'info/'
-database = data_info + 'database_4U_1728_34.csv'
+database = data_info + 'database_test.csv'
 
 logs = data_info + 'log_scripts/'
 terminal_output = True

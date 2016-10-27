@@ -1,11 +1,12 @@
 # Functions to create power spectra from lightcurves
 # Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
 
-def power_spectrum(path_lc, path_bkg):
+def power_spectrum(path_lc, path_bkg, path_std1, npcu):
 
     import numpy as np
     import numpy.fft as fft
     import math
+    import deadtime as deadt
 
     try:
         # Reading in the lightcurve data for each path/file
@@ -37,7 +38,7 @@ def power_spectrum(path_lc, path_bkg):
     n_seg = pow(2, int(math.log(n, 2) + 0.5))
 
     # Whether you wish subtract white noise
-    white_noise_subtraction = True
+    noise_subtraction = True
 
     # A list with indexes of segment end points
     segment_endpoints = []
@@ -73,6 +74,13 @@ def power_spectrum(path_lc, path_bkg):
     power_spectrum = np.zeros((n_seg))
     # Necessary for errors on power colour values
     power_spectrum_squared = np.zeros((n_seg))
+    
+    # Calculate the corresponding frequency grid
+    # (assuming that dt is the same for all)
+    frequency = fft.fftfreq(n_seg, dt)
+
+    # Calculate the error on the frequencies
+    frequency_error = (1.0/(2*dt*float(n_seg)))*np.ones(n_seg/2 - 1)
 
     # Initialise rate arrays
     rate_tot = []
@@ -98,7 +106,7 @@ def power_spectrum(path_lc, path_bkg):
         power_spectrum_squared += (norm*(np.absolute(four_trans))**2)**2
 
         # For calculating the total white noise
-        if white_noise_subtraction:
+        if noise_subtraction:
             rate_tot.extend(segment)
             bkg_tot.extend(bkg_segment)
 
@@ -111,10 +119,11 @@ def power_spectrum(path_lc, path_bkg):
     # Calculating the error on the power spectrum
     power_spectrum_error = power_spectrum/np.sqrt(float(number_of_segments))
 
-    # Calculate the white noise & subtract from the power spectrum
-    if white_noise_subtraction:
+    # Calculate the noise & subtract from the power spectrum
+    if noise_subtraction:
         white_noise = (2*(np.mean(rate_tot)+np.mean(bkg_tot))/np.mean(rate_tot)**2)
-        power_spectrum -= white_noise
+        dead_noise = deadt.calculate_deadtime(path_std1, frequency, npcu=npcu)
+        power_spectrum -= (white_noise*(dead_noise/2.))
 
     # Note the range of the power spectrum - this is due to the output
     # of the FFT function, which adds the negative powers at the end of
@@ -122,14 +131,8 @@ def power_spectrum(path_lc, path_bkg):
     ps = power_spectrum[1:n_seg/2]
     ps_error = power_spectrum_error[1:n_seg/2]
     ps_squared = power_spectrum_squared[1:n_seg/2]
-
-    # Calculate the corresponding frequency grid
-    # (assuming that dt is the same for all)
-    frequency = fft.fftfreq(n_seg, dt)[1:n_seg/2]
-
-    # Calculate the error on the frequencies
-    frequency_error = (1.0/(2*dt*float(n_seg)))*np.ones(n_seg/2 - 1)
-
+    frequency = frequency[1:n_seg/2]
+    
     return ps, ps_error, ps_squared, number_of_segments, frequency, frequency_error
 
 
@@ -162,7 +165,7 @@ def create_power_spectra():
 
     d = defaultdict(list)
     for path_lc, group in db.groupby('bkg_corrected_lc'):
-
+    
         # Check whether x-ray flare was present
         path_bkg = group.rebinned_bkg.values[0]
         flare = False
@@ -179,10 +182,17 @@ def create_power_spectra():
         mode = group.modes.values[0]
         res = group.resolutions.values[0]
 
+        # Find std1 path
+        std1 = db[((db.obsids==obsid) & (db.modes=='std1'))].paths_data.iloc[0]
+        path_std1 = std1 + '.gz'
+        
+        # Determine the maximum number of pcus on during the observation
+        npcu = group.npcu.values[0]
+        
         print obsid, mode, res
 
         # Calculate power spectrum
-        output = power_spectrum(path_lc, path_bkg)
+        output = power_spectrum(path_lc, path_bkg, path_std1, npcu)
 
         if output:
             ps, ps_er, ps_sq, num_seg, freq, freq_er = output

@@ -59,6 +59,12 @@ def saextrct(mode, path_data, gti, output, time_range, channels, layer):
         columns = 'GOOD'
         printmode='LIGHTCURVE'
 
+    # Needed for deadtime corrections
+#    if mode == 'std1':
+#        b = '0.125'
+#        columns = '@' + paths.subscripts + 'deadtime_columns.txt'
+#        printmode='LIGHTCURVE'
+
     command = ['saextrct',
                'infile=@' + path_data, # Input file name
                'gtiorfile=-', # Input GTI files to be OR'd with INFILE
@@ -122,7 +128,7 @@ def extract_lc_and_sp():
         obsid = df.obsids.values[0]
         gti = df.gti.values[0]
         times_pcu = df.times_pcu.values[0]
-        
+
         # Adapt vaules depending on goodxenon
         mode = df.modes.values[0]
         if mode[:2] == 'gx':

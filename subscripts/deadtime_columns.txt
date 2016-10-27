@@ -1,0 +1,8 @@
+XeCntPcu0
+XeCntPcu1
+XeCntPcu2
+XeCntPcu3
+XeCntPcu4
+RemainingCnt
+VpCnt
+VLECnt

@@ -18,7 +18,7 @@ def pcabackest(mode,infile,outfile,filt,allpcus=True):
 
     if mode[:2] == 'gx':
         gaincorr = 'no'
-    if mode == 'std2' and allpcus is True:
+    if (mode == 'std2' or mode=='std1') and allpcus is True:
         gaincorr = 'no'
         fullspec = 'no'
     if mode == 'std2' and allpcus is False:
