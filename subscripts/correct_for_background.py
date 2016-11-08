@@ -158,7 +158,7 @@ def correct_for_background():
 
         # Std2 files won't have a high enough time resolution to create
         # power colours in the high band
-        if mode == 'std2':
+        if mode == 'std2' or mode == 'std1':
             continue
 
         if (mode == 'gx1' or mode == 'gx2'):

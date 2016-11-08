@@ -63,6 +63,7 @@ def determine_info():
                     d['times'].append(time)
                     d['resolutions'].append(resolution)
                     d['modes'].append('event')
+                    d['bitsize'].append(float('NaN'))
 
         if 'Standard2f' in mode:
             with open(a) as s:
@@ -76,6 +77,7 @@ def determine_info():
                     d['times'].append(time)
                     d['resolutions'].append('16s')
                     d['modes'].append('std2')
+                    d['bitsize'].append(float('NaN'))
 
         if 'Standard1b' in mode:
             with open(a) as s:
@@ -89,6 +91,7 @@ def determine_info():
                     d['times'].append(time)
                     d['resolutions'].append('125ms')
                     d['modes'].append('std1')
+                    d['bitsize'].append(float('NaN'))
 
         if 'GoodXenon1' in mode:
             with open(a) as g:
@@ -103,6 +106,7 @@ def determine_info():
                     d['times'].append(time)
                     d['resolutions'].append(resolution)
                     d['modes'].append('gx1')
+                    d['bitsize'].append(float('NaN'))
 
         if 'GoodXenon2' in mode:
             with open(a) as g:
@@ -117,6 +121,7 @@ def determine_info():
                     d['times'].append(time)
                     d['resolutions'].append(resolution)
                     d['modes'].append('gx2')
+                    d['bitsize'].append(float('NaN'))
 
         if mode.startswith('B_'):
             with open(a) as e:
@@ -125,16 +130,19 @@ def determine_info():
                     path = os.getcwd() + '/P' + obsid.split('-')[0] + '/' + line.split(' ')[0]
                     time = line.split(' ')[2]
                     resolution = line.split(' ')[1].split('_')[1]
+                    bitsize = mode.split('_')[-1]
 
                     d['obsids'].append(obsid)
                     d['paths_data'].append(path)
                     d['times'].append(time)
                     d['resolutions'].append(resolution)
                     d['modes'].append('binned')
+                    d['bitsize'].append(bitsize)
 
     # Add information to database
     new_data = pd.DataFrame(d)
-    db = database.merge(db, new_data, ['paths_data', 'times', 'resolutions', 'modes'])
+    new_c = ['paths_data', 'times', 'resolutions', 'modes', 'bitsize']
+    db = database.merge(db, new_data, new_c)
 
     d = defaultdict(list)
 

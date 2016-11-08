@@ -99,7 +99,8 @@ class Plots:
 
         # Plot details
         ax2 = self.fig.add_subplot(self.gs[1,-2:-1])
-        bin_means, bin_edges, binnumber = binned_statistic(freq, freq*ps, bins=np.logspace(-3,2, num=50))
+        # Can choose to plot freq*ps on y
+        bin_means, bin_edges, binnumber = binned_statistic(freq, ps, bins=np.logspace(-3,2, num=50))
         ax2.step(bin_edges[:-1], bin_means, where='pre', lw=2)
 
         # If plotting with errorbar
@@ -108,10 +109,10 @@ class Plots:
         #              fmt='o', color='b')
 
         ax2.set_xscale('log', nonposx='clip')
-        ax2.set_yscale('log', nonposy='clip')
         ax2.set_xlim([10e-3, 10e2])
-        ax2.set_ylim([10e-7, 2])
-        ax2.set_ylabel('Freq*Power (rms/mean)^2')
+        #ax2.set_yscale('log', nonposy='clip')
+        #ax2.set_ylim([10e-7, 2])
+        ax2.set_ylabel('Power (rms/mean)^2')
         ax2.set_xlabel('Frequency (Hz)')
 
         self.ps = True

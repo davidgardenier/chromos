@@ -181,15 +181,19 @@ def create_power_spectra():
         path_obsid = group.paths_obsid.values[0]
         mode = group.modes.values[0]
         res = group.resolutions.values[0]
-
+        
+        print obsid, mode, res
+        
         # Find std1 path
-        std1 = db[((db.obsids==obsid) & (db.modes=='std1'))].paths_data.iloc[0]
-        path_std1 = std1 + '.gz'
+        try:
+            std1 = db[((db.obsids==obsid) & (db.modes=='std1'))].paths_data.iloc[0]
+            path_std1 = glob.glob(std1 + '*')[0]
+        except IndexError:
+            print('ERROR: No std1 file for this obsid. Aborting power spectrum.')
+            continue
         
         # Determine the maximum number of pcus on during the observation
         npcu = group.npcu.values[0]
-        
-        print obsid, mode, res
 
         # Calculate power spectrum
         output = power_spectrum(path_lc, path_bkg, path_std1, npcu)

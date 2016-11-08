@@ -9,7 +9,7 @@ from astropy.io import fits
 MIN_E = 2.
 MAX_E = 13.
 
-def energy_to_channel(epoch, table, energy):
+def energy_to_channel(epoch, table, energy, bit):
     '''
     Function determine which channel corresponds best to an energy
 
@@ -50,7 +50,7 @@ def energy_to_channel(epoch, table, energy):
 
             # Ensure the lowest energy channel is not returned
             # See Gleissner T., Wilms J., Pottschimdt K. etc. 2004
-            if channel == '0-4':
+            if bit != 'H' and channel == '0-4':
                 channel = table[1].split()[0]
 
             if channel.startswith(','):
@@ -60,7 +60,7 @@ def energy_to_channel(epoch, table, energy):
             return channel
 
 
-def calculated_energy_range(date,min_energy,max_energy):
+def calculated_energy_range(date,min_energy,max_energy,bit):
     '''
     Import the channel energy conversion table, and return the required channel
     range in a format suitable for seextrct.
@@ -99,13 +99,13 @@ def calculated_energy_range(date,min_energy,max_energy):
         else:
             epoch = 5
 
-        lower_range = energy_to_channel(epoch, text[12:], min_energy)
-        upper_range = energy_to_channel(epoch, text[12:], max_energy)
+        lower_range = energy_to_channel(epoch, text[12:], min_energy, bit)
+        upper_range = energy_to_channel(epoch, text[12:], max_energy, bit)
 
     return str(lower_range) + '-' + str(upper_range)
 
 
-def get_channel_range(mode, cer, path_event):
+def get_channel_range(mode, cer, path_event, bit):
     '''
     Look inside each file to get the channel range it contains
     '''
@@ -188,8 +188,8 @@ def get_channel_range(mode, cer, path_event):
         channels = ','.join(ch_str)
 
     # Ensure the lowest energy channel is not returned
-    # See Gleissner T., Wilms J., Pottschimdt K. etc. 2004
-    if channels.startswith('0'):
+    # See Gleissner T., Wilms J., Pottschmidt K. etc. 2004
+    if bit != 'H' and channels.startswith('0'):
         channels = channels[4:] #Assuming channels doesn't do 0-19,etc
 
     if channels.startswith(','):
@@ -229,7 +229,7 @@ def find_channels():
         group = group.drop_duplicates('paths_data')
 
         print obsid
-        for mode, path, time in zip(group.modes,group.paths_data,group.times):
+        for mode, path, time, bit in zip(group.modes,group.paths_data,group.times,group.bitsize):
 
             if mode == 'std1':
                 d['paths_data'].append(path)
@@ -237,12 +237,12 @@ def find_channels():
                 continue
 
             # Determine channels according to epoch
-            abs_channels = calculated_energy_range(time,MIN_E,MAX_E)
+            abs_channels = calculated_energy_range(time,MIN_E,MAX_E,bit)
             final_channels = abs_channels
 
             # Check in which fashion the channels are binned, and return these
             if mode == 'event' or mode == 'binned':
-                bin_channels = get_channel_range(mode, abs_channels, path)
+                bin_channels = get_channel_range(mode, abs_channels, path,bit)
                 final_channels = bin_channels
 
             print '   ', mode, '-->', final_channels

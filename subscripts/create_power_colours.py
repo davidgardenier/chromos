@@ -14,6 +14,8 @@ def power_colour(path):
     frequency_bands = [0.0039,0.031,0.25,2.0,16.0]
     # If you wish to shift the frequency bands by 5
     #frequency_bands = [0.0195,0.155,1.25,10.0,80.0]
+    # If you wish to shift the frequency bands by 4
+    #frequency_bands = [0.0156,0.124,1.0,8.0,64.0]
 
     # Import data
     try:
