@@ -257,8 +257,9 @@ def plot_per_obsid(db, obj):
 if __name__=='__main__':
 
     #objects = ['sco_x1']
-    obj = raw_input('Object name: ')
-    objects = [obj]
+    #obj = raw_input('Object name: ')
+    import sys
+    objects = [sys.argv[1]]
     import pandas as pd
     import os
 

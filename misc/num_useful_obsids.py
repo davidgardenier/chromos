@@ -81,4 +81,4 @@ for o in obj:
     p = '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
     db = pd.read_csv(p)
     df = findbestdata(db)
-    print len(df)
+    print '%-20s %d' %(o, len(df))

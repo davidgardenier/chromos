@@ -182,6 +182,9 @@ def create_power_spectra():
         mode = group.modes.values[0]
         res = group.resolutions.values[0]
         
+        if mode == 'gx2':
+            mode = 'gx'
+        
         print obsid, mode, res
         
         # Find std1 path

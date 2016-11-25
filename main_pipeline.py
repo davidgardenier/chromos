@@ -43,6 +43,6 @@ from subscripts.calculate_hi import *
 #correct_for_background()
 #cut_xray_flares()
 #create_power_spectra()
-#create_power_colours()
+create_power_colours()
 #create_response()
-calculate_hi()
+#calculate_hi()

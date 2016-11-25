@@ -38,7 +38,7 @@ def findbestres(res):
 
 def findbestdataperobsid(df):
     '''Select the data with best mode and resolution'''
-    ordering = ['gx1','event','binned','std2']
+    ordering = ['gx1','gx2','event','binned','std2']
     for mode in ordering:
         if mode in df.modes.values:
             df = df[df.modes==mode]

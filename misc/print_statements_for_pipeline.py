@@ -33,8 +33,9 @@ obj = ['4U_0614p09',
 'xte_J1550m564']
 
 for o in obj:
-    print 'screen -S ' + o
+    print 'screen -S ' + 'S_' + o
     print 'startup'
     print 'shorter'
-    print 'nice -n 19 python misc/pipeline_per_object.py ' + o + '\n'
+    extra = '; nice -n 19 python misc/plot_info_per_obsid.py ' + o
+    print 'nice -n 19 python misc/pipeline_per_object.py ' + o + extra + '\n'
     print '========================='

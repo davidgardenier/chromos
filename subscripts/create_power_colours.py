@@ -11,11 +11,11 @@ def power_colour(path):
     import numpy as np
 
     # Define the frequency bands in Hz
-    frequency_bands = [0.0039,0.031,0.25,2.0,16.0]
+    #frequency_bands = [0.0039,0.031,0.25,2.0,16.0]
     # If you wish to shift the frequency bands by 5
     #frequency_bands = [0.0195,0.155,1.25,10.0,80.0]
     # If you wish to shift the frequency bands by 4
-    #frequency_bands = [0.0156,0.124,1.0,8.0,64.0]
+    frequency_bands = [0.0156,0.124,1.0,8.0,64.0]
 
     # Import data
     try:
@@ -130,15 +130,15 @@ def create_power_colours():
             pc1, pc1err, pc2, pc2err, constraint = output
 
             d['power_spectra'].append(ps)
-            d['pc1'].append(pc1)
-            d['pc1_err'].append(pc1err)
-            d['pc2'].append(pc2)
-            d['pc2_err'].append(pc2err)
-            d['lt3sigma'].append(constraint)
+            d['pc1_s4'].append(pc1)
+            d['pc1_err_s4'].append(pc1err)
+            d['pc2_s4'].append(pc2)
+            d['pc2_err_s4'].append(pc2err)
+            d['lt3sigma_s4'].append(constraint)
 
     # Update database and save
     df = pd.DataFrame(d)
-    db = database.merge(db,df,['pc1','pc1_err','pc2','pc2_err','lt3sigma'])
+    db = database.merge(db,df,['pc1_s4','pc1_err_s4','pc2_s4','pc2_err_s4','lt3sigma_s4'])
     print 'DBNUNIQUE\n', db.apply(pd.Series.nunique)
     database.save(db)
     logs.stop_logging()
