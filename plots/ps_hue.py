@@ -104,6 +104,9 @@ def plotpsperhue(huerange,plotinfo):
     # Objects should be in the order top-left, top-right, bottom-left, bottom-right
     #if len(objects) != 4:
     #    return
+    if len(plotinfo) == 4:
+        plotinfo = [plotinfo[3], plotinfo[1], plotinfo[0], plotinfo[2]]
+
     allinfo = zip(*plotinfo)
     objects = allinfo[0]
     obsids = allinfo[1]
@@ -113,10 +116,10 @@ def plotpsperhue(huerange,plotinfo):
     c=canvas.canvas()
 
     if len(plotinfo) == 4:
-        xposition=[0.0,6.0,0.0,6.0]
+        xposition=[0.0,5.0,0.0,5.0]
         yposition=[0.0,0.0,4.5,4.5]
     if len(plotinfo) == 2:
-        xposition=[0.0,6.0]
+        xposition=[0.0,5.0]
         yposition=[0.0,0.0]
 
     print huerange, '\n=========================='
@@ -157,22 +160,28 @@ def plotpsperhue(huerange,plotinfo):
                        #graph.axis.tick.tick(0.8, label=" ", labelattrs=[text.mathmode])]
             #graph.axis.texter.mixed()
 
-        g=c.insert(graph.graphxy(width=6.0,
+        g=c.insert(graph.graphxy(width=5.0,
                                  height=4.5,
                                  xpos=xposition[i],
                                  ypos=yposition[i],
                                  x=graph.axis.log(min=1e-2,max=60,title=xtitle,texter=xtexter),
                                  y=graph.axis.log(min=1e-6,max=0.8,title=ytitle,texter=ytexter)))
 
-        g.plot(values,[graph.style.histogram(lineattrs=[color.gradient.Rainbow, style.linewidth.Thick,],autohistogrampointpos=0,fromvalue=1e-6,steps=1)])
+        if i == 2:
+            g.plot(values,[graph.style.histogram(lineattrs=[color.rgb.black, style.linewidth.Thick,],autohistogrampointpos=0,fromvalue=1e-6,steps=1)])
+        else:
+            g.plot(values,[graph.style.histogram(lineattrs=[color.gradient.Rainbow, style.linewidth.Thick,],autohistogrampointpos=0,fromvalue=1e-6,steps=1)])
         errstyle= [graph.style.symbol(size=0.0, symbolattrs=[color.gradient.Rainbow]),
                    graph.style.errorbar(size=0.0,errorbarattrs=[color.rgb.red])]
+        if i == 2:
+            errstyle= [graph.style.symbol(size=0.0, symbolattrs=[color.rgb.black]),
+                       graph.style.errorbar(size=0.0,errorbarattrs=[color.rgb.black])]
         g.plot(graph.data.values(x=bincentres[:-1], y=nbinmeans, dy=binerrs), errstyle)
-        xtext, ytext = g.pos(40, 0.4)
-        g.text(xtext,ytext, ns[obj], [text.halign.boxright, text.valign.top])
+        xtext, ytext = g.pos(0.014, 0.4)
+        g.text(xtext,ytext, ns[obj], [text.halign.boxleft, text.valign.top])
 
     title = huerange.replace('_', '$^{\circ}$-') + '$^{\circ}$'
-    c.text(6.0,yposition[-1]+4.5+0.3,title,
+    c.text(5.0,yposition[-1]+4.5+0.3,title,
            [text.halign.center, text.valign.bottom, text.size.Large])
 
     outputfile = '/scratch/david/master_project/plots/publication/ps/%s' %huerange
@@ -185,124 +194,126 @@ def plot_ps():
     import itertools
 
     huerange = '0_20'
-    objects = [('sgr_x2','30051-01-03-02','binned'),
+    objects = [('gx_339_d4','80132-01-23-01','event'),
                ('4U_1636_m53','10088-01-06-00','event'),
                ('aquila_X1','30073-02-01-00','event'),
                ('J1701_462','92405-01-07-02','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '20_40'
-    objects = [('4U_0614p09','30056-01-03-04','event'),
+    objects = [('gx_339_d4','91095-08-08-00','gx1'),
                ('IGR_J00291p5934','90425-01-02-07','event'),
                ('aquila_X1','50049-01-03-01','event'),
                ('J1701_462','92405-01-24-05','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '40_60'
-    objects = [('aquila_X1','40432-01-05-00','event'),
+    objects = [('gx_339_d4','92704-03-18-00','event'),
+               ('aquila_X1','94076-01-02-00','binned'),
+               ('aquila_X1','40432-01-05-00','event'),
                ('J1701_462','92405-01-17-12','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '60_80'
-    objects = [('4u_1705_m44','40051-03-02-00','event'),
+    objects = [('gx_339_d4','95409-01-13-03','event'),
                ('S_J1756d9m2508','92050-01-01-01','event'),
                ('aquila_X1','50049-01-03-02','event'),
                ('J1701_462','92405-01-14-01','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '80_100'
-    objects = [('aquila_X1','40033-10-02-03','event'),
+    objects = [('gx_339_d4','20056-01-04-00','event'),
                ('S_J1756d9m2508','93065-01-01-02','event'),
                ('aquila_X1','91414-01-09-06','event'),
                ('J1701_462','92405-01-12-13','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '100_120'
-    objects = [('4u_1705_m44','40034-01-04-04','event'),
+    objects = [('gx_339_d4','95409-01-13-02','event'),
                ('S_J1756d9m2508','94065-02-01-05','event'),
                ('aquila_X1','40047-03-09-00','event'),
                ('HJ1900d1_2455','91057-01-05-04','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '120_140'
-    objects = [('xte_J1808_369','30411-01-03-00','event'),
+    objects = [('gx_339_d4','60705-01-69-00','gx1'),
                ('v4634_sgr','20089-01-01-00','gx1'),
                ('aquila_X1','40033-10-02-00','event'),
                ('HJ1900d1_2455','92049-01-51-00','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '140_160'
-    objects = [('4U_0614p09','50031-01-04-01','event'),
+    objects = [('gx_339_d4','92035-01-03-00','event'),
                ('v4634_sgr','50035-01-03-03','event'),
                ('aquila_X1','50049-01-04-01','event'),
                ('HJ1900d1_2455','91057-01-07-00','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '160_180'
-    objects = [('4U_0614p09','30054-01-01-05','event'),
+    objects = [('gx_339_d4','92035-01-03-06','event'),
                ('v4634_sgr','80048-01-01-11','event'),
                ('aquila_X1','91028-01-29-00','event'),
                ('HJ1900d1_2455','93451-01-02-00','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '180_200'
-    objects = [('4U_0614p09','30053-01-01-02','event'),
+    objects = [('gx_339_d4','92085-02-04-00','event'),
                ('cyg_x2','90030-01-40-00','binned'),
                ('aquila_X1','91028-01-23-00','event'),
                ('J1701_462','91442-01-01-00','binned')]
     plotpsperhue(huerange,objects)
 
     huerange = '200_220'
-    objects = [('sco_x1','30035-01-01-00','binned'),
+    objects = [('gx_339_d4','70130-01-01-00','binned'),
                ('cyg_x2','90030-01-56-01','binned'),
                ('4U_1636_m53','60032-01-11-02','event'),
                ('J1701_462','91106-02-02-11','binned')]
     plotpsperhue(huerange,objects)
 
     huerange = '220_240'
-    objects = [('4U_1728_34','70028-01-01-00','event'),
+    objects = [('gx_339_d4','70109-01-13-00','binned'),
                ('cyg_x2','90030-01-33-01','binned'),
                ('4U_1636_m53','60032-01-11-03','event'),
                ('J1701_462','92405-01-15-02','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '240_260'
-    objects = [('4U_0614p09','40030-01-06-00','event'),
+    objects = [('gx_339_d4','95335-01-01-07','event'),
                ('cyg_x2','90030-01-24-00','binned'),
                ('4U_1636_m53','60032-01-22-00','event'),
                ('J1701_462','91106-02-02-10','binned')]
     plotpsperhue(huerange,objects)
 
     huerange = '260_280'
-    objects = [('IGR_J17480m2446','50054-06-07-01','event'),
+    objects = [('gx_339_d4','95409-01-15-06','event'),
                ('cyg_x2','90030-01-10-00','binned'),
                ('aquila_X1','96440-01-08-02','event'),
                ('J1701_462','92405-01-16-04','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '280_300'
-    objects = [('4U_0614p09','30056-01-05-00','event'),
+    objects = [('gx_339_d4','92034-08-01-00','event'),
                ('cyg_x2','90030-01-31-00','binned'),
                ('aquila_X1','50049-02-15-02','event'),
                ('J1701_462','92405-01-17-00','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '300_320'
-    objects = [('4U_1636_m53','60032-05-16-00','event'),
+    objects = [('gx_339_d4','94311-01-01-01','gx1'),
                ('cyg_x2','70014-02-01-03','binned'),
                ('aquila_X1','50049-02-15-00','event'),
                ('J1701_462','92405-01-29-00','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '320_340'
-    objects = [('sgr_x2','30051-01-11-01','binned'),
+    objects = [('gx_339_d4','93409-01-24-01','gx1'),
                ('cyg_x2','20053-04-01-01','binned'),
                ('aquila_X1','40047-02-04-00','event'),
                ('J1701_462','92405-01-15-00','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '340_360'
-    objects = [('sgr_x2','30051-01-03-00','binned'),
+    objects = [('gx_339_d4','80132-01-03-00','gx1'),
                ('cyg_x2','90030-01-19-00','binned'),
                ('aquila_X1','20092-01-05-06','event'),
                ('IGR_J00291p5934','93013-07-03-01','event')]

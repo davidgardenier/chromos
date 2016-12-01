@@ -90,7 +90,7 @@ ns = [('4u_1705_m44', '4U 1705-44'),
         ('xte_J0929m314', 'XTE J0929-314'),
         #('xte_J1550m564', 'XTE J1550-564'), #BH system
         ('xte_J1751m305', 'XTE J1751-305'),
-        ('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
+        #('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
         ('xte_J1808_369', 'SAX J1808.4-3648'),
         ('xte_J1814m338', 'XTE J1814-338')]
 
@@ -169,11 +169,11 @@ names = {'4u_1705_m44':'4U 1705-44',
 
 class empty:
 
-	def __init__(self):
-		pass
-	def labels(self, ticks):
-		for tick in ticks:
-			tick.label=""
+    def __init__(self):
+        pass
+    def labels(self, ticks):
+        for tick in ticks:
+            tick.label=""
 
 def plotpcpane():
 
@@ -192,27 +192,31 @@ def plotpcpane():
         objs = sorted(objs, reverse=True, key=lambda x: x[1])
 
         myticks = []
-    	if yposition[i]!=0.0:
+        if yposition[i]!=0.0:
             xtitle = ""
             xtexter=empty()
-    	else:
+        else:
             xtitle = "PC1"
             xtexter=graph.axis.texter.mixed()
-    	if xposition[i]!=0.0:
+        if xposition[i]!=0.0:
             ytitle = ""
             ytexter=empty()
-    	else:
+        else:
             ytitle="PC2"
             ytexter=graph.axis.texter.mixed()
 
-    	g=c.insert(graph.graphxy(width=6.0,
+        g=c.insert(graph.graphxy(width=6.0,
                                  height=6.0,
                                  xpos=xposition[i],
                                  ypos=yposition[i],
-	                             x=graph.axis.log(min=0.01,max=600,title=xtitle,texter=xtexter,manualticks=myticks),
-	                             y=graph.axis.log(min=0.01,max=60,title=ytitle,texter=ytexter),
+                                 x=graph.axis.log(min=10,
+                                                  max=190,
+                                                  title=xtitle,
+                                                  texter=xtexter,
+                                                  manualticks=myticks),
+                                 y=graph.axis.log(min=0.05,max=1,title=ytitle,texter=ytexter),
                                  key=graph.key.key(pos='tr', dist=0.1, textattrs=[text.size.tiny])))
-        scatterstyle= [graph.style.symbol(symbol=graph.style._circlesymbol, size=0.05, symbolattrs=[deco.filled, color.gradient.Rainbow])]
+        scatterstyle= [graph.style.symbol(symbol=graph.style.symbol.changesquare, size=0.08, symbolattrs=[deco.filled, color.gradient.ReverseRainbow])]
 
         # Plot Neutron Stars
         grey= color.cmyk(0,0,0,0.5)
@@ -237,8 +241,14 @@ def plotpcpane():
             ys.extend(db.pc2.values)
             xerrors.extend(db.pc1_err.values)
             yerrors.extend(db.pc2_err.values)
-
-            g.plot(graph.data.values(x=xs, y=ys, dx=xerrors, dy=yerrors, title=name + ' Hz'), scatterstyle)
+            
+            if any(((10<z[0]<190) and (0.05<z[1]<1)) for z in zip(xs,ys)):
+                g.plot(graph.data.values(x=xs, 
+                                         y=ys, 
+                                         dx=xerrors, 
+                                         dy=yerrors, 
+                                         title=name + ' Hz'), 
+                       scatterstyle)
     # title = huerange.replace('_', '$^[\circ]$-') + '$^[\circ]$'
     # c.text(6.0,yposition[-1]+6.5,title,
     #        [text.halign.center, text.valign.bottom, text.size.Large])

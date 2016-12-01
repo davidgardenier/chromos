@@ -47,7 +47,7 @@ def plot_allpcs():
             ('xte_J0929m314', 'XTE J0929-314'),
             #('xte_J1550m564', 'XTE J1550-564'), #BH system
             ('xte_J1751m305', 'XTE J1751-305'),
-            ('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
+            #('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
             ('xte_J1808_369', 'SAX J1808.4-3648'),
             ('xte_J1814m338', 'XTE J1814-338')]
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points

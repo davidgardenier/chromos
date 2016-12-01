@@ -132,7 +132,7 @@ def plot_allpcs():
             ('xte_J0929m314', 'XTE J0929-314'),
             #('xte_J1550m564', 'XTE J1550-564'), #BH system
             ('xte_J1751m305', 'XTE J1751-305'),
-            ('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
+            #('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
             ('xte_J1808_369', 'SAX J1808.4-3648'),
             ('xte_J1814m338', 'XTE J1814-338')]
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
@@ -194,7 +194,7 @@ def plot_allpcs():
                       x=graph.axis.lin(min=0, max=360, title=r"Hue ($^{\circ}$)"),
                       y=graph.axis.lin(min=0.4, max=1.75, title=r"Hardness"),
                       key=graph.key.key(pos='bl', dist=0.1, hdist=0.1, vdist=0.1, textattrs=[text.size.scriptsize], keyattrs=[deco.filled([color.rgb.white])]))
-    errstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow]),
+    errstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.08, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
     scatterstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow])]
 

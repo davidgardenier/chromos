@@ -130,7 +130,7 @@ def plot_allpcs():
             ('xte_J0929m314', 'XTE J0929-314'),
             #('xte_J1550m564', 'XTE J1550-564'), #BH system
             ('xte_J1751m305', 'XTE J1751-305'),
-            ('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
+            #('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
             ('xte_J1808_369', 'SAX J1808.4-3648'),
             ('xte_J1814m338', 'XTE J1814-338')]
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
@@ -188,11 +188,15 @@ def plot_allpcs():
         g.plot(graph.data.values(x=pertype[2], y=pertype[3]), scatterstyle)
 
         #If wanting to print a list of objects & obsids per angle
-        print k
-        print '--------------'
+#        print k
+#        print '--------------'
+#        for e in binnedhues[k]:
+#            print "('%s','%s','%s')" %(e[0], e[1], e[-3])
+#        print '=============='
+        print "hues['%s'] = [" %k
         for e in binnedhues[k]:
-            print "('%s','%s','%s')" %(e[0], e[1], e[-3])
-        print '=============='
+            print "('%s','%s','%s')," %(e[0], e[1], e[-3])
+        print ']'
 
     # Overplot bin details
     for b in [0,20,40,60,80,100,120,140,160]:

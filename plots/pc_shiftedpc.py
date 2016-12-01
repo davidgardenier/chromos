@@ -56,7 +56,7 @@ def findbestdata(db):
 
 def findbestdatashifted(db):
     # Apply constraint to the data
-    db = db[(db.pc1_shiftedby5.notnull() & db.lt3sigma_shiftedby5==True)]
+    db = db[(db.pc1_s4.notnull() & db.lt3sigma_s4==True)]
     db = db.groupby('obsids').apply(findbestdataperobsid)
     return db
 
@@ -90,7 +90,7 @@ ns = [('4u_1705_m44', '4U 1705-44'),
         ('xte_J0929m314', 'XTE J0929-314'),
         #('xte_J1550m564', 'XTE J1550-564'), #BH system
         ('xte_J1751m305', 'XTE J1751-305'),
-        ('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
+        #('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
         ('xte_J1808_369', 'SAX J1808.4-3648'),
         ('xte_J1814m338', 'XTE J1814-338')]
 
@@ -159,10 +159,10 @@ for i, o in enumerate(ns):
     except:
         print 'FAILED: %s' %o
         continue
-    x_shiftedns.extend(db.pc1_shiftedby5.values)
-    y_shiftedns.extend(db.pc2_shiftedby5.values)
-    xerror_shiftedns.extend(db.pc1_err_shiftedby5.values)
-    yerror_shiftedns.extend(db.pc2_err_shiftedby5.values)
+    x_shiftedns.extend(db.pc1_s4.values)
+    y_shiftedns.extend(db.pc2_s4.values)
+    xerror_shiftedns.extend(db.pc1_err_s4.values)
+    yerror_shiftedns.extend(db.pc2_err_s4.values)
 
 names = {'4u_1705_m44':'4U 1705-44',
         '4U_0614p09':'4U 0614+09',
