@@ -1,7 +1,7 @@
 # Functions to determine the Poisson noise level with dead-time correction
 # Written by David Gardenier, davidgardenier@gmail.com, 2016-2017
 
-def calculate_deadtime(std1path, f, npcu=5, vle_correction='max'):
+def calculate_deadtime(std1path, f, npcu=5, vle_correction='mean'):
     '''
     Function to calculate the deadtime correction factor upon being given the
     path, array with frequencies and number of pcus
@@ -12,7 +12,7 @@ def calculate_deadtime(std1path, f, npcu=5, vle_correction='max'):
 
     import pandas as pd
     import pyfits
-    from numpy import sin, cos, pi
+    from numpy import sin, cos, pi, mean
         
     hdulist = pyfits.open(std1path)
     data = hdulist[1].data
@@ -49,10 +49,10 @@ def calculate_deadtime(std1path, f, npcu=5, vle_correction='max'):
     N = len(f)
     
     # Method of correction (could be also use the mean)
-    if vle_correction == 'max':
-        corvle = max(vlecnt)/float(npcu)
-        corxe = max(xecnt)/float(npcu)
-        cortotal = max(totalcnt)/float(npcu)
+    if vle_correction == 'mean':
+        corvle = mean(vlecnt)/float(npcu)
+        corxe = mean(xecnt)/float(npcu)
+        cortotal = mean(totalcnt)/float(npcu)
     
     # VLE correction factor
     pvle = 2*corvle*corxe*tau**2*(sin(pi*tau*f)/(pi*tau*f))**2
