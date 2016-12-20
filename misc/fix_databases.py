@@ -1,3 +1,4 @@
+import pandas as pd
 
 obj = [ '4U_0614p09',
         '4U_1636_m53',
@@ -34,18 +35,36 @@ obj = [ '4U_0614p09',
         'xte_J1550m564']
 
 for o in obj:
-    data = '/scratch/david/master_project/' + o + '/'
-    database = '/scratch/david/master_project/'+o+'/info/database_'+o+'.csv'
     
-    filein = database
-    fileout = database
+    print o + '\n' + '='*len(o)
 
-    f = open(filein,'r')
-    filedata = f.read()
-    f.close()
+    # Import database
+    database = '/scratch/david/master_project/'+o+'/info/database_'+o+'.csv'
+    db = pd.read_csv(database)
+    
+    to_del = []
+    
+    print len(db)
+ 
+    # Remove unnamed columns
+    for col in db.columns:
+       if 'Unnamed' in col:
+           del db[col]
+              
+    # Find which columns need to be deleted
+    for c in db.columns:
+        if c.endswith('_s4'):
+            to_del.append(c)
+            
+            if c.startswith('power_spectra'):
+                print c
 
-    newdata = filedata.replace("gx2_2s.ps","gx_2s.ps")
+    # Delete the columns
+    for c in to_del:
+        del db[c]
 
-    f = open(fileout,'w')
-    f.write(newdata)
-    f.close()
+    # Clean up database
+    db = db.drop_duplicates()
+    print len(db)
+    
+    db.to_csv(database)

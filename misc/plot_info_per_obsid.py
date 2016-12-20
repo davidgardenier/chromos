@@ -227,7 +227,10 @@ def plot_per_obsid(db, obj):
     # First get a file with the best contrained power colours
     df = findbestdata(db)
     c = ['pc1','pc1_err','pc2','pc2_err']
-    df.to_csv('/scratch/david/master_project/' + obj + '/info/power_colours.csv', cols = c)
+    try:
+        df.to_csv('/scratch/david/master_project/' + obj + '/info/power_colours.csv', cols = c)
+    except KeyError:
+        pass
     # Then a file with all the fluxes
     df = db.dropna(subset=['flux_i3t16_s6p4t9p7_h9p7t16'])
     c = ['flux_i3t16_s6p4t9p7_h9p7t16','flux_err_i3t16_s6p4t9p7_h9p7t16','hardness_i3t16_s6p4t9p7_h9p7t16','hardness_err_i3t16_s6p4t9p7_h9p7t16']
