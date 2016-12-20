@@ -65,6 +65,9 @@ def power_spectrum(path_lc, path_bkg, path_std1, npcu):
 
     # Calculating the number of segments
     number_of_segments = len(segment_endpoints)
+    # For ease, using M for the total number of segments
+    M = float(number_of_segments)
+    
     # Stop calculations if no segments can be found
     if number_of_segments == 0:
         print 'WARNING: No segments found'
@@ -95,29 +98,33 @@ def power_spectrum(path_lc, path_bkg, path_std1, npcu):
         # Calculate the fast Fourier transform
         four_trans = fft.fft(segment, n_seg, 0)
 
-        # Calculate the normalisation of the powerspectrum
-        # (rms normalisation)
-        norm = (2*dt)/(float(n_seg)*(np.mean(segment)**2))
+        # Add the square of the FFT to the power spectrum
+        fft_sq = (np.absolute(four_trans))**2
+        power_spectrum += fft_sq
 
-        # Add the normalisation of the square of the FFT
-        # to the power spectrum
-        power_spectrum += norm*(np.absolute(four_trans))**2
-        # Add the normalisation of the squared power spectrum
-        power_spectrum_squared += (norm*(np.absolute(four_trans))**2)**2
+        # Add the squared power spectrum
+        power_spectrum_squared += (fft_sq)**2
 
         # For calculating the total white noise
         if noise_subtraction:
             rate_tot.extend(segment)
             bkg_tot.extend(bkg_segment)
+    
+    # Calculate the mean power spectrum
+    power_spectrum = power_spectrum/M
 
     # Calculate the mean power spectrum
-    power_spectrum = power_spectrum/float(number_of_segments)
-
-    # Calculate the mean power spectrum
-    power_spectrum_squared = power_spectrum_squared/float(number_of_segments)
-
+    power_spectrum_squared = power_spectrum_squared/M
+    
     # Calculating the error on the power spectrum
-    power_spectrum_error = power_spectrum/np.sqrt(float(number_of_segments))
+    power_spectrum_error = power_spectrum/np.sqrt(M)
+    
+    # Calculate the normalisation of the power spectrum
+    # (rms normalisation)
+    norm = (2*dt)/(float(n_seg)*(np.mean(rate_tot)**2))
+    power_spectrum *= norm
+    power_spectrum_squared *= norm**2
+    power_spectrum_error *= norm
 
     # Calculate the noise & subtract from the power spectrum
     if noise_subtraction:
