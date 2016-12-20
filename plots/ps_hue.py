@@ -195,23 +195,23 @@ def plot_ps():
 
     huerange = '0_20'
     objects = [('gx_339_d4','80132-01-23-01','event'),
-               ('4U_1636_m53','10088-01-06-00','event'),
-               ('aquila_X1','30073-02-01-00','event'),
-               ('J1701_462','92405-01-07-02','event')]
+               ('J1701_462', '92405-01-34-01', 'event'),
+               ('IGR_J00291p5934', '90425-01-01-07', 'event'),
+               ('4U_1636_m53','10088-01-09-00','event')]
     plotpsperhue(huerange,objects)
 
     huerange = '20_40'
     objects = [('gx_339_d4','91095-08-08-00','gx1'),
-               ('IGR_J00291p5934','90425-01-02-07','event'),
-               ('aquila_X1','50049-01-03-01','event'),
-               ('J1701_462','92405-01-24-05','event')]
+               ('J1701_462', '92405-01-42-06', 'event'),
+               ('aquila_X1', '50049-01-03-01', 'event'),
+               ('4U_0614p09', '30056-01-03-04', 'event')]
     plotpsperhue(huerange,objects)
 
     huerange = '40_60'
     objects = [('gx_339_d4','92704-03-18-00','event'),
                ('aquila_X1','94076-01-02-00','binned'),
                ('aquila_X1','40432-01-05-00','event'),
-               ('J1701_462','92405-01-17-12','event')]
+               ('J1701_462', '92405-01-17-12', 'event')]
     plotpsperhue(huerange,objects)
 
     huerange = '60_80'
@@ -223,100 +223,100 @@ def plot_ps():
 
     huerange = '80_100'
     objects = [('gx_339_d4','20056-01-04-00','event'),
-               ('S_J1756d9m2508','93065-01-01-02','event'),
-               ('aquila_X1','91414-01-09-06','event'),
-               ('J1701_462','92405-01-12-13','event')]
+               ('aquila_X1', '40033-10-02-04', 'event'),
+               ('S_J1756d9m2508', '94065-06-02-02', 'event'),
+               ('4u_1705_m44', '40051-03-02-00', 'event')]
     plotpsperhue(huerange,objects)
 
     huerange = '100_120'
     objects = [('gx_339_d4','95409-01-13-02','event'),
-               ('S_J1756d9m2508','94065-02-01-05','event'),
-               ('aquila_X1','40047-03-09-00','event'),
-               ('HJ1900d1_2455','91057-01-05-04','event')]
+               ('HJ1900d1_2455', '96030-01-22-00', 'event'),
+               ('S_J1756d9m2508', '94065-02-01-04', 'event'),
+               ('aquila_X1', '40033-10-02-06', 'event')]
     plotpsperhue(huerange,objects)
 
     huerange = '120_140'
     objects = [('gx_339_d4','60705-01-69-00','gx1'),
-               ('v4634_sgr','20089-01-01-00','gx1'),
-               ('aquila_X1','40033-10-02-00','event'),
-               ('HJ1900d1_2455','92049-01-51-00','event')]
+               ('v4634_sgr', '20089-01-01-00', 'gx1'),
+               ('HJ1900d1_2455', '92049-01-08-00', 'event'),
+               ('aquila_X1', '40033-10-02-00', 'event')]
     plotpsperhue(huerange,objects)
 
     huerange = '140_160'
     objects = [('gx_339_d4','92035-01-03-00','event'),
-               ('v4634_sgr','50035-01-03-03','event'),
-               ('aquila_X1','50049-01-04-01','event'),
-               ('HJ1900d1_2455','91057-01-07-00','event')]
+               ('HJ1900d1_2455', '91057-01-05-01', 'event'),
+               ('v4634_sgr', '92703-01-02-01', 'event'),
+               ('aquila_X1', '50049-01-04-00', 'event')]
     plotpsperhue(huerange,objects)
 
     huerange = '160_180'
     objects = [('gx_339_d4','92035-01-03-06','event'),
-               ('v4634_sgr','80048-01-01-11','event'),
-               ('aquila_X1','91028-01-29-00','event'),
-               ('HJ1900d1_2455','93451-01-02-00','event')]
+               ('4U_0614p09', '10095-01-03-01', 'event'),
+               ('aquila_X1', '93076-01-05-00', 'event'),
+               ('4U_1728_34', '50030-03-10-00', 'event')]
     plotpsperhue(huerange,objects)
 
     huerange = '180_200'
     objects = [('gx_339_d4','92085-02-04-00','event'),
-               ('cyg_x2','90030-01-40-00','binned'),
-               ('aquila_X1','91028-01-23-00','event'),
-               ('J1701_462','91442-01-01-00','binned')]
+               ('4U_1728_34', '40033-06-02-03', 'event'),
+               ('cyg_x2', '30046-01-12-00', 'binned'),
+               ('J1701_462', '91442-01-01-01', 'binned')]
     plotpsperhue(huerange,objects)
 
     huerange = '200_220'
     objects = [('gx_339_d4','70130-01-01-00','binned'),
-               ('cyg_x2','90030-01-56-01','binned'),
-               ('4U_1636_m53','60032-01-11-02','event'),
-               ('J1701_462','91106-02-02-11','binned')]
+               ('J1701_462', '91106-02-02-11', 'binned'),
+               ('cyg_x2', '90030-01-56-01', 'binned'),
+               ('sco_x1', '30035-01-09-00', 'binned')]
     plotpsperhue(huerange,objects)
 
     huerange = '220_240'
     objects = [('gx_339_d4','70109-01-13-00','binned'),
-               ('cyg_x2','90030-01-33-01','binned'),
-               ('4U_1636_m53','60032-01-11-03','event'),
-               ('J1701_462','92405-01-15-02','event')]
+               ('sco_x1', '40020-01-03-00', 'binned'),
+               ('cyg_x2', '91009-01-46-00', 'binned'),
+               ('J1701_462', '91106-02-02-14', 'binned')]
     plotpsperhue(huerange,objects)
 
     huerange = '240_260'
     objects = [('gx_339_d4','95335-01-01-07','event'),
-               ('cyg_x2','90030-01-24-00','binned'),
-               ('4U_1636_m53','60032-01-22-00','event'),
-               ('J1701_462','91106-02-02-10','binned')]
+               ('cyg_x2', '90030-01-55-00', 'binned'),
+               ('sco_x1', '40020-01-01-07', 'binned'),
+               ('4U_0614p09', '40030-01-06-00', 'event')]
     plotpsperhue(huerange,objects)
 
     huerange = '260_280'
     objects = [('gx_339_d4','95409-01-15-06','event'),
-               ('cyg_x2','90030-01-10-00','binned'),
-               ('aquila_X1','96440-01-08-02','event'),
-               ('J1701_462','92405-01-16-04','event')]
+               ('IGR_J17480m2446', '95437-01-07-00', 'event'),
+               ('sco_x1', '20053-01-01-05', 'binned'),
+               ('cyg_x2', '90030-01-04-00', 'binned')]
     plotpsperhue(huerange,objects)
 
     huerange = '280_300'
-    objects = [('gx_339_d4','92034-08-01-00','event'),
-               ('cyg_x2','90030-01-31-00','binned'),
-               ('aquila_X1','50049-02-15-02','event'),
-               ('J1701_462','92405-01-17-00','event')]
+    objects = [('gx_339_d4','95335-01-01-00','event'),
+               ('cyg_x2', '90030-01-31-00', 'binned'),
+               ('sco_x1', '20053-01-02-05', 'binned'),
+               ('IGR_J17480m2446', '95437-01-11-04', 'event')]
     plotpsperhue(huerange,objects)
 
     huerange = '300_320'
-    objects = [('gx_339_d4','94311-01-01-01','gx1'),
-               ('cyg_x2','70014-02-01-03','binned'),
-               ('aquila_X1','50049-02-15-00','event'),
-               ('J1701_462','92405-01-29-00','event')]
+    objects = [('gx_339_d4','95409-01-16-05','event'),
+               ('IGR_J17480m2446', '95437-01-13-01', 'event'),
+               ('cyg_x2', '30046-01-02-00', 'binned'),
+               ('J1701_462', '92405-01-37-10', 'event')]
     plotpsperhue(huerange,objects)
 
     huerange = '320_340'
-    objects = [('gx_339_d4','93409-01-24-01','gx1'),
-               ('cyg_x2','20053-04-01-01','binned'),
-               ('aquila_X1','40047-02-04-00','event'),
-               ('J1701_462','92405-01-15-00','event')]
+    objects = [('gx_339_d4','92035-01-04-00','binned'),
+               ('J1701_462', '92405-01-15-00', 'event'),
+               ('cyg_x2', '90030-01-32-00', 'binned'),
+               ('sgr_x1', '40023-01-03-00', 'event')]
     plotpsperhue(huerange,objects)
 
     huerange = '340_360'
     objects = [('gx_339_d4','80132-01-03-00','gx1'),
-               ('cyg_x2','90030-01-19-00','binned'),
-               ('aquila_X1','20092-01-05-06','event'),
-               ('IGR_J00291p5934','93013-07-03-01','event')]
+               ('IGR_J00291p5934', '90425-01-02-05', 'event'),
+               ('sgr_x2', '30051-01-03-00', 'binned'),
+               ('IGR_J17480m2446', '50138-03-01-01', 'event')]
     plotpsperhue(huerange,objects)
 
 
