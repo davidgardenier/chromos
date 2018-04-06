@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import math
 from pyx import *
 
+from filter_bursts import filter_bursts
 
 def path(o):
     return '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
@@ -91,8 +92,7 @@ ns=[('4u_1705_m44', '4U 1705-44'),
     #('xte_J1550m564', 'XTE J1550-564'), #BH system
     ('xte_J1751m305', 'XTE J1751-305'),
     #('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
-    ('xte_J1808_369', 'SAX J1808.4-3648'),
-    ('xte_J1814m338', 'XTE J1814-338')]
+    ('xte_J1808_369', 'SAX J1808.4-3648')]
 
 x_ns = []
 y_ns = []
@@ -105,6 +105,7 @@ for i, o in enumerate(ns):
     p = path(o)
     db = pd.read_csv(p)
     db = findbestdata(db)
+    db = filter_bursts(db)
 
     x_ns.extend(db.pc1.values)
     y_ns.extend(db.pc2.values)
@@ -124,6 +125,7 @@ for i, o in enumerate(bhs):
     p = path(o)
     db = pd.read_csv(p)
     db = findbestdata(db)
+    db = filter_bursts(db)
 
     x_bh.extend(db.pc1.values)
     y_bh.extend(db.pc2.values)
@@ -156,6 +158,7 @@ for i, o in enumerate(ns):
     db = pd.read_csv(p)
     try:
         db = findbestdatashifted(db)
+        db = filter_bursts(db)
         if 'pc1_s4' not in db:
             print 'FAILED: %s' %o
             continue

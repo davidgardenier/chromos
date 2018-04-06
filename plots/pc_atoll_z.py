@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import math
 from pyx import *
 
+from filter_bursts import filter_bursts
+
 def path(o):
     return '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
 
@@ -81,6 +83,7 @@ for i, o in enumerate(ns):
     p = path(o)
     db = pd.read_csv(p)
     db = findbestdata(db)
+    db = filter_bursts(db)
 
     x_ns.extend(db.pc1.values)
     y_ns.extend(db.pc2.values)
@@ -118,7 +121,7 @@ def plot_allpcs():
     # Set up plot details
     g = graph.graphxy(height=7,
                       width=7,
-                      x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
+                      x=graph.axis.log(min=0.01, max=300, title=r"PC1"),
                       y=graph.axis.log(min=0.01, max=100, title=r"PC2"),
                       key=graph.key.key(pos='tr', dist=0.2))
     errstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.1, symbolattrs=[color.gradient.Rainbow]),
@@ -137,6 +140,7 @@ def plot_allpcs():
         p = path(o)
         db = pd.read_csv(p)
         db = findbestdata(db)
+        db = filter_bursts(db)
 
         x_atolls.extend(db.pc1.values)
         y_atolls.extend(db.pc2.values)
@@ -164,6 +168,7 @@ def plot_allpcs():
         p = path(o)
         db = pd.read_csv(p)
         db = findbestdata(db)
+        db = filter_bursts(db)
 
         x_z.extend(db.pc1.values)
         y_z.extend(db.pc2.values)

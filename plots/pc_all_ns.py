@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import math
 from pyx import *
 
+from filter_bursts import filter_bursts
+
 def path(o):
     return '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
 
@@ -71,7 +73,7 @@ def plot_allpcs():
             ('gx_17p2', 'GX 17+2'), #Only has 4 points
             #('gx_339_d4', 'GX 339-4'), #BH system
             ('gx_340p0', 'GX 340+0'), #Only 5 points
-            #('gx_349p2', 'GX 349+2'), #Only 3 points
+            # ('gx_349p2', 'GX 349+2'), #Only 3 points
             ('HJ1900d1_2455', 'HETE J1900.1-2455'),
             ('IGR_J00291p5934', 'IGR J00291+5934'),
             ('IGR_J17480m2446', 'IGR J17480-2446'),
@@ -89,8 +91,8 @@ def plot_allpcs():
             #('xte_J1550m564', 'XTE J1550-564'), #BH system
             ('xte_J1751m305', 'XTE J1751-305'),
             #('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
-            ('xte_J1808_369', 'SAX J1808.4-3648'),
-            ('xte_J1814m338', 'XTE J1814-338')]
+            ('xte_J1808_369', 'SAX J1808.4-3648')]
+            # ('xte_J1814m338', 'XTE J1814-338')
             #('xte_J2123_m058', 'XTE J2123-058')] # No pc points
 
     # Set up plot details
@@ -98,7 +100,7 @@ def plot_allpcs():
                       width=9,
                       x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
                       y=graph.axis.log(min=0.01, max=100, title=r"PC2"),
-                      key=graph.key.key(pos=None,hpos=1.0,vpos=0.5,hinside=0, dist=0.05, textattrs=[text.size.small]))
+                      key=graph.key.key(pos=None,hpos=1.0,vpos=0.5,hinside=0, dist=0.1, textattrs=[text.size.small]))
     errstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
     scatterstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow])]
@@ -111,6 +113,7 @@ def plot_allpcs():
         p = path(o)
         db = pd.read_csv(p)
         db = findbestdata(db)
+        db = filter_bursts(db)
 
         x = db.pc1.values
         y = db.pc2.values

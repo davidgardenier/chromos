@@ -60,7 +60,7 @@ def plot_allpcs():
 
     objects = [('4u_1705_m44', 'f'),
               ('xte_J1808_369', 'f'),
-              ('cir_x1', 'e'),
+              ('cir_x1', 'f'),
               ('cyg_x2', 'e'),
               #('EXO_0748_676', 'e'),
               ('HJ1900d1_2455', 'f'),
@@ -111,7 +111,7 @@ def plot_allpcs():
     # Set up plot details
     g = graph.graphxy(height=7,
                       width=7,
-                      x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
+                      x=graph.axis.log(min=0.01, max=300, title=r"PC1"),
                       y=graph.axis.log(min=0.01, max=100, title=r"PC2"),
                       key=graph.key.key(pos='tr', dist=0.2))
     errstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.06, symbolattrs=[color.gradient.ReverseRainbow]),

@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import math
 from pyx import *
 
+from filter_bursts import filter_bursts
 
 def path(o):
     return '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
@@ -112,24 +113,24 @@ for i, o in enumerate(ns):
     xerror_ns.extend(db.pc1_err.values)
     yerror_ns.extend(db.pc2_err.values)
 
-bursters = [('4U_0614p09',414.7),
-            ('4U_1636_m53',581.9),
-            ('4U_1702m43',330),
-            ('4U_1728_34',364),
-            ('aquila_X1',550.3),
-            ('EXO_0748_676',552.5),#? Strange behaviour
-            ('KS_1731m260',524),
+bursters = [('4U_0614p09',415),
+            ('4U_1636_m53',581),
+            ('4U_1702m43',329),
+            ('4U_1728_34',363),
+            ('aquila_X1',549),
+            # ('EXO_0748_676',552),#? Strange behaviour
+            ('KS_1731m260',524)]
+
+pulsars = [('HJ1900d1_2455',377),
+            ('IGR_J17480m2446',11),
+            ('IGR_J17498m2921', 401),
+            ('IGR_J00291p5934', 598),
+            ('xte_J1807m294',190),
+            ('xte_J1814m338', 314),
+            ('xte_J1808_369',401),
             ('S_J1756d9m2508', 182),
             ('xte_J0929m314', 185),
             ('xte_J1751m305', 435)]
-            
-pulsars = [('HJ1900d1_2455',377.3),
-            ('IGR_J17480m2446',11),
-            #('IGR_J17498m2921', 401),
-            ('xte_J1751m305',244.8),
-            ('xte_J1807m294',190.6),
-            ('xte_J1814m338', 314),
-            ('xte_J1808_369',401)]
 
 names = {'4u_1705_m44':'4U 1705-44',
         '4U_0614p09':'4U 0614+09',
@@ -211,11 +212,11 @@ def plotpcpane():
                                  xpos=xposition[i],
                                  ypos=yposition[i],
                                  x=graph.axis.log(min=10,
-                                                  max=190,
+                                                  max=290,
                                                   title=xtitle,
                                                   texter=xtexter,
                                                   manualticks=myticks),
-                                 y=graph.axis.log(min=0.05,max=1,title=ytitle,texter=ytexter),
+                                 y=graph.axis.log(min=0.05,max=2,title=ytitle,texter=ytexter),
                                  key=graph.key.key(pos='tr', dist=0.1, textattrs=[text.size.tiny])))
         scatterstyle= [graph.style.symbol(symbol=graph.style.symbol.changesquare, size=0.08, symbolattrs=[deco.filled, color.gradient.ReverseRainbow])]
 
@@ -232,23 +233,27 @@ def plotpcpane():
             yerrors = []
 
             print o[0]
-            name = str(o[-1])
+            name_obj = names[o[0]].split('-')[0].split('+')[0]
+            if o[0] == 'aquila_X1':
+                name_obj = 'Aql X-1'
+            name = name_obj + ' - ' + str(o[-1]) + 'Hz'
             o = o[0]
             p = path(o)
             db = pd.read_csv(p)
             db = findbestdata(db)
+            db = filter_bursts(db)
 
             xs.extend(db.pc1.values)
             ys.extend(db.pc2.values)
             xerrors.extend(db.pc1_err.values)
             yerrors.extend(db.pc2_err.values)
-            
-            if any(((10<z[0]<190) and (0.05<z[1]<1)) for z in zip(xs,ys)):
-                g.plot(graph.data.values(x=xs, 
-                                         y=ys, 
-                                         dx=xerrors, 
-                                         dy=yerrors, 
-                                         title=name + ' Hz'), 
+
+            if any(((10<z[0]<290) and (0.05<z[1]<2)) for z in zip(xs,ys)):
+                g.plot(graph.data.values(x=xs,
+                                         y=ys,
+                                         dx=xerrors,
+                                         dy=yerrors,
+                                         title=name),
                        scatterstyle)
     # title = huerange.replace('_', '$^[\circ]$-') + '$^[\circ]$'
     # c.text(6.0,yposition[-1]+6.5,title,

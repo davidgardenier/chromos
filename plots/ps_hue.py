@@ -313,7 +313,7 @@ def plot_ps():
     plotpsperhue(huerange,objects)
 
     huerange = '340_360'
-    objects = [('gx_339_d4','80132-01-03-00','gx1'),
+    objects = [('gx_339_d4','70109-01-02-00','event'),
                ('IGR_J00291p5934', '90425-01-02-05', 'event'),
                ('sgr_x2', '30051-01-03-00', 'binned'),
                ('IGR_J17480m2446', '50138-03-01-01', 'event')]

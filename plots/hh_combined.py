@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import math
 from pyx import *
 
+from filter_bursts import filter_bursts
 
 def path(o):
     return '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
@@ -143,6 +144,7 @@ for i, o in enumerate(ns):
     db = pd.read_csv(p)
     # Determine pc values
     bestdata = findbestdata(db)
+    bestdata = filter_bursts(bestdata)
     # Calculate hues
     hues = []
     hues_err = []
@@ -242,6 +244,10 @@ def plotpcpane(objects, nr):
         xposition=[0.0,6.0,12.0]
         yposition=[0.0,0.0,0.0]
         order = [1,2,3]
+    if len(objects) == 4:
+        xposition=[0.0,6.0,12.0, 0.0]
+        yposition=[6.0,6.0,6.0, 0.0]
+        order = [1,2,3, 4]
     objcts = [objects[j-1] for j in order]
 
     print str(nr), '\n=========================='
@@ -253,6 +259,7 @@ def plotpcpane(objects, nr):
         db = pd.read_csv(p)
         # Determine pc values
         bestdata = findbestdata(db)
+        bestdata = filter_bursts(bestdata)
         # Calculate hues
         hues = []
         hues_err = []
@@ -283,7 +290,7 @@ def plotpcpane(objects, nr):
         hues_err = [i for j, i in enumerate(hues_err) if j not in index_to_del]
         hardness = [i for j, i in enumerate(hardness) if j not in index_to_del]
         hardness_err = [i for j, i in enumerate(hardness_err) if j not in index_to_del]
-        
+
         # Plot details
         x = hues
         y = hardness
@@ -347,18 +354,16 @@ if __name__=='__main__':
             '4u_1705_m44',
             '4U_1728_34',
             'aquila_X1',
-            'cir_x1',
             'cyg_x2',
-            'EXO_0748_676',
+            'gx_5m1',
             'gx_17p2',
             'gx_340p0',
-            'gx_349p2']
+            'gx_349p2',
+            'HJ1900d1_2455']
     plotpcpane(pane, nr)
 
     nr = 2
-    pane = ['gx_5m1',
-            'HJ1900d1_2455',
-            'IGR_J00291p5934',
+    pane = ['IGR_J00291p5934',
             'IGR_J17480m2446',
             'IGR_J17498m2921',
             'KS_1731m260',
@@ -367,13 +372,13 @@ if __name__=='__main__':
             'sco_x1',
             'sgr_x1',
             'sgr_x2',
-            'v4634_sgr']
+            'v4634_sgr',
+            'XB_1254_m690',
+            'xte_J0929m314']
     plotpcpane(pane, nr)
 
     nr = 3
-    pane = ['XB_1254_m690',
-            'xte_J0929m314',
-            'J1701_462',
+    pane = ['J1701_462',
             'xte_J1751m305',
             'xte_J1807m294',
             'xte_J1814m338']

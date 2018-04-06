@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import math
 from pyx import *
 
+from filter_bursts import filter_bursts
+
 def path(o):
     return '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
 
@@ -116,6 +118,7 @@ def plot_allpcs():
         p = path(o)
         db = pd.read_csv(p)
         db = findbestdata(db)
+        db = filter_bursts(db)
 
         x_ns.extend(db.pc1.values)
         y_ns.extend(db.pc2.values)
@@ -135,6 +138,7 @@ def plot_allpcs():
         p = path(o)
         db = pd.read_csv(p)
         db = findbestdata(db)
+        db = filter_bursts(db)
 
         x = db.pc1.values
         y = db.pc2.values

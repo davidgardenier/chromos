@@ -9,6 +9,8 @@ from math import atan2, degrees, pi, log10, sqrt
 import math
 from pyx import *
 
+from filter_bursts import filter_bursts
+
 def path(o):
     return '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
 
@@ -126,6 +128,7 @@ for i, o in enumerate(ns):
     db = pd.read_csv(p)
     # Determine pc values
     bestdata = findbestdata(db)
+    bestdata = filter_bursts(bestdata)
     # Calculate hues
     hues = []
     hues_err = []
@@ -202,6 +205,7 @@ def plot_allpcs():
         db = pd.read_csv(p)
         # Determine pc values
         bestdata = findbestdata(db)
+        bestdata = filter_bursts(bestdata)
         # Calculate hues
         hues = []
         hues_err = []
@@ -250,6 +254,7 @@ def plot_allpcs():
         db = pd.read_csv(p)
         # Determine pc values
         bestdata = findbestdata(db)
+        bestdata = filter_bursts(bestdata)
         # Calculate hues
         hues = []
         hues_err = []

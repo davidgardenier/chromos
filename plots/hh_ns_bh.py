@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import math
 from pyx import *
 
+from filter_bursts import filter_bursts
+
 def path(o):
     return '/scratch/david/master_project/' + o + '/info/database_' + o + '.csv'
 
@@ -52,6 +54,7 @@ def findbestdata(db):
     # Apply constraint to the data
     db = db[(db.pc1.notnull() & db.lt3sigma==True)]
     db = db.groupby('obsids').apply(findbestdataperobsid)
+    db = db[((db.pc1>0) & (db.pc2>0))]
     return db
 
 
@@ -133,8 +136,7 @@ def plot_allpcs():
         #('xte_J1550m564', 'XTE J1550-564'), #BH system
         ('xte_J1751m305', 'XTE J1751-305'),
         #('xte_J1807m294', 'XTE J1807-294'), #Only 4 points
-        ('xte_J1808_369', 'SAX J1808.4-3648'),
-        ('xte_J1814m338', 'XTE J1814-338')]
+        ('xte_J1808_369', 'SAX J1808.4-3648')]
 
     bhs = [('gx_339_d4', 'GX 339-4'), ('H1743m322','H1743-322'), ('xte_J1550m564', 'XTE J1550-564')]
 
@@ -150,6 +152,7 @@ def plot_allpcs():
         db = pd.read_csv(p)
         # Determine pc values
         bestdata = findbestdata(db)
+        bestdata = filter_bursts(bestdata)
         # Calculate hues
         hues = []
         hues_err = []
@@ -167,7 +170,9 @@ def plot_allpcs():
         hardness = []
         hardness_err = []
         for obsid, group in bestdata.groupby('obsids'):
+
             df = db[db.obsids==obsid].dropna(subset=['flux_i3t16_s6p4t9p7_h9p7t16'])
+
             hardness.append(df.hardness_i3t16_s6p4t9p7_h9p7t16.values[0])
             hardness_err.append(df.hardness_err_i3t16_s6p4t9p7_h9p7t16.values[0])
 
@@ -211,6 +216,7 @@ def plot_allpcs():
 
         # Determine pc values
         bestdata = findbestdata(db)
+        bestdata = filter_bursts(bestdata)
         # Calculate hues
         hues = []
         hues_err = []
@@ -241,7 +247,7 @@ def plot_allpcs():
         hues_err = [i for j, i in enumerate(hues_err) if j not in index_to_del]
         hardness = [i for j, i in enumerate(hardness) if j not in index_to_del]
         hardness_err = [i for j, i in enumerate(hardness_err) if j not in index_to_del]
-        
+
         # Plot details
         x = hues
         y = hardness
