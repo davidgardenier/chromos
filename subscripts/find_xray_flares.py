@@ -1,5 +1,6 @@
 # Functions to detect when an X-ray flare happens and to cut around it
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# OUTDATED: Use Phil's new script to find obsids with flares
+# Written by David Gardenier, 2015-2016
 
 
 def cut_flare(path_obsid, lc, bkg_lc, res, mode):

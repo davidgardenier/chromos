@@ -1,5 +1,5 @@
 # Quick script to overplot power colour values
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 import os
 import glob
@@ -17,12 +17,12 @@ def plot_allpcs():
     import itertools
 
     scos=[('sco_x1', 'Sco X-1'),
-          ('gx_17p2', 'GX 17+2'), #Only has 4 points
-          ('gx_349p2', 'GX 349+2')] #Only 3 points
+          ('gx_17p2', 'GX 17+2'),
+          ('gx_349p2', 'GX 349+2')]
 
     cygs = [('cyg_x2', 'Cyg X-2'),
-          ('gx_5m1', 'GX 5-1'), #Only 5 points
-          ('gx_340p0', 'GX 340+0')] #Only 5 points]
+          ('gx_5m1', 'GX 5-1'),
+          ('gx_340p0', 'GX 340+0')]
 
     # Set up plot details
     g = graph.graphxy(height=7,

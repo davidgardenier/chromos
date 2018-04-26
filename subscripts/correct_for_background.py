@@ -1,5 +1,5 @@
 # Functions to correct each lightcurve of non-std2 type for their background
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 def read_light_curve(path):
     '''

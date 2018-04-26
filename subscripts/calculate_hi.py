@@ -1,5 +1,5 @@
 # Functions to calculate hardness intensity diagrams
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 
 def calculate_hi(low_e=3.0,
@@ -118,8 +118,6 @@ def calculate_hi(low_e=3.0,
         integflux = path_obsid + 'integflux.in'
         with open(integflux, 'w') as f:
             #intgr_low, intgr_high, soft_low, soft_high, hard_low, hard_high
-            #line = ['eufspec.dat', 2.0, 60.0, 7.3, 9.8, 9.8, 18.2] #JOEL
-            #line = ['eufspec.dat', 2.0, 13.0, 2.0, 6.0, 6.0, 13.0] #ME
             line = ['eufspec.dat',
                     str(low_e),
                     str(high_e),
@@ -156,7 +154,6 @@ def calculate_hi(low_e=3.0,
 
         # Clear xspec spectrum
         xspec.AllData.clear()
-        #os.system('rm ' + rsp + '&')
 
     # Update database and save
     df = pd.DataFrame(d)

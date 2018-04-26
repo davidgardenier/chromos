@@ -4,9 +4,7 @@ obj = ['4U_0614p09',
 '4u_1705_m44',
 '4U_1728_34',
 'aquila_X1',
-'cir_x1',
 'cyg_x2',
-'EXO_0748_676',
 'gx_17p2',
 'gx_340p0',
 'gx_349p2',
@@ -36,6 +34,6 @@ for o in obj:
     print 'screen -S ' + o
     print 'startup'
     print 'shorter'
-    extra = ''#; nice -n 19 python misc/plot_info_per_obsid.py ' + o
-    print 'nice -n 19 python misc/pipeline_per_object.py ' + o + extra + '\n'
+    print 'nice -n 19 python misc/pipeline_per_object.py ' + o
+    # print 'nice -n 19 python misc/plot_info_per_obsid.py ' + o
     print '========================='

@@ -1,5 +1,5 @@
 # Quick & dirt script to find where files have produced errors in the pipeline
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 # Could be adapted to look for nan values in the database, and use those to
 # trace back why values haven't been calculated

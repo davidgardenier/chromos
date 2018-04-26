@@ -1,5 +1,5 @@
 # Functions to integrate under power spectra to create power colours
-# Written by David Gardenier, davidgardenier@gmail.com
+# Written by David Gardenier, 2015-2016
 
 
 def power_colour(path):
@@ -11,11 +11,11 @@ def power_colour(path):
     import numpy as np
 
     # Define the frequency bands in Hz
-    frequency_bands = [0.0039,0.031,0.25,2.0,16.0]
+    frequency_bands = [1/256.,1/32.,0.25,2.0,16.0]
     # If you wish to shift the frequency bands by 5
-    #frequency_bands = [0.0195,0.155,1.25,10.0,80.0]
+    # frequency_bands = [0.0195,0.155,1.25,10.0,80.0]
     # If you wish to shift the frequency bands by 4
-    #frequency_bands = [0.0156,0.124,1.0,8.0,64.0]
+    # frequency_bands = [f*4 for f in frequency_bands]
 
     # Import data
     try:

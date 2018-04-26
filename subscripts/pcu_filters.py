@@ -1,7 +1,7 @@
 # Function to determine when the number of pcu's changes, and to determine
 # in spacecraft time how to filter the data so that 32s around this change is
 # cut from the final output
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-216
+# Written by David Gardenier, 2015-216
 
 def pcu_filters():
     '''

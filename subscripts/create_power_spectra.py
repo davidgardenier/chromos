@@ -1,5 +1,5 @@
 # Functions to create power spectra from lightcurves
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 def power_spectrum(path_lc, path_bkg, path_std1, npcu):
 
@@ -32,7 +32,7 @@ def power_spectrum(path_lc, path_bkg, path_std1, npcu):
     dt = dt[0]
 
     # Express the length of each segment size in units of dt
-    n = 512/dt
+    n = 256/dt
     # n should already be a power of 2 - but in case if isn't
     # this line will round it off to the nearest power of 2
     n_seg = pow(2, int(math.log(n, 2) + 0.5))
@@ -67,7 +67,7 @@ def power_spectrum(path_lc, path_bkg, path_std1, npcu):
     number_of_segments = len(segment_endpoints)
     # For ease, using M for the total number of segments
     M = float(number_of_segments)
-    
+
     # Stop calculations if no segments can be found
     if number_of_segments == 0:
         print 'WARNING: No segments found'
@@ -77,7 +77,7 @@ def power_spectrum(path_lc, path_bkg, path_std1, npcu):
     power_spectrum = np.zeros((n_seg))
     # Necessary for errors on power colour values
     power_spectrum_squared = np.zeros((n_seg))
-    
+
     # Calculate the corresponding frequency grid
     # (assuming that dt is the same for all)
     frequency = fft.fftfreq(n_seg, dt)
@@ -109,16 +109,16 @@ def power_spectrum(path_lc, path_bkg, path_std1, npcu):
         if noise_subtraction:
             rate_tot.extend(segment)
             bkg_tot.extend(bkg_segment)
-    
+
     # Calculate the mean power spectrum
     power_spectrum = power_spectrum/M
 
     # Calculate the mean power spectrum
     power_spectrum_squared = power_spectrum_squared/M
-    
+
     # Calculating the error on the power spectrum
     power_spectrum_error = power_spectrum/np.sqrt(M)
-    
+
     # Calculate the normalisation of the power spectrum
     # (rms normalisation)
     norm = (2*dt)/(float(n_seg)*(np.mean(rate_tot)**2))
@@ -139,7 +139,7 @@ def power_spectrum(path_lc, path_bkg, path_std1, npcu):
     ps_error = power_spectrum_error[1:n_seg/2]
     ps_squared = power_spectrum_squared[1:n_seg/2]
     frequency = frequency[1:n_seg/2]
-    
+
     return ps, ps_error, ps_squared, number_of_segments, frequency, frequency_error
 
 
@@ -172,7 +172,7 @@ def create_power_spectra():
 
     d = defaultdict(list)
     for path_lc, group in db.groupby('bkg_corrected_lc'):
-    
+
         # Check whether x-ray flare was present
         path_bkg = group.rebinned_bkg.values[0]
         flare = False
@@ -188,12 +188,12 @@ def create_power_spectra():
         path_obsid = group.paths_obsid.values[0]
         mode = group.modes.values[0]
         res = group.resolutions.values[0]
-        
+
         if mode == 'gx2':
             mode = 'gx'
-        
+
         print obsid, mode, res
-        
+
         # Find std1 path
         try:
             std1 = db[((db.obsids==obsid) & (db.modes=='std1'))].paths_data.iloc[0]
@@ -201,7 +201,7 @@ def create_power_spectra():
         except IndexError:
             print('ERROR: No std1 file for this obsid. Aborting power spectrum.')
             continue
-        
+
         # Determine the maximum number of pcus on during the observation
         npcu = group.npcu.values[0]
 

@@ -1,5 +1,5 @@
 # Functions to determine the Poisson noise level with dead-time correction
-# Written by David Gardenier, davidgardenier@gmail.com, 2016-2017
+# Written by David Gardenier, 2016-2017
 
 def calculate_deadtime(std1path, f, npcu=5, vle_correction='mean'):
     '''

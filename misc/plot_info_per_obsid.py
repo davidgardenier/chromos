@@ -1,5 +1,5 @@
 # Script to plot multiple graphs per obsid
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 import pandas as pd
 import numpy as np

@@ -63,7 +63,3 @@ def save(db,location=paths.database):
 
 if not os.path.exists(paths.database):
     create_db()
-
-# Handy print statements:
-#print 'DBNUNIQUE\n', db.apply(pd.Series.nunique)
-#pd.options.display.max_colwidth = 100

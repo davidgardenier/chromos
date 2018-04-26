@@ -1,7 +1,7 @@
 # Functions to create a background files for each standard2 data file, and
 # create a list of paths directing to these piles. Uses the ftool pcabackest
 # to create the backgrounds.
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 def pcabackest(mode,infile,outfile,filt,allpcus=True):
     '''

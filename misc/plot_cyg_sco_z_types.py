@@ -1,5 +1,5 @@
 # Quick script to overplot power colour values
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 import os
 import glob

@@ -1,5 +1,5 @@
 # Function to create a database of the files present and their properties
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 def determine_info():
     '''
@@ -188,9 +188,6 @@ def determine_info():
     if len(unfound_obsids) > 0:
         print 'ERROR: NO DATA FOR THESE OBSIDS', unfound_obsids
         db = db[db.modes.notnull()]
-    # Print info of database
-    #pd.options.display.max_colwidth = 100
-    #print db[db.obsids=='40048-01-09-00']
 
     database.save(db)
     logs.stop_logging()

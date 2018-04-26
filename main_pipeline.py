@@ -1,5 +1,5 @@
 # Master Project - Scripts for working with RXTE-data
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 from subscripts.download_data import *
 from subscripts.locate_files import *
@@ -41,7 +41,6 @@ create_backgrounds()
 find_channels()
 extract_lc_and_sp()
 correct_for_background()
-cut_xray_flares()
 create_power_spectra()
 create_power_colours()
 create_response()

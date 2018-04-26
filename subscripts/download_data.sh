@@ -9,7 +9,7 @@
 ## Usage: bash ./<something>/download_data.sh <proposal_ID_list>
 ##
 ## Written by Abigail Stevens, A.L.Stevens@uva.nl, 2013-2015
-## Adaped by David Gardenier, davidgardenier@gmail.com, 2015-2016
+## Adaped by David Gardenier, 2015-2016
 ################################################################################
 
 ## Make sure the input arguments are ok

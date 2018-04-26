@@ -1,5 +1,5 @@
 # Functions to extract lightcurves and spectra from RXTE-data
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 def seextrct(mode, path_data, gti, output, time_range, channels):
     '''
@@ -12,7 +12,7 @@ def seextrct(mode, path_data, gti, output, time_range, channels):
 
     command = ['seextrct',
                'infile=@' + path_data, # Input file name
-               'gtiorfile=-', # Input GTI files to be OR'd with INFILE
+               'gtiorfile=APPLY', # Input GTI files to be OR'd with INFILE
                'gtiandfile=' + gti, # Input GTI file to be AND'd with INFILE
                'outroot=' + output, # Root name for output file
                'timecol=TIME', # Name of TIME column
@@ -59,15 +59,9 @@ def saextrct(mode, path_data, gti, output, time_range, channels, layer):
         columns = 'GOOD'
         printmode='LIGHTCURVE'
 
-    # Needed for deadtime corrections
-#    if mode == 'std1':
-#        b = '0.125'
-#        columns = '@' + paths.subscripts + 'deadtime_columns.txt'
-#        printmode='LIGHTCURVE'
-
     command = ['saextrct',
                'infile=@' + path_data, # Input file name
-               'gtiorfile=-', # Input GTI files to be OR'd with INFILE
+               'gtiorfile=APPLY', # Input GTI files to be OR'd with INFILE
                'gtiandfile=' + gti, # Input GTI file to be AND'd with INFILE
                'outroot=' + output, # Root name for output file
                'accumulate=ONE', # Accumulate (ONE) or (MANY) Spectral/Light Curves
@@ -147,6 +141,10 @@ def extract_lc_and_sp():
             if isnan(times_pcu):
                 print obsid, mode, res, 'ERROR: No pcu times, as no filter file'
                 continue
+        if type(gti)==float:
+            if isnan(gti):
+                print obsid, mode, res, 'ERROR: No gti times'
+                continue
 
         # You get problems if the file name is longer than 80 characters (incl@)
         filenametoolong = False
@@ -174,13 +172,13 @@ def extract_lc_and_sp():
         print obsid, mode, res, '--> Extracting Lightcurve'
 
         # Extract files
-        if mode == 'event' or mode =='gx':
+        if mode == 'event' or mode == 'gx':
             seextrct(mode, path_data, gti, output, times_pcu, channels)
         if mode == 'std2' or mode == 'binned':
             saextrct(mode, path_data, gti, output, times_pcu, channels, layer)
 
         # Run saextrct for background files
-        saextrct('std2',path_bkg, gti, output_bkg, times_pcu, channels, layer)
+        saextrct('std2', path_bkg, gti, output_bkg, times_pcu, channels, layer)
 
         # Check if extraction worked or not
         lc = output + '.lc'

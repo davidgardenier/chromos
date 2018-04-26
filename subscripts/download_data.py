@@ -1,7 +1,7 @@
 # Program to download data with just an obsid list and name of file. Basically
 # an extended Python wrapper for Abbie's earlier bash script program, which has
 # been adapted for better intregration with this program.
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 def download():
     '''

@@ -1,5 +1,5 @@
 # Quick script to overplot power colour values
-# Written by David Gardenier, davidgardenier@gmail.com, 2015-2016
+# Written by David Gardenier, 2015-2016
 
 import os
 import glob
@@ -17,19 +17,16 @@ ns={'4u_1705_m44':'4U 1705-44',
         '4U_1702m43':'4U 1702-43',
         '4U_1728_34':'4U 1728-34',
         'aquila_X1':'Aql X-1',
-        'cir_x1':'Cir X-1', #strange behaviour
         'cyg_x2':'Cyg X-2',
-        'EXO_0748_676':'EXO 0748-676', #Strange behaviour
-        'gx_5m1':'GX 5-1', #Only 5 points
-        'gx_17p2':'GX 17+2', #Only has 4 points
+        'gx_5m1':'GX 5-1',
+        'gx_17p2':'GX 17+2',
         'gx_339_d4':'GX 339-4', #BH system
-        'gx_340p0':'GX 340+0', #Only 5 points
-        'gx_349p2':'GX 349+2', #Only 3 points
+        'gx_340p0':'GX 340+0',
+        'gx_349p2':'GX 349+2',
         'HJ1900d1_2455':'HETE J1900.1-2455',
         'IGR_J00291p5934':'IGR J00291+5934',
         'IGR_J17480m2446':'IGR J17480-2446',
-        'IGR_J17498m2921':'IGR J17498-2921', #Only 1 point
-        'IGR_J17511m3057':'IGR J17511-3057', #Same as XTE J1751
+        'IGR_J17498m2921':'IGR J17498-2921',
         'J1701_462':'XTE J1701-462',
         'KS_1731m260':'KS 1731-260',
         'sco_x1':'Sco X-1',
@@ -41,10 +38,10 @@ ns={'4u_1705_m44':'4U 1705-44',
         'xte_J0929m314':'XTE J0929-314',
         'xte_J1550m564':'XTE J1550-564', #BH system
         'xte_J1751m305':'XTE J1751-305',
-        'xte_J1807m294':'XTE J1807-294', #Only 4 points
+        'xte_J1807m294':'XTE J1807-294',
         'xte_J1808_369':'SAX J1808.4-3648',
         'xte_J1814m338':'XTE J1814-338',
-        'xte_J2123_m058':'XTE J2123-058'} # No pc points
+        'xte_J2123_m058':'XTE J2123-058'}
 
 
 def getdata(obj,obsid,mode):
@@ -106,12 +103,12 @@ def plot_colours(n,N):
     hststyle = [graph.style.histogram(lineattrs=[cl, style.linewidth.Thick,],autohistogrampointpos=0,fromvalue=1e-6,steps=1)]
     errstyle= [graph.style.symbol(size=0.0, symbolattrs=[cl]),
                graph.style.errorbar(size=0.0,errorbarattrs=[cl])]
-               
+
     return hststyle,errstyle
 
 def plotps():
 
-    objects = [('IGR_J00291p5934', '90425-01-01-07', 'event'),#0-20
+    objects = [('IGR_J00291p5934', '90425-01-02-05', 'event'),#0-20
                ('aquila_X1', '50049-01-03-01', 'event'),#20-40
                ('aquila_X1','40432-01-05-00','event'),#40-60
                ('aquila_X1','50049-01-03-02','event'),#60-80
@@ -129,12 +126,12 @@ def plotps():
                ('cyg_x2', '30046-01-02-00', 'binned'),#300-320
                ('cyg_x2', '90030-01-32-00', 'binned'),#320-340
                ('sgr_x2', '30051-01-03-00', 'binned')]#340-360
-               
+
     allinfo = zip(*objects)
     objects = allinfo[0]
     obsids = allinfo[1]
     modes = allinfo[2]
-    
+
     # Set up plot details
     c=canvas.canvas()
 
@@ -145,7 +142,7 @@ def plotps():
     xposition += 3*[i for i in range(0,6*plot_width,plot_width)]
     yposition = [0 for i in range(0,6)]
     for i in range(2):
-        yposition += [e-plot_height for e in yposition[-6:]]    
+        yposition += [e-plot_height for e in yposition[-6:]]
 
     for q in range(len(objects)):
         obj = objects[q]
