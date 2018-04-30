@@ -27,7 +27,7 @@ def plot_allpcs():
         ('gx_17p2', 'GX 17+2'),
         ('gx_340p0', 'GX 340+0'),
         #('gx_349p2', 'GX 349+2'), #Only 3 points
-        # ('gx_5m1', 'GX 5-1'), Only 4 points
+        # ('gx_5m1', 'GX 5-1'),  # Only 4 points
         ('HJ1900d1_2455', 'HETE J1900.1-2455'),
         ('IGR_J00291p5934', 'IGR J00291+5934'),
         ('IGR_J17480m2446', 'IGR J17480-2446'),
