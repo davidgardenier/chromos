@@ -107,7 +107,7 @@ ns=[
     #('xte_J1807m294', 'XTE J1807-294'), # Only 2 points
     #('xte_J1814m338', 'XTE J1814-338'),  # Only 3 points
     #('gx_339_d4', 'GX 339-4'), # BH system
-    #('H1743m322':'H1743-322'),  # BH system
+    #('H1743m322', 'H1743-322'),  # BH system
     #('xte_J1550m564', 'XTE J1550-564'), #BH system
     ]
 
@@ -160,7 +160,7 @@ def plot_allpcs():
             #('xte_J1807m294', 'XTE J1807-294'), # Only 2 points
             #('xte_J1814m338', 'XTE J1814-338'),  # Only 3 points
             #('gx_339_d4', 'GX 339-4'), # BH system
-            #('H1743m322':'H1743-322'),  # BH system
+            #('H1743m322', 'H1743-322'),  # BH system
             #('xte_J1550m564', 'XTE J1550-564'), #BH system
             ]
 
