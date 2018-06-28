@@ -104,7 +104,7 @@ def plot_allpcs():
 
     objects=[
             ('4U_0614p09', '4U 0614+09'),
-            ('4U_1636_m53', '4U 1636-53'),
+            #('4U_1636_m53', '4U 1636-53'),  # Only 2 points
             ('4U_1702m43', '4U 1702-43'),
             ('4u_1705_m44', '4U 1705-44'),
             ('4U_1728_34', '4U 1728-34'),
@@ -116,7 +116,6 @@ def plot_allpcs():
             # ('gx_5m1', 'GX 5-1'),  # Only 4 points
             ('HJ1900d1_2455', 'HETE J1900.1-2455'),
             ('IGR_J00291p5934', 'IGR J00291+5934'),
-            ('IGR_J17480m2446', 'IGR J17480-2446'),
             #('IGR_J17498m2921', 'IGR J17498-2921'), #Only 1 point
             ('KS_1731m260', 'KS 1731-260'),
             ('xte_J1808_369', 'SAX J1808.4-3648'),
@@ -191,15 +190,15 @@ def plot_allpcs():
         g.plot(graph.data.values(x=pertype[2], y=pertype[3]), scatterstyle)
 
         #If wanting to print a list of objects & obsids per angle
-#        print k
-#        print '--------------'
-#        for e in binnedhues[k]:
-#            print "('%s','%s','%s')" %(e[0], e[1], e[-3])
-#        print '=============='
-        print "hues['%s'] = [" %k
-        for e in binnedhues[k]:
-            print "('%s','%s','%s')," %(e[0], e[1], e[-3])
-        print ']'
+        # print k
+        # print '--------------'
+        # for e in binnedhues[k]:
+        #     print "('%s','%s','%s')" %(e[0], e[1], e[-3])
+        # print '=============='
+        # print "hues['%s'] = [" %k
+        # for e in binnedhues[k]:
+        #     print "('%s','%s','%s')," %(e[0], e[1], e[-3])
+        # print ']'
 
     # Overplot bin details
     for b in [0,20,40,60,80,100,120,140,160]:

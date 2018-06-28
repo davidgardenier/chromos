@@ -161,7 +161,6 @@ def plot_allpcs():
 
     allhues = []
     for i, o in enumerate(objects):
-        print o[-1]
         name = o[-1]
         o = o[0]
         p = path(o)
@@ -169,6 +168,7 @@ def plot_allpcs():
         # Determine pc values
         bestdata = findbestdata(db)
         bestdata = filter_bursts(bestdata)
+        print(name, len(bestdata))
 
         # Calculate hues
         for i in range(len(bestdata.pc1.values)):

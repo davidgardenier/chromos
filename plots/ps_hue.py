@@ -25,7 +25,6 @@ ns={'4u_1705_m44':'4U 1705-44',
         'gx_349p2':'GX 349+2',
         'HJ1900d1_2455':'HETE J1900.1-2455',
         'IGR_J00291p5934':'IGR J00291+5934',
-        'IGR_J17480m2446':'IGR J17480-2446',
         'IGR_J17498m2921':'IGR J17498-2921',
         'J1701_462':'XTE J1701-462',
         'KS_1731m260':'KS 1731-260',
@@ -282,7 +281,7 @@ def plot_ps():
 
     huerange = '260_280'
     objects = [('gx_339_d4','95409-01-15-06','event'),
-               ('IGR_J17480m2446', '95437-01-07-00', 'event'),
+               ('J1701_462','91106-01-12-00','binned'),
                ('sco_x1', '20053-01-01-05', 'binned'),
                ('cyg_x2', '90030-01-04-00', 'binned')]
     plotpsperhue(huerange,objects)
@@ -291,12 +290,12 @@ def plot_ps():
     objects = [('gx_339_d4','95335-01-01-00','event'),
                ('cyg_x2', '90030-01-31-00', 'binned'),
                ('sco_x1', '20053-01-02-05', 'binned'),
-               ('IGR_J17480m2446', '95437-01-11-04', 'event')]
+               ('J1701_462','91106-02-03-14','binned')]
     plotpsperhue(huerange,objects)
 
     huerange = '300_320'
     objects = [('gx_339_d4','95409-01-16-05','event'),
-               ('IGR_J17480m2446', '95437-01-13-01', 'event'),
+               ('sco_x1','40706-01-03-00','binned'),
                ('cyg_x2', '30046-01-02-00', 'binned'),
                ('J1701_462', '92405-01-37-10', 'event')]
     plotpsperhue(huerange,objects)
@@ -312,7 +311,7 @@ def plot_ps():
     objects = [('gx_339_d4','70109-01-02-00','event'),
                ('IGR_J00291p5934', '90425-01-02-05', 'event'),
                ('sgr_x2', '30051-01-03-00', 'binned'),
-               ('IGR_J17480m2446', '50054-06-04-01', 'event')]
+               ('aquila_X1','50049-02-08-03','event')]
     plotpsperhue(huerange,objects)
 
 
