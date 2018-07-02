@@ -96,8 +96,8 @@ def plot_allpcs():
     # Set up plot details
     g = graph.graphxy(height=9,
                       width=9,
-                      x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
-                      y=graph.axis.log(min=0.01, max=100, title=r"PC2"),
+                      x=graph.axis.log(min=0.01, max=300, title=r"PC1"),
+                      y=graph.axis.log(min=0.01, max=30, title=r"PC2"),
                       key=graph.key.key(pos=None,hpos=1.0,vpos=0.5,hinside=0, dist=0.1, textattrs=[text.size.small]))
     errstyle= [graph.style.symbol(size=0.1, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]

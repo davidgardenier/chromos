@@ -139,8 +139,8 @@ def plot_allpcs():
     # Set up plot details
     g = graph.graphxy(height=7,
                       width=7,
-                      x=graph.axis.log(min=0.01, max=1000, title=r"PC1"),
-                      y=graph.axis.log(min=0.01, max=100, title=r"PC2"))
+                      x=graph.axis.log(min=0.01, max=300, title=r"PC1"),
+                      y=graph.axis.log(min=0.01, max=30, title=r"PC2"))
     errstyle= [graph.style.symbol(graph.style.symbol.changesquare, size=0.08, symbolattrs=[color.gradient.Rainbow]),
                graph.style.errorbar(size=0,errorbarattrs=[color.gradient.Rainbow])]
     scatterstyle= [graph.style.symbol(graph.style.symbol.cross, size=0.1, symbolattrs=[color.gradient.Rainbow])]
@@ -214,44 +214,44 @@ def plot_allpcs():
         g.plot(graph.data.function(func), styles=[linesty])
 
 
-        xtext, ytext = g.pos(345, 17)
+        xtext, ytext = g.pos(345, 7)
         g.text(g.width-0.1,ytext, '100$^{\circ}$', [text.halign.boxright])
-        xtext, ytext = g.pos(345, 1.8)
+        xtext, ytext = g.pos(345, 1.35)
         g.text(g.width-0.1,ytext, '120$^{\circ}$', [text.halign.boxright])
-        xtext, ytext = g.pos(345, 0.35)
+        xtext, ytext = g.pos(345, 0.38)
         g.text(g.width-0.1,ytext, '140$^{\circ}$', [text.halign.boxright])
-        xtext, ytext = g.pos(345, 0.07)
+        xtext, ytext = g.pos(345, 0.12)
         g.text(g.width-0.1,ytext, '160$^{\circ}$', [text.halign.boxright])
+        xtext, ytext = g.pos(345, 0.023)
+        g.text(g.width-0.1,ytext, '180$^{\circ}$', [text.halign.boxright])
 
-        xtext, ytext = g.pos(190, 20)
-        g.text(xtext,0.1, '180$^{\circ}$', [text.halign.boxleft])
-        xtext, ytext = g.pos(28, 1.9)
+        xtext, ytext = g.pos(27.8, 0.08)
         g.text(xtext,0.1, '$200^{\circ}$', [text.halign.boxleft])
-        xtext, ytext = g.pos(6.5, 0.35)
+        xtext, ytext = g.pos(6.5, 0.08)
         g.text(xtext,0.1, '220$^{\circ}$', [text.halign.boxleft])
-        xtext, ytext = g.pos(1.9, 0.06)
+        xtext, ytext = g.pos(1.85, 0.08)
         g.text(xtext,0.1, '240$^{\circ}$', [text.halign.boxleft])
-        xtext, ytext = g.pos(0.45, 0.08)
+        xtext, ytext = g.pos(0.42, 0.08)
         g.text(xtext,0.1, '260$^{\circ}$', [text.halign.boxleft])
-        xtext, ytext = g.pos(0.04, 0.08)
+        xtext, ytext = g.pos(0.035, 0.08)
         g.text(xtext,0.1, '280$^{\circ}$', [text.halign.boxleft])
 
         xtext, ytext = g.pos(345, 0.09)
         g.text(0.1,ytext, '300$^{\circ}$', [text.halign.boxleft, text.valign.top])
         xtext, ytext = g.pos(345, 0.65)
         g.text(0.1,ytext, '320$^{\circ}$', [text.halign.boxleft, text.valign.top])
-        xtext, ytext = g.pos(345, 4)
+        xtext, ytext = g.pos(345, 4.5)
         g.text(0.1,ytext, '340$^{\circ}$', [text.halign.boxleft, text.valign.top])
 
-        xtext, ytext = g.pos(0.022, 20)
+        xtext, ytext = g.pos(0.07, 20)
         g.text(xtext,g.height-0.1, '0$^{\circ}$', [text.halign.boxright, text.valign.top])
-        xtext, ytext = g.pos(0.37, 1.9)
+        xtext, ytext = g.pos(0.62, 1.9)
         g.text(xtext,g.height-0.1, '$20^{\circ}$', [text.halign.boxright, text.valign.top])
-        xtext, ytext = g.pos(2.6, 0.35)
+        xtext, ytext = g.pos(3.0, 0.35)
         g.text(xtext,g.height-0.1, '40$^{\circ}$', [text.halign.boxright, text.valign.top])
-        xtext, ytext = g.pos(18, 0.06)
+        xtext, ytext = g.pos(13, 0.06)
         g.text(xtext,g.height-0.1, '60$^{\circ}$', [text.halign.boxright, text.valign.top])
-        xtext, ytext = g.pos(150, 0.08)
+        xtext, ytext = g.pos(70, 0.08)
         g.text(xtext,g.height-0.1, '80$^{\circ}$', [text.halign.boxright, text.valign.top])
 
     g.writePDFfile('/scratch/david/master_project/plots/publication/pc/hue_bins')
