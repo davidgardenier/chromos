@@ -25,7 +25,7 @@ list_dir=$3
 data_dir=$2  ## Saves as {data_dir_prefix}/propID/obsID
 dl_log="$list_dir/download.log"
 dl_list="$list_dir/new_downloads.txt"
-web_prefix="ftp://legacy.gsfc.nasa.gov/xte/data/archive"  ## The web archive prefix
+web_prefix="https://legacy.gsfc.nasa.gov/FTP/xte/data/archive"  ## The web archive prefix
 
 ################################################################################
 ################################################################################
