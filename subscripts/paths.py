@@ -1,7 +1,7 @@
 import os
 
 selection = 'xte_J1550m564'
-subscripts = os.getcwd() + '/subscripts/'
+subscripts = os.path.dirname(os.path.realpath(__file__)) + '/'
 
 data = '/scratch/david/master_project/xte_J1550m564/'
 data_info = data + 'info/'
