@@ -1,5 +1,5 @@
 argparse==1.2.1
 astropy==1.0.3
-numpy==1.21.0
+numpy==1.22.0
 wsgiref==0.1.2
 pandas==0.13.1
